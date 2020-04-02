@@ -30,6 +30,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.2'
+    //implementation 'org.mongodb:mongodb-driver-legacy:4.0.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.maps.android:android-maps-utils:1.0.2'
