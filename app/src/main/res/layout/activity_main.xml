@@ -14,7 +14,7 @@
         android:layout_marginTop="342dp"
         android:layout_marginEnd="136dp"
         android:layout_marginBottom="343dp"
-        android:text="Shelter Project"
+        android:text="Safe Zone"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
