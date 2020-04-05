@@ -6,43 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
-import com.mongodb.ServerAddress;
-
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoCollection;
-
-import org.bson.Document;
-import java.util.Arrays;
-import com.mongodb.Block;
-
-import com.mongodb.client.MongoCursor;
-import static com.mongodb.client.model.Filters.*;
-
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.result.DeleteResult;
-import static com.mongodb.client.model.Updates.*;
-import com.mongodb.client.result.UpdateResult;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
-
-import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.*;
 import java.util.logging.Logger;
 import static com.mongodb.client.model.Filters.eq;
 
@@ -51,6 +19,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class LoginActivity extends AppCompatActivity {
     private static String email;
     private static String password;
+    private boolean[] checkuser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -62,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         //Login Button
         Button LoginButton = (Button) findViewById(R.id.LoginButton);
+        //Click on login button
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
                 AlertDialog errorMessage = builder.create();
                 // Good message
-                builder2.setMessage("Welcome!")
+                builder2.setMessage("Login successful\n!")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -89,8 +59,17 @@ public class LoginActivity extends AppCompatActivity {
                 AlertDialog goodMessage = builder2.create();
                 // Check if the user exist
                 try {
-                    if (CheckLogin(email,password)){
-                        goodMessage.show();
+                    checkuser=CheckLogin(email,password);
+                    if (checkuser[0] == true ){
+                        if(checkuser[1]== true){// This is Admin
+                            System.out.println("this is admin\n");
+                            goodMessage.show();
+                        }
+                        else{//This is simple user
+
+                            goodMessage.show();
+
+                        }
                     }
                     else{
                         errorMessage.show();
@@ -110,7 +89,21 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+        Button contactButton = (Button) findViewById(R.id.contact_button);
+        contactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowContactPage();
+            }
 
+        });
+
+
+    }
+    public void ShowContactPage() {
+        //Going to sign up page
+        Intent i = new Intent(this, ContactActivity.class);
+        startActivity(i);
     }
 
     public void ShowSignupPage() {
@@ -120,8 +113,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //Connecting to MongoDB in new thread and find if the user exist , return True or False
-    public boolean CheckLogin(final String email, final String password) throws InterruptedException {
-         boolean flag =false;
+    public boolean[] CheckLogin(final String email, final String password) throws InterruptedException {
+         boolean[] flag= new boolean[2];
+
         Thread t = Thread.currentThread();// The main thread
         //New Thread that connect to DB and find the use.
         LoginThread loginThread= new LoginThread(email,password);
