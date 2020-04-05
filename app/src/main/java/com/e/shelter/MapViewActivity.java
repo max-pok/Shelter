@@ -2,9 +2,7 @@ package com.e.shelter;
 
 import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -26,9 +24,6 @@ import android.os.StrictMode;
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap map;
     private SupportMapFragment mapFragment;
-    private FusedLocationProviderClient fusedLocationClient;
-    private Location currentLocation;
-    private static final int PERMISSION_ID = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +36,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
     }
 
+    /**
+     *  Creates all the necessary settings for the map.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -54,7 +52,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     *
+     * Adding the shelters location from mongoDB into the map.
      */
     public void add_shelters_into_map(GoogleMap googleMap) {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
@@ -68,6 +66,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Adding the shelters information from the local shelters.json file to mongoDB.
+     * TODO: You must place the 'shelters.json' file in 'app/src/main/assets' directory before you use the current function.
+     * Use this function only to add the file information into your local db.
+     */
     public void add_shelters_to_mongodb() {
         // TODO: add more information, for example: open/close, accessibility, capacity.
         try {
@@ -88,6 +91,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     *  This function loads the json file from asset folder into a string.
+     */
     public String loadJSONFromAsset(Context context) {
         String json = null;
         try {
