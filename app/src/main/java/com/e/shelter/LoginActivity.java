@@ -102,8 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     public void ShowContactPage() {
         //Going to sign up page
-        Intent i = new Intent(this, ContactActivity.class);
-        startActivity(i);
+
     }
 
     public void ShowSignupPage() {
