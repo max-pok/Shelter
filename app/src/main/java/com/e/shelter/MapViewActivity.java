@@ -2,7 +2,9 @@ package com.e.shelter;
 
 import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,8 +24,11 @@ import java.io.InputStream;
 import android.os.StrictMode;
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback {
-    GoogleMap map;
-    SupportMapFragment mapFragment;
+    private GoogleMap map;
+    private SupportMapFragment mapFragment;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location currentLocation;
+    private static final int PERMISSION_ID = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +44,18 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.day_map));
-        // TODO: add current location.
-//        LatLng latLng = new LatLng(31.067197, 35.034576);
-//        map.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
-//        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-//        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.0f));
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_map));
         map.getUiSettings().setMapToolbarEnabled(false);
+        map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(true);
+        map.getUiSettings().setZoomControlsEnabled(true);
+
         add_shelters_into_map(map);
     }
 
+    /**
+     *
+     */
     public void add_shelters_into_map(GoogleMap googleMap) {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
@@ -81,10 +88,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
-    public void current_location(GoogleMap googleMap) { }
-
-    public void generateNoteOnSD(Context context, String sFileName, String sBody) {}
-
     public String loadJSONFromAsset(Context context) {
         String json = null;
         try {
@@ -101,5 +104,4 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return json;
 
     }
-
 }
