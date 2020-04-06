@@ -6,7 +6,13 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb3c99be-117f-4227-99a8-98ef9a55f0e3" name="Default Changelist" comment="" />
+    <list default="true" id="eb3c99be-117f-4227-99a8-98ef9a55f0e3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StudioProjects-Shelter.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +28,12 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <projects_view />
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
       </state>
     </system>
   </component>
@@ -135,7 +146,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="4a5d7f3a-8f30-4f70-8dd8-0ec1484b460b" name="Default Changelist" comment="" />
+      <changelist id="eb3c99be-117f-4227-99a8-98ef9a55f0e3" name="Default Changelist" comment="" />
       <created>1586189501540</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -176,7 +187,14 @@
       <option name="project" value="LOCAL" />
       <updated>1586198851247</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="PM2020T22-23">
+      <created>1586199311828</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1586199311828</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
