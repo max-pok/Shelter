@@ -8,6 +8,9 @@ pipeline {
         // Stop the build early in case of compile or test failures
         skipStagesAfterUnstable()
     }
+    tools {
+        jdk "JAVA_HOME"
+    }
     stages {
         stage('Checkout') {
             steps { //Checking out the repo
