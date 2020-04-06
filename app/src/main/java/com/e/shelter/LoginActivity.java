@@ -101,15 +101,11 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     public void ShowContactPage() {
-        //Going to sign up page
-        Intent i = new Intent(this, ContactActivity.class);
-        startActivity(i);
+
     }
 
     public void ShowSignupPage() {
-        //Going to sign up page
-        Intent i = new Intent(this, SignupActivity.class);
-        startActivity(i);
+
     }
 
     //Connecting to MongoDB in new thread and find if the user exist , return True or False

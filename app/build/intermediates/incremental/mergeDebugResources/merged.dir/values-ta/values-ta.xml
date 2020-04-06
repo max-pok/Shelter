@@ -45,8 +45,6 @@
     <string msgid="5201977337835724196" name="common_open_on_phone">"மொபைலில் திற"</string>
     <string msgid="3441753203274453993" name="common_signin_button_text">"உள்நுழைக"</string>
     <string msgid="669893613918351210" name="common_signin_button_text_long">"Google மூலம் உள்நுழைக"</string>
-    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"மேலே செல்லும்"</string>
-    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"வழிசெலுத்தல் டிராயரைத் திறக்கும்"</string>
     <string msgid="730395136688082741" name="search_menu_title">"தேடல்"</string>
     <string msgid="8106346172024741305" name="status_bar_notification_info_overflow">"999+"</string>
 </resources>
