@@ -6,9 +6,7 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb3c99be-117f-4227-99a8-98ef9a55f0e3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="eb3c99be-117f-4227-99a8-98ef9a55f0e3" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1586198386340</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="PM2020T22-23">
+      <created>1586198851247</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1586198851247</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -191,6 +196,7 @@
     <MESSAGE value="Merge remote-tracking branch 'remotes/origin/hadar_branch' into hackathon&#10;&#10;# Conflicts:&#10;#&#9;.idea/mongoSettings.xml&#10;#&#9;app/build.gradle&#10;#&#9;app/src/main/AndroidManifest.xml&#10;#&#9;app/src/main/java/com/e/shelter/MainActivity.java&#10;#&#9;app/src/main/res/layout/activity_main_window.xml&#10;#&#9;app/src/main/res/values/map_api.xml&#10;#&#9;app/src/test/java/com/e/shelter/ExampleUnitTest.java" />
     <MESSAGE value="PM2020T22-5&#10;Merge remote-tracking branch 'remotes/origin/hadar_branch' into hackathon&#10;&#10;# Conflicts:&#10;#&#9;.idea/mongoSettings.xml&#10;#&#9;app/build.gradle&#10;#&#9;app/src/main/AndroidManifest.xml&#10;#&#9;app/src/main/java/com/e/shelter/MainActivity.java&#10;#&#9;app/src/main/res/layout/activity_main_window.xml&#10;#&#9;app/src/main/res/values/map_api.xml&#10;#&#9;app/src/test/java/com/e/shelter/ExampleUnitTest.java" />
     <MESSAGE value="PM2020T22-5" />
-    <option name="LAST_COMMIT_MESSAGE" value="PM2020T22-5" />
+    <MESSAGE value="PM2020T22-23" />
+    <option name="LAST_COMMIT_MESSAGE" value="PM2020T22-23" />
   </component>
 </project>
