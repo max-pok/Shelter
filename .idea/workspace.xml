@@ -7,11 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eb3c99be-117f-4227-99a8-98ef9a55f0e3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StudioProjects-Shelter.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,20 +34,33 @@
     </system>
   </component>
   <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
     <favorite-branches>
       <branch-storage>
         <map>
           <entry type="LOCAL">
             <value>
               <list>
-                <branch-info repo="$PROJECT_DIR$" source="hackathon" />
+                <branch-info repo="$PROJECT_DIR$" source="Sarit_branch" />
               </list>
             </value>
           </entry>
           <entry type="REMOTE">
             <value>
               <list>
-                <branch-info repo="$PROJECT_DIR$" source="origin/hadar_branch" />
+                <branch-info repo="$PROJECT_DIR$" source="origin/Sarit_branch" />
               </list>
             </value>
           </entry>
@@ -194,7 +203,14 @@
       <option name="project" value="LOCAL" />
       <updated>1586199311828</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="PM2020T22-23">
+      <created>1586199874271</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1586199874271</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
