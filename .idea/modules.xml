@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/GitHub-Shelter.iml" filepath="$PROJECT_DIR$/GitHub-Shelter.iml" group="Shelter" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Shelter.iml" filepath="$PROJECT_DIR$/.idea/Shelter.iml" group="Shelter" />
       <module fileurl="file://$PROJECT_DIR$/app/Shelter-app.iml" filepath="$PROJECT_DIR$/app/Shelter-app.iml" group="Shelter/app" />
+      <module fileurl="file://$PROJECT_DIR$/StudioProjects-Shelter.iml" filepath="$PROJECT_DIR$/StudioProjects-Shelter.iml" group="Shelter" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Shelter/app" />
     </modules>
   </component>
