@@ -1,7 +1,5 @@
-package com.example.contacts;
-
+package com.e.shelter;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 public class ContactPage extends AppCompatActivity {
@@ -11,4 +9,5 @@ public class ContactPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts_of_municipality);
     }
+
 }

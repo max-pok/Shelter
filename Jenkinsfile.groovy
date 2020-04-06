@@ -1,15 +1,27 @@
 pipeline {
     agent any
 
-    triggers {
-        cron('H */8 * * *') //regular builds
-        pollSCM('* * * * *') //polling for changes, here once a minute
+    docker {
+        image 'windsekirun/jenkins-android-docker:1.1.1'
     }
-
+    options {
+        // Stop the build early in case of compile or test failures
+        skipStagesAfterUnstable()
+    }
     stages {
         stage('Checkout') {
             steps { //Checking out the repo
-                checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/map_view']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://github.com/max-pok/Shelter.git']]]
+                checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/hackathon']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://github.com/max-pok/Shelter.git']]]
+            }
+        }
+        stage('Prepare') {
+            steps {
+                sh 'chmod +x ./gradlew'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh './gradlew build'
             }
         }
         stage('Unit & Integration Tests') {
@@ -23,9 +35,10 @@ pipeline {
                 }
             }
         }
-        stage('Publish Artifact to Nexus') {
+        stage('Build APK') {
             steps {
-                sh './gradlew publish --no-daemon'
+                // Finish building and packaging the APK
+                sh './gradlew assembleDebug'
             }
         }
     }
