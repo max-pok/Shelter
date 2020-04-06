@@ -8,9 +8,6 @@ pipeline {
         // Stop the build early in case of compile or test failures
         skipStagesAfterUnstable()
     }
-    tools {
-        jdk "JAVA_HOME"
-    }
     stages {
         stage('Checkout') {
             steps { //Checking out the repo
@@ -22,9 +19,10 @@ pipeline {
                 sh 'chmod +x ./gradlew'
             }
         }
-        stage('Build') {
+        stage('Compile') {
             steps {
-                sh './gradlew build'
+                // Compile the app and its dependencies
+                sh './gradlew compileDebugSources'
             }
         }
         stage('Unit & Integration Tests') {
