@@ -22,6 +22,8 @@ public class LoginThread extends Thread {
         this.flag[1]=true;
         this.email=email;
         this.password=password;
+
+
     }
     public boolean[] getFlag(){
         return flag;
