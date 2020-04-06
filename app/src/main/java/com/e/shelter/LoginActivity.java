@@ -17,8 +17,8 @@ import static com.mongodb.client.model.Filters.eq;
 
 
 public class LoginActivity extends AppCompatActivity {
-    private static String email;
-    private static String password;
+    public static String email;
+    public static String password;
     private boolean[] checkuser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +103,18 @@ public class LoginActivity extends AppCompatActivity {
     public void ShowContactPage() {
         //Going to sign up page
 
+    }
+    public String getEmail(){
+        return email;
+    }
+    public  String getPassword(){
+        return password;
+    }
+    public  void  setEmail(String email){
+        this.email=email;
+    }
+    public void setPassword(String password){
+        this.password=password;
     }
 
     public void ShowSignupPage() {
