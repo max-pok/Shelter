@@ -1,7 +1,7 @@
-#Mon Apr 06 18:21:13 IDT 2020
-base.0=C\:\\dev\\Shelter\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
+#Mon Apr 06 19:13:17 IDT 2020
+base.0=C\:\\Users\\Adir atia\\Documents\\GitHub\\Shelter\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
 path.1=classes.dex
 renamed.1=classes2.dex
 path.0=classes.dex
 renamed.0=classes.dex
-base.1=C\:\\dev\\Shelter\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex
+base.1=C\:\\Users\\Adir atia\\Documents\\GitHub\\Shelter\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex

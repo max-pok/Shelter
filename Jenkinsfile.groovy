@@ -1,9 +1,5 @@
 pipeline {
     agent any
-
-    docker {
-        image 'windsekirun/jenkins-android-docker:1.1.1'
-    }
     options {
         // Stop the build early in case of compile or test failures
         skipStagesAfterUnstable()

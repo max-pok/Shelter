@@ -6,107 +6,107 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="28"
-8-->C:\dev\Shelter\app\src\main\AndroidManifest.xml
+8-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="29" />
-9-->C:\dev\Shelter\app\src\main\AndroidManifest.xml
+9-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml
 10
 11    <uses-permission android:name="android.permission.SEND_SMS" />
-11-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:5:5-67
-11-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:5:22-64
+11-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:5:5-67
+11-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:5:22-64
 12    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-12-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:6:5-79
-12-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:6:22-76
+12-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:6:5-79
+12-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:6:22-76
 13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-13-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:7:5-81
-13-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:7:22-78
+13-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:7:5-81
+13-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:7:22-78
 14    <uses-permission android:name="android.permission.INTERNET" />
-14-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:8:5-67
-14-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:8:22-64
+14-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:8:5-67
+14-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:8:22-64
 15
 16    <uses-feature android:name="android.hardware.location.gps" />
-16-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:10:5-66
-16-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:10:19-63
+16-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:10:5-66
+16-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:10:19-63
 17
 18    <!-- Include required permissions for Google Maps API to run. -->
 19    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-19-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:23:5-79
-19-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:23:22-76
+19-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:23:5-79
+19-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:23:22-76
 20
 21    <uses-feature
-21-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:26:5-28:35
+21-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:26:5-28:35
 22        android:glEsVersion="0x00020000"
-22-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:27:9-41
+22-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:27:9-41
 23        android:required="true" />
-23-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:28:9-32
+23-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\edb03ed300512ae8da7c146a103a6c79\jetified-play-services-maps-17.0.0\AndroidManifest.xml:28:9-32
 24
 25    <application
-25-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:12:5-38:19
+25-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:12:5-38:19
 26        android:allowBackup="true"
-26-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:13:9-35
+26-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:13:9-35
 27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-27-->[androidx.core:core:1.1.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\1cd7eff88f5e86d0249af2958bf465f0\core-1.1.0\AndroidManifest.xml:24:18-86
+27-->[androidx.core:core:1.1.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\1cd7eff88f5e86d0249af2958bf465f0\core-1.1.0\AndroidManifest.xml:24:18-86
 28        android:debuggable="true"
 29        android:extractNativeLibs="false"
 30        android:icon="@mipmap/ic_launcher"
-30-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:14:9-43
+30-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:14:9-43
 31        android:label="@string/app_name"
-31-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:15:9-41
+31-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:15:9-41
 32        android:roundIcon="@mipmap/ic_launcher_round"
-32-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:16:9-54
+32-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:16:9-54
 33        android:supportsRtl="true"
-33-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:17:9-35
+33-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:17:9-35
 34        android:testOnly="true"
 35        android:theme="@style/AppTheme" >
-35-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:18:9-40
+35-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:18:9-40
 36        <activity android:name="com.e.shelter.MainActivity" >
-36-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:20:9-25:20
-36-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:20:19-47
+36-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:20:9-25:20
+36-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:20:19-47
 37            <intent-filter>
-37-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:21:13-24:29
+37-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:21:13-24:29
 38                <action android:name="android.intent.action.MAIN" />
-38-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:22:17-69
-38-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:22:25-66
+38-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:22:17-69
+38-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:22:25-66
 39
 40                <category android:name="android.intent.category.LAUNCHER" />
-40-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:23:17-77
-40-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:23:27-74
+40-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:23:17-77
+40-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:23:27-74
 41            </intent-filter>
 42        </activity>
 43        <activity android:name="com.e.shelter.LoginActivity" />
-43-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:27:9-51
-43-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:27:19-48
+43-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:27:9-51
+43-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:27:19-48
 44        <activity android:name="com.e.shelter.MapViewActivity" />
-44-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:28:9-53
-44-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:28:19-50
+44-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:28:9-53
+44-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:28:19-50
 45
 46        <uses-library
-46-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:30:9-32:40
+46-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:30:9-32:40
 47            android:name="org.apache.http.legacy"
-47-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:31:13-50
+47-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:31:13-50
 48            android:required="false" />
-48-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:32:13-37
+48-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:32:13-37
 49
 50        <meta-data
-50-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:34:9-36:47
+50-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:34:9-36:47
 51            android:name="com.google.android.geo.API_KEY"
-51-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:35:13-58
+51-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:35:13-58
 52            android:value="@string/map_key" />
-52-->C:\dev\Shelter\app\src\main\AndroidManifest.xml:36:13-44
+52-->C:\Users\Adir atia\Documents\GitHub\Shelter\app\src\main\AndroidManifest.xml:36:13-44
 53        <meta-data
-53-->[com.google.maps.android:android-maps-utils:1.0.2] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\3dff11321c299524177e859acc860748\jetified-android-maps-utils-1.0.2\AndroidManifest.xml:12:9-14:69
+53-->[com.google.maps.android:android-maps-utils:1.0.2] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\3dff11321c299524177e859acc860748\jetified-android-maps-utils-1.0.2\AndroidManifest.xml:12:9-14:69
 54            android:name="com.google.android.gms.version"
-54-->[com.google.maps.android:android-maps-utils:1.0.2] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\3dff11321c299524177e859acc860748\jetified-android-maps-utils-1.0.2\AndroidManifest.xml:13:13-58
+54-->[com.google.maps.android:android-maps-utils:1.0.2] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\3dff11321c299524177e859acc860748\jetified-android-maps-utils-1.0.2\AndroidManifest.xml:13:13-58
 55            android:value="@integer/google_play_services_version" />
-55-->[com.google.maps.android:android-maps-utils:1.0.2] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\3dff11321c299524177e859acc860748\jetified-android-maps-utils-1.0.2\AndroidManifest.xml:14:13-66
+55-->[com.google.maps.android:android-maps-utils:1.0.2] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\3dff11321c299524177e859acc860748\jetified-android-maps-utils-1.0.2\AndroidManifest.xml:14:13-66
 56
 57        <activity
-57-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:23:9-26:75
+57-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:23:9-26:75
 58            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-58-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:24:13-79
+58-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:24:13-79
 59            android:exported="false"
-59-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:25:13-37
+59-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:25:13-37
 60            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-60-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Max\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:26:13-72
+60-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Adir atia\.gradle\caches\transforms-2\files-2.1\6fb3f6cd2b75dfe7dd10f87d94351f9e\jetified-play-services-base-17.0.0\AndroidManifest.xml:26:13-72
 61    </application>
 62
 63</manifest>
