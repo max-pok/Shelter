@@ -2,17 +2,19 @@ package com.e.shelter;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static com.mongodb.client.model.Filters.eq;
 
 
 
@@ -20,11 +22,14 @@ public class LoginActivity extends AppCompatActivity {
     private static String email;
     private static String password;
     private boolean[] checkuser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
         mongoLogger.setLevel(Level.SEVERE);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -63,11 +68,14 @@ public class LoginActivity extends AppCompatActivity {
                     if (checkuser[0] == true ){
                         if(checkuser[1]== true){// This is Admin
                             System.out.println("this is admin\n");
-                            goodMessage.show();
+
+                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
+
                         }
                         else{//This is simple user
 
-                            goodMessage.show();
+                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
 
                         }
                     }
@@ -100,26 +108,38 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-    public void ShowContactPage() {
+    public void ShowContactPage() { }
 
-    }
-
-    public void ShowSignupPage() {
-
-    }
+    public void ShowSignupPage() { }
 
     //Connecting to MongoDB in new thread and find if the user exist , return True or False
     public boolean[] CheckLogin(final String email, final String password) throws InterruptedException {
-         boolean[] flag= new boolean[2];
+        boolean[] flag = new boolean[2];
 
         Thread t = Thread.currentThread();// The main thread
         //New Thread that connect to DB and find the use.
-        LoginThread loginThread= new LoginThread(email,password);
+        LoginThread loginThread = new LoginThread(email, password);
         loginThread.start();
         t.sleep(1000);//wait to answer from the login thread.
         //Get True if the user exist else False.
-         flag= loginThread.getFlag();
+        flag = loginThread.getFlag();
         System.out.println(flag);
         return flag;
+    }
+
+    /**
+     * Creates users collection and inserts admin user.
+     * Use this function only to add the users collection into your mongoDB.
+     * TODO: delete function and admin user before deployment.
+     */
+    public void create_user_db() {
+        BasicDBObject document = new BasicDBObject();
+        document.put("email", "admin@admin.com");
+        document.put("password", "admin");
+        document.put("user_type", "admin");
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection users_collection = shelter_db.createCollection("users",new BasicDBObject());
+        users_collection.insert(document);
     }
 }

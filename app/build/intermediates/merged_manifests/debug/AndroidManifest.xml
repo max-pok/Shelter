@@ -40,10 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.e.shelter.LoginActivity" >
-        </activity>
-        <activity android:name="com.e.shelter.SignupActivity" >
-        </activity>
+        <activity android:name="com.e.shelter.LoginActivity" />
+        <activity android:name="com.e.shelter.MapViewActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"

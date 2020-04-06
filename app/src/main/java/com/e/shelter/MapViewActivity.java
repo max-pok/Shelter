@@ -14,14 +14,12 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
+
 import android.os.StrictMode;
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -44,7 +42,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        add_shelters_to_mongodb();
         map = googleMap;
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_map));
         map.getUiSettings().setMapToolbarEnabled(false);
@@ -80,15 +77,15 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         try {
             JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext()));
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            MongoDatabase shelter_db = mongoClient.getDatabase("SafeZone_DB");
-            MongoCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+            DB shelter_db = mongoClient.getDB("SafeZone_DB");
+            DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
             for (int i = 0 ; i < obj.length() ; i++) {
                 JSONObject value = (JSONObject) obj.get(i);
                 BasicDBObject document = new BasicDBObject();
                 document.put("name", value.get("name"));
                 document.put("lat", value.get("lat"));
                 document.put("lon", value.get("lon"));
-                shelter_db_collection.insertOne(document);
+                shelter_db_collection.insert(document);
             }
         } catch (JSONException e) {
             e.printStackTrace();
