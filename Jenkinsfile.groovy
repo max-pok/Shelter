@@ -28,7 +28,7 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 script {
-                    sh './gradlew testAll' //run a gradle test
+                    sh './gradlew test' //run a gradle test
                 }
             }
         }

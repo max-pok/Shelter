@@ -13,6 +13,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,8 +27,13 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -33,6 +44,7 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:1.0.2'
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.2'
 }
+
 
 task testAll(dependsOn: ['test', 'connectedAndroidTest']) {
     group = 'custom_tasks'
