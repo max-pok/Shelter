@@ -1,39 +1,47 @@
 pipeline {
-    agent any
-
-    triggers {
-        cron('H */8 * * *') //regular builds
-        pollSCM('* * * * *') //polling for changes, here once a minute
+    agent {
+        docker {
+            image 'windsekirun/jenkins-android-docker:1.1.1'
+        }
     }
-
+    options {
+        // Stop the build early in case of compile or test failures
+        skipStagesAfterUnstable()
+    }
     stages {
         stage('Checkout') {
             steps { //Checking out the repo
-                checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/map_view']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://github.com/max-pok/Shelter.git']]]
+                checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/hackathon']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://github.com/max-pok/Shelter.git']]]
             }
         }
-        stage('Unit & Integration Tests') {
+        stage('Prepare') {
+            steps {
+                sh 'chmod +x ./gradlew'
+            }
+        }
+        stage('Compile') {
+            steps {
+                // Compile the app and its dependencies
+                sh './gradlew compileDebugSources'
+            }
+        }
+        stage('Unit Tests') {
             steps {
                 script {
-                    try {
-                        sh './gradlew clean test --no-daemon' //run a gradle task
-                    } finally {
-                        junit '**/build/test-results/test/*.xml' //make the junit test results available in any case (success & failure)
-                    }
+                    sh './gradlew test' //run a gradle test
                 }
             }
         }
-        stage('Publish Artifact to Nexus') {
+        stage('Build APK') {
             steps {
-                sh './gradlew publish --no-daemon'
+                // Finish building and packaging the APK
+                sh './gradlew assembleDebug'
             }
         }
     }
     post {
-        always { //Send an email to the person that broke the build
-            step([$class                  : 'Mailer',
-                  notifyEveryUnstableBuild: true,
-                  recipients              : [emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']])].join(' ')])
+        always {
+            emailext body: 'Build Failed', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
         }
     }
 }
