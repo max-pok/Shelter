@@ -20,7 +20,6 @@ public class SignupThread extends Thread {
     public static String phone;
     public static String address;
     public static boolean flag= false;
-
     //Ctor
     SignupThread(String email,String password,String firstName,String lastName,String phone ,String address){
         this.email= email;
@@ -30,16 +29,14 @@ public class SignupThread extends Thread {
         this.phone=phone;
         this.address=address;
     }
-
     public boolean getFlag(){
         return flag;
     }
-
     public void run(){
         try {
             //Connect to MongoDB
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+            MongoDatabase database = mongoClient.getDatabase("ShelterDB");
             MongoCollection<Document> usersCollection = database.getCollection("users");
             MongoCollection<Document> simpleUsersCollection = database.getCollection("simpleUsers");
             //Find if the email exist in users collection according to email
@@ -74,9 +71,7 @@ public class SignupThread extends Thread {
         }
     }
 
-    public void create_simpleUser_DB() {
-        // TODO
-    }
+
 
 
 }

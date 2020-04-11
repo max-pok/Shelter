@@ -30,16 +30,18 @@ public class LoginThread extends Thread {
         try {
             //Connect to MongoDB
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+            MongoDatabase database = mongoClient.getDatabase("ShelterDB");
             MongoCollection<Document> mongoCollection = database.getCollection("users");
             //Find if the user exist in users collection according to email and password.
             Document myDoc = mongoCollection.find(and(eq("email", email), eq("password", password))).first();
             if (myDoc!=null){//The user exist
                 //flag[0] show if the user exist
                 flag[0]=true;
-                if (myDoc.get("user_type")=="admin"){
+                if(myDoc.get("user_type")=="admin"){
                     flag[1]=true;
                 }
+
+
                 System.out.println(myDoc.toJson());
             }
             mongoClient.close();

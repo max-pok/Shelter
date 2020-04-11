@@ -10,11 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static com.mongodb.client.model.Filters.eq;
@@ -68,13 +63,11 @@ public class LoginActivity extends AppCompatActivity {
                     if (checkuser[0] == true ){
                         if(checkuser[1]== true){// This is Admin
                             System.out.println("this is admin\n");
-
-                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
-
+                            goodMessage.show();
                         }
                         else{//This is simple user
-                            System.out.println("this is simple user\n");
-                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
+                            goodMessage.show();
 
                         }
                     }
@@ -108,21 +101,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     public void ShowContactPage() {
-        startActivity(new Intent(getBaseContext(), ContactPage.class));
-    }
+        //Going to sign up page
 
+    }
     public String getEmail(){
         return email;
     }
-
     public  String getPassword(){
         return password;
     }
-
     public  void  setEmail(String email){
         this.email=email;
     }
-
     public void setPassword(String password){
         this.password=password;
     }
@@ -146,22 +136,5 @@ public class LoginActivity extends AppCompatActivity {
          flag= loginThread.getFlag();
         System.out.println(flag);
         return flag;
-    }
-
-    /**
-     * Creates users collection and inserts admin user.
-     * Use this function only to add the users collection into your mongoDB.
-     * TODO: delete function and admin user before deployment.
-     */
-    public void create_user_db() {
-        BasicDBObject document = new BasicDBObject();
-        document.put("email", "admin@admin.com");
-        document.put("password", "admin");
-        document.put("user_type", "admin");
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection users_collection = shelter_db.createCollection("users",new BasicDBObject());
-        users_collection.insert(document);
-        mongoClient.close();
     }
 }

@@ -8,8 +8,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/Shelter.iml" filepath="$PROJECT_DIR$/.idea/Shelter.iml" group="Shelter" />
       <module fileurl="file://$PROJECT_DIR$/app/Shelter-app.iml" filepath="$PROJECT_DIR$/app/Shelter-app.iml" group="Shelter/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Shelter/app" />
-      <module fileurl="file://$PROJECT_DIR$/dev-Shelter.iml" filepath="$PROJECT_DIR$/dev-Shelter.iml" group="Shelter" />
-      <module fileurl="file://$PROJECT_DIR$/app/dev-Shelter-app.iml" filepath="$PROJECT_DIR$/app/dev-Shelter-app.iml" group="Shelter/app" />
     </modules>
   </component>
 </project>

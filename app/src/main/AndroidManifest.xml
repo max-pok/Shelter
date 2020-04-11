@@ -22,10 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".MapViewActivity" />
-        <activity android:name=".ContactPage" />
+        <activity android:name=".LoginActivity">
+        </activity>
+        <activity android:name=".SignupActivity">
+        </activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
