@@ -1,8 +1,10 @@
-package com.example.contacts;
+package com.e.shelter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.e.shelter.R;
 
 public class ContactPage extends AppCompatActivity {
 
