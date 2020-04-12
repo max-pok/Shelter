@@ -108,6 +108,5 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             return null;
         }
         return json;
-
     }
 }
