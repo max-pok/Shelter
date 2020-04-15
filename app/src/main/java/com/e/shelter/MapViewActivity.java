@@ -5,6 +5,8 @@ import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -20,6 +22,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -100,11 +104,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onSearchConfirmed(CharSequence text) {
                 if (text != null && text.length() > 0) {
-                    try {
-                        searchAddress(text.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    searchAddress(text.toString());
                 }
             }
 
@@ -315,23 +315,53 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return json;
     }
 
-    public void searchAddress(String address) throws IOException {
+    public void searchAddress(String address) {
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection shelter_db_collection = shelter_db.getCollection("Addresses");
+        DBCursor cursor = shelter_db_collection.find();
+        while(cursor.hasNext()) {
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            if ((object.get("StreetName") + " " + object.get("HouseNumber")).contains(address)) {
+                double lat = Double.parseDouble(object.getString("lat"));
+                double lon = Double.parseDouble(object.getString("lon"));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), defaultZoom));
+                searchLocationMarker = googleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(lat,lon))
+                        .title(object.get("StreetName") + " " + object.get("HouseNumber"))
+                        .snippet(object.get("StreetName") + " " + object.get("HouseNumber"))
+                        .icon(BitmapDescriptorFactory.defaultMarker(150)));
+                break;
+            }
+        }
+
+    }
+
+
+
+    /**
+     * Adding the shelters information from the local shelters.json file to mongoDB.
+     * TODO: You must place the 'addresses.json' file in 'app/src/main/assets' directory before you use the current function.
+     * Use this function only to add the file information into your local db.
+     */
+    public void add_addresses_to_mongodb() {
         try {
             JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "addresses.json"));
-            for (int i = 0; i < obj.length(); i++) {
+            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+            DB shelter_db = mongoClient.getDB("SafeZone_DB");
+            DBCollection shelter_db_collection = shelter_db.getCollection("Addresses");
+            for (int i = 0 ; i < obj.length() ; i++) {
                 JSONObject value = (JSONObject) obj.get(i);
-                if ((value.getString("streetName") + " " + value.getString("HouseNuber")).contains(address)) {
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(value.getString("lat")),Double.parseDouble(value.getString("lon"))), defaultZoom));
-                    searchLocationMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(value.getString("lat")),Double.parseDouble(value.getString("lon"))))
-                            .title(value.getString("streetName") + " " + value.getString("HouseNuber")));
-                    break;
-                }
+                BasicDBObject document = new BasicDBObject();
+                document.put("HouseNumber", value.get("HouseNuber"));
+                document.put("StreetName", value.get("streetName"));
+                document.put("lat", value.get("lat"));
+                document.put("lon", value.get("lon"));
+                shelter_db_collection.insert(document);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
 }
