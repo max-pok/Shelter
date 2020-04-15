@@ -2,15 +2,11 @@ package com.e.shelter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -25,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -48,15 +45,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
-
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -72,8 +66,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private Location lastKnownLocation;
     private LocationCallback locationCallback;
     private View mapView;
-    private final float defaultZoom = 15;
-
+    private final float defaultZoom = 18;
+    private Marker searchLocationMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +81,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
         assert this.mapFragment != null;
         this.mapFragment.getMapAsync(this);
+        mapView = mapFragment.getView();
 
         //Location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapViewActivity.this);
@@ -100,14 +95,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         searchBar = findViewById(R.id.searchBar);
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
-            public void onSearchStateChanged(boolean enabled) {
-
-            }
+            public void onSearchStateChanged(boolean enabled) { }
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
-                //startSearch(text.toString(), true, null, true);
-                // TODO:
                 if (text != null && text.length() > 0) {
                     try {
                         searchAddress(text.toString());
@@ -130,13 +121,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
         searchBar.addTextChangeListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
+                        .setCountry("iw")
                         .setTypeFilter(TypeFilter.ADDRESS)
                         .setSessionToken(token)
                         .setQuery(s.toString())
@@ -163,12 +153,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                         }
                     }
                 });
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (searchLocationMarker != null) {
+                    searchLocationMarker.remove();
+                }
             }
         });
     }
@@ -188,7 +179,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-            layoutParams.setMargins(0, 0, 40, 315);
+            layoutParams.setMargins(0, 0, 40, 325);
         }
 
         // Check if GPS is enabled or not. If GPS is disabled request user to enable it.
@@ -202,9 +193,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(builder.build());
         task.addOnSuccessListener(MapViewActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-
-            }
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {}
         });
         task.addOnFailureListener(MapViewActivity.this, new OnFailureListener() {
             @Override
@@ -219,11 +208,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
-
         // Google map settings
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.getUiSettings().setZoomControlsEnabled(true);
-        //this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_map));
+
         add_shelters_into_map(this.googleMap);
     }
 
@@ -291,7 +279,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public void add_shelters_to_mongodb() {
         // TODO: add more information, for example: open/close, accessibility, capacity.
         try {
-            JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext()));
+            JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
             DB shelter_db = mongoClient.getDB("SafeZone_DB");
             DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
@@ -311,10 +299,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     /**
      *  This function loads the json file from asset folder into a string.
      */
-    public String loadJSONFromAsset(Context context) {
+    public String loadJSONFromAsset(Context context, String fileName) {
         String json = null;
         try {
-            InputStream is = context.getAssets().open("shelters.json");
+            InputStream is = context.getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -328,14 +316,22 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void searchAddress(String address) throws IOException {
-        Log.d("address search", "searchAddress()");
+        try {
+            JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "addresses.json"));
+            for (int i = 0; i < obj.length(); i++) {
+                JSONObject value = (JSONObject) obj.get(i);
+                if ((value.getString("streetName") + " " + value.getString("HouseNuber")).contains(address)) {
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(value.getString("lat")),Double.parseDouble(value.getString("lon"))), defaultZoom));
+                    searchLocationMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(value.getString("lat")),Double.parseDouble(value.getString("lon"))))
+                            .title(value.getString("streetName") + " " + value.getString("HouseNuber")));
+                    break;
+                }
+            }
 
-        Geocoder geocoder = new Geocoder(MapViewActivity.this);
-        List<Address> addressList = new ArrayList<>();
-        addressList = geocoder.getFromLocationName(address, 1);
-        if (addressList.size() > 0) {
-            Address searchAddress = addressList.get(0);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(searchAddress.getLatitude(), searchAddress.getLongitude()), defaultZoom));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
     }
+
 }
