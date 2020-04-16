@@ -6,11 +6,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.bson.Document;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+
 
 public class LoginThread extends Thread {
     private static boolean[] flag;
@@ -23,6 +26,16 @@ public class LoginThread extends Thread {
         this.email=email;
         this.password=password;
     }
+    static String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        return sb.toString();
+    }
     public boolean[] getFlag(){
         return flag;
     }
@@ -33,7 +46,7 @@ public class LoginThread extends Thread {
             MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
             MongoCollection<Document> mongoCollection = database.getCollection("users");
             //Find if the user exist in users collection according to email and password.
-            Document myDoc = mongoCollection.find(and(eq("email", email), eq("password", password))).first();
+            Document myDoc = mongoCollection.find(and(eq("email", email), eq("password", sha1(password)))).first();
             if (myDoc!=null){//The user exist
                 //flag[0] show if the user exist
                 flag[0]=true;
@@ -43,7 +56,7 @@ public class LoginThread extends Thread {
                 System.out.println(myDoc.toJson());
             }
             mongoClient.close();
-        } catch (MongoException m) {
+        } catch (MongoException | NoSuchAlgorithmException m) {
             Log.e("Error " + m, "" + m);
         }
     }

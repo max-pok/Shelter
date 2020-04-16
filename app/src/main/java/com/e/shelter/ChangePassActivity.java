@@ -19,6 +19,9 @@ import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
@@ -26,6 +29,16 @@ public class ChangePassActivity extends AppCompatActivity {
     public static String oldPass;
     public static String newPass1;
     public static String newPass2;
+    static String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        return sb.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +114,13 @@ public class ChangePassActivity extends AppCompatActivity {
             String email = loginActivity.getEmail();
             Document myDoc = mongoCollection.find(and(eq("email",email), eq("password",oldPass))).first();
             if(myDoc !=null) {
-                if (myDoc.get("password").equals(oldPass)) {
+                if (myDoc.get("password").equals(sha1(oldPass))) {
                     mongoClient.close();
                     return true;
                 }
             }
             mongoClient.close();
-        } catch (MongoException e) {
+        } catch (MongoException | NoSuchAlgorithmException e) {
             Log.e("Error " + e, "" + e);
         }
         return false;
@@ -129,10 +142,10 @@ public class ChangePassActivity extends AppCompatActivity {
             //Document myDoc = mongoCollection.find(and(eq("email", email), eq("password", oldPass))).first();
 
             BasicDBObject query = new BasicDBObject();
-            query.put("password", oldPass);
+            query.put("password", sha1(oldPass));
 
             BasicDBObject newDocument = new BasicDBObject();
-            newDocument.put("password", newPass1);
+            newDocument.put("password", sha1(newPass1));
 
             BasicDBObject updateObject = new BasicDBObject();
             updateObject.put("$set", newDocument);
@@ -143,7 +156,7 @@ public class ChangePassActivity extends AppCompatActivity {
 
 
         }
-        catch (MongoException e){
+        catch (MongoException | NoSuchAlgorithmException e){
             Log.e("Error " + e, "" + e);
         }
         return false;
