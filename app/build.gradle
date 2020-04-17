@@ -32,6 +32,10 @@ repositories {
 }
 
 dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.2.2'
+    implementation 'androidx.navigation:navigation-ui:2.2.2'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -42,7 +46,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.maps.android:android-maps-utils:1.0.2'
+    implementation 'com.google.android.libraries.places:places:2.2.0'
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.2'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.1'
+    implementation 'com.google.android.material:material:1.1.0'
 }
 
 
