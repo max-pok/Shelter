@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.2.2'
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])

@@ -25,10 +25,14 @@ pipeline {
                 sh './gradlew compileDebugSources'
             }
         }
-        stage('Unit Tests') {
+        stage('Unit & Integration Tests') {
             steps {
                 script {
-                    sh './gradlew test' //run a gradle test
+                    try {
+                        sh './gradlew clean UnitTest --no-daemon' //run a gradle task
+                    } finally {
+                        junit '**/build/test-results/test/*.xml' //make the junit test results available in any case (success & failure)
+                    }
                 }
             }
         }

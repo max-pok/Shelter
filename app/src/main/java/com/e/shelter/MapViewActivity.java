@@ -1,28 +1,17 @@
 package com.e.shelter;
 
-<<<<<<< HEAD
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.location.LocationListener;
-import android.location.LocationManager;
-=======
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
->>>>>>> e930fc4a69adb0b0b2614d9443eaa8a83f45534b
 import android.os.Bundle;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -40,7 +29,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -56,7 +44,6 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -73,9 +60,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.StrictMode;
-<<<<<<< HEAD
-import android.Manifest;
-=======
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -83,7 +67,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
->>>>>>> e930fc4a69adb0b0b2614d9443eaa8a83f45534b
 
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
@@ -417,6 +400,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 Intent intent = new Intent(this, ContactPage.class);
                 startActivity(intent);
                 return false;
+            case R.id.nav_settings:
+                Intent settingsActive = new Intent(this, SettingsActivity.class);
+                startActivity(settingsActive);
         }
         return false;
     }
