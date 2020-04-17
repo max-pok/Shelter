@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">Shelter</string>
-    <string name="title_location_permission" />
-    <string name="text_location_permission" />
-    <string name="ok" />
 </resources>
