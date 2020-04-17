@@ -2,7 +2,6 @@ package com.e.shelter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
@@ -12,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
+
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,14 +43,17 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,7 +69,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
@@ -78,7 +81,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private View mapView;
     private final float defaultZoom = 18;
     private Marker searchLocationMarker;
-    private DrawerLayout drawer;
+    private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
 
@@ -106,21 +109,21 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
         //Hooks
-        drawer = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
+        //Navigation drawer
         navigationView.bringToFront();
-        toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         navigationView.setNavigationItemSelectedListener(this);
 
         //Search bar
         searchBar = findViewById(R.id.searchBar);
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
-            public void onSearchStateChanged(boolean enabled) { }
+            public void onSearchStateChanged(boolean enabled) {}
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
@@ -134,16 +137,18 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     searchBar.disableSearch();
                     toggle.syncState();
-                    drawer.openDrawer(GravityCompat.START);
+                    drawerLayout.openDrawer(GravityCompat.START);
                     searchBar.disableSearch();
                 } else if (buttonCode == MaterialSearchBar.BUTTON_BACK) {
+                    searchBar.clearSuggestions();
                     searchBar.disableSearch();
                 }
             }
         });
         searchBar.addTextChangeListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -157,19 +162,19 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     @Override
                     public void onComplete(@NonNull Task<FindAutocompletePredictionsResponse> task) {
                         if (task.isSuccessful()) {
-                             FindAutocompletePredictionsResponse predictionsResponse = task.getResult();
-                             if (predictionsResponse != null) {
-                                 predictions = predictionsResponse.getAutocompletePredictions();
-                                 List<String> suggestionList = new ArrayList<>();
-                                 for (int i = 0 ; i < predictions.size() ; i ++) {
-                                     AutocompletePrediction prediction = predictions.get(i);
-                                     suggestionList.add(prediction.getFullText(null).toString());
-                                 }
-                                 searchBar.updateLastSuggestions(suggestionList);
-                                 if (!searchBar.isSuggestionsVisible()) {
-                                     searchBar.showSuggestionsList();
-                                 }
-                             }
+                            FindAutocompletePredictionsResponse predictionsResponse = task.getResult();
+                            if (predictionsResponse != null) {
+                                predictions = predictionsResponse.getAutocompletePredictions();
+                                List<String> suggestionList = new ArrayList<>();
+                                for (int i = 0; i < predictions.size(); i++) {
+                                    AutocompletePrediction prediction = predictions.get(i);
+                                    suggestionList.add(prediction.getFullText(null).toString());
+                                }
+                                searchBar.updateLastSuggestions(suggestionList);
+                                if (!searchBar.isSuggestionsVisible()) {
+                                    searchBar.showSuggestionsList();
+                                }
+                            }
                         } else {
                             Log.i("PlacesError", "prediction fetching task unsuccessful");
                         }
@@ -184,10 +189,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
+        //Toggle Functions
     }
 
     /**
-     *  Creates all the necessary settings for the map.
+     * Creates all the necessary settings for the map.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -215,7 +221,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(builder.build());
         task.addOnSuccessListener(MapViewActivity.this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {}
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+            }
         });
         task.addOnFailureListener(MapViewActivity.this, new OnFailureListener() {
             @Override
@@ -230,6 +237,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
+
         // Google map settings
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -286,7 +294,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
-        while(cursor.hasNext()) {
+        while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
             googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
@@ -305,7 +313,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
             DB shelter_db = mongoClient.getDB("SafeZone_DB");
             DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
-            for (int i = 0 ; i < obj.length() ; i++) {
+            for (int i = 0; i < obj.length(); i++) {
                 JSONObject value = (JSONObject) obj.get(i);
                 BasicDBObject document = new BasicDBObject();
                 document.put("name", value.get("name"));
@@ -319,7 +327,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     *  This function loads the json file from asset folder into a string.
+     * This function loads the json file from asset folder into a string.
      */
     public String loadJSONFromAsset(Context context, String fileName) {
         String json = null;
@@ -342,14 +350,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Addresses");
         DBCursor cursor = shelter_db_collection.find();
-        while(cursor.hasNext()) {
+        while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             if ((object.get("StreetName") + " " + object.get("HouseNumber")).contains(address)) {
                 double lat = Double.parseDouble(object.getString("lat"));
                 double lon = Double.parseDouble(object.getString("lon"));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), defaultZoom));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), defaultZoom));
                 searchLocationMarker = googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(lat,lon))
+                        .position(new LatLng(lat, lon))
                         .title(object.get("StreetName") + " " + object.get("HouseNumber"))
                         .snippet(object.get("StreetName") + " " + object.get("HouseNumber"))
                         .icon(BitmapDescriptorFactory.defaultMarker(150)));
@@ -370,7 +378,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
             DB shelter_db = mongoClient.getDB("SafeZone_DB");
             DBCollection shelter_db_collection = shelter_db.getCollection("Addresses");
-            for (int i = 0 ; i < obj.length() ; i++) {
+            for (int i = 0; i < obj.length(); i++) {
                 JSONObject value = (JSONObject) obj.get(i);
                 BasicDBObject document = new BasicDBObject();
                 document.put("HouseNumber", value.get("HouseNuber"));
@@ -386,13 +394,22 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return true;
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+            case R.id.nightmode_switch:
+                break;
+            case R.id.nav_info:
+                Intent intent = new Intent(this, ContactPage.class);
+                startActivity(intent);
+                return false;
+        }
+        return false;
     }
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
