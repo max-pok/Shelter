@@ -11,6 +11,11 @@ import org.bson.Document;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+<<<<<<< HEAD
+=======
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+>>>>>>> ChangePass
 
 public class SignupThread extends Thread {
     public static String email;
@@ -21,6 +26,21 @@ public class SignupThread extends Thread {
     public static String address;
     public static boolean flag= false;
 
+<<<<<<< HEAD
+=======
+
+    static String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        return sb.toString();
+    }
+
+>>>>>>> ChangePass
     //Ctor
     SignupThread(String email,String password,String firstName,String lastName,String phone ,String address){
         this.email= email;
@@ -37,6 +57,10 @@ public class SignupThread extends Thread {
 
     public void run(){
         try {
+<<<<<<< HEAD
+=======
+
+>>>>>>> ChangePass
             //Connect to MongoDB
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
             MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
@@ -46,12 +70,22 @@ public class SignupThread extends Thread {
             Document myDoc = usersCollection.find(eq("email", email)).first();
             if (myDoc!=null){//The user exist
                 System.out.println("this email exsit");
+<<<<<<< HEAD
+=======
+                System.out.println(sha1(password));
+
+
+>>>>>>> ChangePass
             }
             else{
                 //new Document for users collection
                 Document newUser = new Document();
                 newUser.put("email", email);
+<<<<<<< HEAD
                 newUser.put("password", password);
+=======
+                newUser.put("password", sha1(password));
+>>>>>>> ChangePass
                 newUser.put("user_type", "simpleUser");
                 //insert the document to users collection
                 usersCollection.insertOne(newUser);
@@ -69,7 +103,11 @@ public class SignupThread extends Thread {
             }
             //close the DB connection
             mongoClient.close();
+<<<<<<< HEAD
         } catch (MongoException m) {
+=======
+        } catch (MongoException | NoSuchAlgorithmException m) {
+>>>>>>> ChangePass
             Log.e("Error " + m, "" + m);
         }
     }

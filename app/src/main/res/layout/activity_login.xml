@@ -12,8 +12,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="35dp"
         android:ems="10"
+<<<<<<< HEAD
         android:inputType="textPersonName"
         android:hint="Email"
+=======
+        android:hint="Email"
+        android:inputType="textPersonName"
+>>>>>>> ChangePass
         app:layout_constraintBottom_toTopOf="@+id/passowrdInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,8 +30,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="44dp"
         android:ems="10"
+<<<<<<< HEAD
         android:inputType="textPassword"
         android:hint="Password"
+=======
+        android:hint="Password"
+        android:inputType="textPassword"
+>>>>>>> ChangePass
         app:layout_constraintBottom_toTopOf="@+id/LoginButton"
         app:layout_constraintStart_toStartOf="@+id/emailInput"
         app:layout_constraintTop_toBottomOf="@+id/emailInput" />

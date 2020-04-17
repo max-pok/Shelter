@@ -22,7 +22,11 @@ import static com.mongodb.client.model.Filters.eq;
 
 
 public class LoginActivity extends AppCompatActivity {
+<<<<<<< HEAD
     public static String email;
+=======
+    public static String email="adirat@ac.sce.ac.il";
+>>>>>>> ChangePass
     public static String password;
     private boolean[] checkuser;
     @Override
