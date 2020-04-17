@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
@@ -25,8 +24,8 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".MapViewActivity" />
+        <activity android:name=".ChangePassActivity" />
         <activity android:name=".ContactPage" />
-
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
