@@ -19,6 +19,7 @@
         <activity android:name=".MapViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -26,6 +27,7 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
+        <activity android:name=".MainMenuActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"

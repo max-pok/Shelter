@@ -1,12 +1,15 @@
 package com.e.shelter;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -22,7 +25,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -38,6 +40,7 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -51,16 +54,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback {
+
+public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
     private MaterialSearchBar searchBar;
@@ -72,6 +78,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private View mapView;
     private final float defaultZoom = 18;
     private Marker searchLocationMarker;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle toggle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +105,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //Autocomplete search
         final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
+        //Hooks
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+
+        navigationView.bringToFront();
+        toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(this);
+
         //Search bar
         searchBar = findViewById(R.id.searchBar);
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
@@ -112,10 +133,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             public void onButtonClicked(int buttonCode) {
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     searchBar.disableSearch();
-                    // TODO: ADD LEFT SLIDE ACTIVITY
+                    toggle.syncState();
+                    drawer.openDrawer(GravityCompat.START);
+                    searchBar.disableSearch();
                 } else if (buttonCode == MaterialSearchBar.BUTTON_BACK) {
                     searchBar.disableSearch();
-                    // TODO: CLOSE LEFT SLIDE ACTIVITY
                 }
             }
         });
@@ -337,8 +359,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
-
-
     /**
      * Adding the shelters information from the local shelters.json file to mongoDB.
      * TODO: You must place the 'addresses.json' file in 'app/src/main/assets' directory before you use the current function.
@@ -361,6 +381,20 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
