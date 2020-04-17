@@ -395,9 +395,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_home:
-            case R.id.nightmode_switch:
-                break;
             case R.id.nav_info:
                 Intent intent = new Intent(this, ContactPage.class);
                 startActivity(intent);

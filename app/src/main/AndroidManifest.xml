@@ -27,7 +27,6 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
-        <activity android:name=".MainMenuActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
