@@ -5,8 +5,8 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.e.shelter"
-        minSdkVersion 28
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -43,6 +43,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.maps.android:android-maps-utils:1.0.2'
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support:support-annotations:24.0.0'
+    androidTestImplementation 'com.android.support.test:runner:0.5'
 }
 
 

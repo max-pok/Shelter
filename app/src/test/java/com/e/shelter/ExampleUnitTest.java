@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 
-public class ExampleUnitTest {
+public class ExampleUnitTest  {
 
     @Test
     public void defaultTest() {
