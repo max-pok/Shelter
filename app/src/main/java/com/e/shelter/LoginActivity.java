@@ -22,7 +22,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 
 public class LoginActivity extends AppCompatActivity {
-    public static String email="adirat@ac.sce.ac.il";
+    public static String email;
     public static String password;
     private boolean[] checkuser;
     @Override
@@ -102,10 +102,22 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ShowContactPage();
             }
+        });
+
+        Button changepass = (Button) findViewById(R.id.changepass);
+        changepass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowChangePass();
+            }
 
         });
 
 
+    }
+
+    public void ShowChangePass() {
+        startActivity(new Intent(getBaseContext(), ChangePassActivity.class));
     }
     public void ShowContactPage() {
         startActivity(new Intent(getBaseContext(), ContactPage.class));

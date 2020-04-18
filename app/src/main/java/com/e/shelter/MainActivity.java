@@ -9,6 +9,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        java.text.DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent i = new Intent(this, LoginActivity.class);

@@ -102,6 +102,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/SignUpButton" />
 
+    <Button
+        android:id="@+id/changepass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="18dp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/SignUpButton"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

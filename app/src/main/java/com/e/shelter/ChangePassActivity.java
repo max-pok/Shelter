@@ -112,7 +112,8 @@ public class ChangePassActivity extends AppCompatActivity {
             //Find if the user exist in users collection according to email and password.
             LoginActivity loginActivity = new LoginActivity();
             String email = loginActivity.getEmail();
-            Document myDoc = mongoCollection.find(and(eq("email",email), eq("password",oldPass))).first();
+            System.out.println(email);
+            Document myDoc = mongoCollection.find(and(eq("email",email), eq("password",sha1(oldPass)))).first();
             if(myDoc !=null) {
                 if (myDoc.get("password").equals(sha1(oldPass))) {
                     mongoClient.close();
@@ -139,8 +140,17 @@ public class ChangePassActivity extends AppCompatActivity {
             MongoCollection<Document> mongoCollection = database.getCollection("users");
             LoginActivity loginActivity = new LoginActivity();
             String email = loginActivity.getEmail();
-            //Document myDoc = mongoCollection.find(and(eq("email", email), eq("password", oldPass))).first();
+            System.out.println(email);
+            System.out.println(sha1(oldPass));
 
+            Document myDoc = mongoCollection.find(and(eq("email", email), eq("password", sha1(oldPass)))).first();
+            myDoc.getObjectId("_id");
+            Document updateDoc = new Document();
+            updateDoc.put("email",myDoc.get("email"));
+            updateDoc.put("password",sha1(newPass1));
+            updateDoc.put("user_type",myDoc.get("user_type"));
+            mongoCollection.replaceOne(and(eq("email", email), eq("password", sha1(oldPass))),updateDoc);
+            /*
             BasicDBObject query = new BasicDBObject();
             query.put("password", sha1(oldPass));
 
@@ -150,7 +160,7 @@ public class ChangePassActivity extends AppCompatActivity {
             BasicDBObject updateObject = new BasicDBObject();
             updateObject.put("$set", newDocument);
 
-          mongoCollection.updateOne(query, updateObject);
+          mongoCollection.updateOne(query, updateObject);*/
             mongoClient.close();
             return true;
 
