@@ -48,8 +48,8 @@ pipeline {
                             [$class: 'DevelopersRecipientProvider'],
                             [$class: 'RequesterRecipientProvider']
                     ],
-                    replyTo: '$DEFAULT_REPLYTO',
-                    to: '$DEFAULT_RECIPIENTS'
+                    replyTo: 'maxim.p9@gmail.com',
+                    to: 'maxim.p9@gmail.com'
         }
     }
 }
