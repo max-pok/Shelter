@@ -41,9 +41,15 @@ pipeline {
     }
     post {
         always {
-            emailext body: 'Build Update',
-                    to: "maxim.p9@gmail.com",
-                    subject: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER'
+            emailext subject: '$DEFAULT_SUBJECT',
+                    body: '$DEFAULT_CONTENT',
+                    recipientProviders: [
+                            [$class: 'CulpritsRecipientProvider'],
+                            [$class: 'DevelopersRecipientProvider'],
+                            [$class: 'RequesterRecipientProvider']
+                    ],
+                    replyTo: '$DEFAULT_REPLYTO',
+                    to: '$DEFAULT_RECIPIENTS'
         }
     }
 }
