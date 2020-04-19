@@ -401,8 +401,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 startActivity(intent);
                 return false;
             case R.id.nav_settings:
-                Intent settingsActive = new Intent(this, SettingsActivity.class);
-                startActivity(settingsActive);
+               /* Intent settingsActive = new Intent(this, SettingsActivity.class);
+                startActivity(settingsActive);*/
         }
         return false;
     }
