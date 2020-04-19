@@ -24,28 +24,11 @@
     ]
   },
   {
-    "featureType": "administrative",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
     "featureType": "administrative.locality",
     "elementType": "labels.text.fill",
     "stylers": [
       {
         "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "stylers": [
-      {
-        "visibility": "off"
       }
     ]
   },
@@ -96,15 +79,6 @@
   },
   {
     "featureType": "road",
-    "elementType": "labels.icon",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
     "elementType": "labels.text.fill",
     "stylers": [
       {
@@ -136,14 +110,6 @@
     "stylers": [
       {
         "color": "#f3d19c"
-      }
-    ]
-  },
-  {
-    "featureType": "transit",
-    "stylers": [
-      {
-        "visibility": "off"
       }
     ]
   },
