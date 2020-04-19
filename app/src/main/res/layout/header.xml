@@ -16,10 +16,10 @@
         android:src="@drawable/male_account_icon" />
 
     <TextView
-        android:id="@+id/email_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
+        android:text="sce@sce.co.il"
         android:textColor="@color/white"
         android:textSize="18dp" />
 

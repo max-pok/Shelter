@@ -66,11 +66,11 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     checkuser=CheckLogin(email,password);
                     if (checkuser[0] == true ){
-                        if(checkuser[1]== true){ // This is Admin
+                        if(checkuser[1]== true){// This is Admin
                             System.out.println("this is admin\n");
-                            Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
-                            myIntent.putExtra("email", email); //Optional parameters
-                            startActivity(myIntent);
+
+                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
                         }
                         else{//This is simple user
                             System.out.println("this is simple user\n");
@@ -119,8 +119,8 @@ public class LoginActivity extends AppCompatActivity {
         return password;
     }
 
-    public  void setEmail(String email){
-        this.email = email;
+    public  void  setEmail(String email){
+        this.email=email;
     }
 
     public void setPassword(String password){
