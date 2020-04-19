@@ -41,7 +41,15 @@ pipeline {
     }
     post {
         always {
-            emailext body: 'Build Failed', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
+            emailext subject: '$DEFAULT_SUBJECT',
+                    body: '$DEFAULT_CONTENT',
+                    recipientProviders: [
+                            [$class: 'CulpritsRecipientProvider'],
+                            [$class: 'DevelopersRecipientProvider'],
+                            [$class: 'RequesterRecipientProvider']
+                    ],
+                    replyTo: '$DEFAULT_REPLYTO',
+                    to: '$DEFAULT_RECIPIENTS'
         }
     }
 }
