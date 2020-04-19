@@ -1,5 +1,7 @@
 package com.e.shelter;
 
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -63,9 +66,15 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -88,6 +97,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
@@ -154,7 +165,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
-                        .setCountry("iw")
+                        .setCountry("israel")
                         .setTypeFilter(TypeFilter.ADDRESS)
                         .setSessionToken(token)
                         .setQuery(s.toString())
@@ -190,7 +201,25 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
-        //Toggle Functions
+
+        //Header
+        View header = navigationView.getHeaderView(0);
+        TextView header_email = header.findViewById(R.id.email_header);
+        Intent intent = getIntent();
+        String value = intent.getStringExtra("email");
+        if (value != null) header_email.setText(value);
+
+        //Switch
+        navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+                } else googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+            }
+        });
     }
 
     /**
@@ -242,6 +271,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         // Google map settings
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.getUiSettings().setZoomControlsEnabled(true);
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
+        this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
         add_shelters_into_map(this.googleMap);
     }
@@ -401,8 +432,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 startActivity(intent);
                 return false;
             case R.id.nav_settings:
-               Intent settingsActive = new Intent(this,SettingsActivity.class);
-               startActivity(settingsActive);
+                Intent settingsActive = new Intent(this, SettingsActivity.class);
+                startActivity(settingsActive);
+                return false;
+            case R.id.nav_night_mode_switch:
+                nightModeSwitch();
+                return false;
         }
         return false;
     }
@@ -414,6 +449,23 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void nightModeSwitch() {
+        // Flips switch
+        if (((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).isChecked()) {
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
+        } else ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
+
+        // Checks if the switch is checked or not
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+                } else googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+            }
+        });
     }
 
 }
