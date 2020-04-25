@@ -8,12 +8,12 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
-        stage('Checkout') {
-            steps {
-                //Checking out the repo
-                checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/develop']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '${gitProdCredential}', url: 'https://github.com/max-pok/Shelter.git']]]
-            }
-        }
+//        stage('Checkout') {
+//            steps {
+//                //Checking out the repo
+//                checkout changelog: true, poll: true, scm: [$class: 'GitSCM', branches: [[name: '*/develop']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '${gitProdCredential}', url: 'https://github.com/max-pok/Shelter.git']]]
+//            }
+//        }
         stage('Prepare') {
             steps {
                 // Prepare for next stages
