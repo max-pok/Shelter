@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                 email = emailInput.getText().toString();
                 password = passwordInput.getText().toString();
                 //Error message
-                builder.setMessage("Worng Email/Password, Try Again!")
+                builder.setMessage("Wrong Email/Password, Try Again!")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                             myIntent.putExtra("email", email); //Optional parameters
                             startActivity(myIntent);
                         }
-                        else{//This is simple user
+                        else{ //This is simple user
                             System.out.println("this is simple user\n");
                             startActivity(new Intent(getBaseContext(), MapViewActivity.class));
 

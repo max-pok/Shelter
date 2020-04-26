@@ -12,6 +12,7 @@ android {
     }
 
     testOptions {
+        unitTests.includeAndroidResources = true
         unitTests.all {
             unitTests()
         }

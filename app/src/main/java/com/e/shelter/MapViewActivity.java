@@ -1,7 +1,6 @@
 package com.e.shelter;
 
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
@@ -66,19 +65,16 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
     private MaterialSearchBar searchBar;
@@ -135,7 +131,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         searchBar = findViewById(R.id.searchBar);
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
-            public void onSearchStateChanged(boolean enabled) {}
+            public void onSearchStateChanged(boolean enabled) {
+            }
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
@@ -217,7 +214,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
-                } else googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+                } else
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
             }
         });
     }
@@ -454,14 +452,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public void nightModeSwitch() {
         if (((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).isChecked()) {
             ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
-        } else ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
+        } else
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
 
         ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
-                } else googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+                } else
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
             }
         });
     }
