@@ -45,12 +45,11 @@ pipeline {
         }
     }
     post {
-
         success {
             echo 'BUILD SUCCESSFUL - NO EMAIL WILL BE SENT'
         }
 
-        failure {
+        failure { //Send an email to to all teammates about broken build
             emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
                     body: '$DEFAULT_CONTENT',
                     replyTo: 'maxim.p9@gmail.com',

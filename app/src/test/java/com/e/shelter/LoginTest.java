@@ -2,6 +2,7 @@ package com.e.shelter;
 
 
 import com.e.shelter.utilities.EmailValidator;
+import com.e.shelter.utilities.PasswordValidator;
 
 import org.junit.Test;
 
@@ -45,4 +46,26 @@ public class LoginTest {
     public void EmailValidatorTest_InvalidEmailNoTld_ReturnsFalse() {
         assertFalse(EmailValidator.isValidEmail("name@email"));
     }
+
+    @Test
+    public void PasswordValidatorTest_CorrectPassword_ReturnsTrue() {
+        assertTrue(PasswordValidator.isValidPassword("123456789"));
+    }
+
+    @Test
+    public void PasswordValidatorTest_InvalidPassword_ReturnsFalse() {
+        assertFalse(PasswordValidator.isValidPassword("12345"));
+    }
+
+    @Test
+    public void PasswordValidatorTest_EmptyPassword_ReturnsFalse() {
+        assertFalse(PasswordValidator.isValidPassword(""));
+    }
+
+    @Test
+    public void PasswordValidatorTest_NullPassword_ReturnsFalse() {
+        assertFalse(PasswordValidator.isValidPassword(null));
+    }
+
+
 }
