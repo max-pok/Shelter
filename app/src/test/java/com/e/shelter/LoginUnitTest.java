@@ -7,10 +7,9 @@ import com.e.shelter.utilities.PasswordValidator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class LoginTest {
+public class LoginUnitTest {
 
     @Test
     public void EmailValidatorTest_CorrectEmail_ReturnsTrue() {

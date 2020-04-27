@@ -3,6 +3,7 @@ package com.e.shelter;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -12,9 +13,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
+import com.e.shelter.utilities.Member;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -45,6 +49,11 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -60,6 +69,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.os.StrictMode;
 import android.text.Editable;
@@ -89,7 +99,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
-
+    private FirebaseFirestore database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +207,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     searchLocationMarker.remove();
                 }
             }
+
         });
 
         //Header
@@ -218,6 +229,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
             }
         });
+
     }
 
     /**
@@ -272,7 +284,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
         this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
-        add_shelters_into_map(this.googleMap);
+        //add_shelters_into_map(this.googleMap);
+        add_shelters_to_mongodb();
     }
 
     @Override
@@ -283,6 +296,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Finds device location, if it fails the function retrieves the last known location.
+     */
     public void getDeviceLocation() {
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
@@ -338,18 +354,29 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      */
     public void add_shelters_to_mongodb() {
         // TODO: add more information, for example: open/close, accessibility, capacity.
+        JSONArray obj = null;
         try {
-            JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
+            obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
+
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
             DB shelter_db = mongoClient.getDB("SafeZone_DB");
             DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
             for (int i = 0; i < obj.length(); i++) {
-                JSONObject value = (JSONObject) obj.get(i);
-                BasicDBObject document = new BasicDBObject();
-                document.put("name", value.get("name"));
-                document.put("lat", value.get("lat"));
-                document.put("lon", value.get("lon"));
-                shelter_db_collection.insert(document);
+                try {
+                    JSONObject value = (JSONObject) obj.get(i);
+                    BasicDBObject document = new BasicDBObject();
+                    document.put("name", value.get("name"));
+                    document.put("lat", value.get("lat"));
+                    document.put("lon", value.get("lon"));
+                    String address = findSheltersAddresses(Double.parseDouble(String.valueOf(value.get("lat"))), Double.parseDouble(String.valueOf(value.get("lon"))));
+                    document.put("address", address);
+                    document.put("status", "open");
+                    document.put("capacity", "1.25 meter per person");
+                    shelter_db_collection.insert(document);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -375,6 +402,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return json;
     }
 
+    /**
+     * search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
+     * @param address - input received from search bar.
+     */
     public void searchAddress(String address) {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
@@ -391,15 +422,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                         .title(object.get("StreetName") + " " + object.get("HouseNumber"))
                         .snippet(object.get("StreetName") + " " + object.get("HouseNumber"))
                         .icon(BitmapDescriptorFactory.defaultMarker(150)));
-                break;
+                return;
             }
         }
-
+        Toast.makeText(MapViewActivity.this, "Address not found", Toast.LENGTH_LONG).show();
     }
 
     /**
      * Adding the shelters information from the local shelters.json file to mongoDB.
-     * TODO: You must place the 'addresses.json' file in 'app/src/main/assets' directory before you use the current function.
      * Use this function only to add the file information into your local db.
      */
     public void add_addresses_to_mongodb() {
@@ -422,6 +452,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     *
+     * @param item - selected item from side navigation bar.
+     * @return true to keep item selected, false otherwise.
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -440,6 +475,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return false;
     }
 
+    /**
+     * Back button press functionality
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -466,4 +504,21 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+    public void addSheltersToFireBaseDataBase() {
+
+    }
+
+    public String findSheltersAddresses(double latitude, double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(MapViewActivity.this, Locale.getDefault());
+
+        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        System.out.println("address = " + address);
+        return address;
+    }
+
 }
+

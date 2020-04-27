@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.e.shelter.utilities.Member;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -27,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     private boolean[] checkuser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
@@ -104,9 +107,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
-
-
     }
+
     public void ShowContactPage() {
         startActivity(new Intent(getBaseContext(), ContactPage.class));
     }
@@ -164,4 +166,6 @@ public class LoginActivity extends AppCompatActivity {
         users_collection.insert(document);
         mongoClient.close();
     }
+
+
 }

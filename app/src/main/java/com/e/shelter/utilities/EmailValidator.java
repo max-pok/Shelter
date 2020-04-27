@@ -20,7 +20,7 @@ public class EmailValidator {
 
     /**
      * Validates if the given input is a valid email address.
-     * @return {@code true} if the input is a valid email. {@code false} otherwise.
+     * @return true if the input is a valid email. false otherwise.
      */
     public static boolean isValidEmail(String email) {
         return email != null && EMAIL_PATTERN.matcher(email).matches();
