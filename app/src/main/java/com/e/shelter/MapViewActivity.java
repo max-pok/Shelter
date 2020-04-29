@@ -21,7 +21,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.e.shelter.utilities.Shelter;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -46,10 +48,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.CollectionReference;
@@ -70,7 +78,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,7 +97,7 @@ import android.widget.Toast;
 
 
 
-public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
@@ -104,10 +114,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private FirebaseFirestore database;
-
-    private DirectionsAPI directionsAPI;
-    private FloatingActionButton navigationButton;
-    private MarkerOptions destinationMarker;
+    private List<Place.Field> fields;
 
 
     @Override
@@ -129,11 +136,31 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapViewActivity.this);
+        System.out.println(getString(R.string.map_key));
         Places.initialize(MapViewActivity.this, getString(R.string.map_key));
         placesClient = Places.createClient(this);
 
         //Autocomplete search
-        final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+        // and once again when the user makes a selection (for example when calling fetchPlace()).
+        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+        // Create a RectangularBounds object.
+        RectangularBounds bounds = RectangularBounds.newInstance(
+                new LatLng(-33.880490, 151.184363),
+                new LatLng(-33.858754, 151.229596));
+        // Use the builder to create a FindAutocompletePredictionsRequest.
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                // Call either setLocationBias() OR setLocationRestriction().
+                .setLocationBias(bounds)
+                //.setLocationRestriction(bounds)
+                .setOrigin(new LatLng(-33.8749937,151.2041382))
+                .setCountries("AU", "NZ")
+                .setTypeFilter(TypeFilter.ADDRESS)
+                .setSessionToken(token)
+                .build();
+
+
 
         //Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -180,34 +207,36 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
-                        .setCountry("israel")
-                        .setTypeFilter(TypeFilter.ADDRESS)
-                        .setSessionToken(token)
-                        .setQuery(s.toString())
-                        .build();
-                placesClient.findAutocompletePredictions(predictionsRequest).addOnCompleteListener(new OnCompleteListener<FindAutocompletePredictionsResponse>() {
-                    @Override
-                    public void onComplete(@NonNull Task<FindAutocompletePredictionsResponse> task) {
-                        if (task.isSuccessful()) {
-                            FindAutocompletePredictionsResponse predictionsResponse = task.getResult();
-                            if (predictionsResponse != null) {
-                                predictions = predictionsResponse.getAutocompletePredictions();
-                                List<String> suggestionList = new ArrayList<>();
-                                for (int i = 0; i < predictions.size(); i++) {
-                                    AutocompletePrediction prediction = predictions.get(i);
-                                    suggestionList.add(prediction.getFullText(null).toString());
-                                }
-                                searchBar.updateLastSuggestions(suggestionList);
-                                if (!searchBar.isSuggestionsVisible()) {
-                                    searchBar.showSuggestionsList();
-                                }
-                            }
-                        } else {
-                            Log.i("PlacesError", "prediction fetching task unsuccessful");
-                        }
-                    }
-                });
+//                FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
+//                        .setOrigin(new LatLng(-33.8749937,151.2041382))
+//                        .setCountries("AU", "NZ")
+//                        .setTypeFilter(TypeFilter.ADDRESS)
+//                        .setSessionToken(token)
+//                        .setQuery(s.toString())
+//                        .build();
+//                placesClient.findAutocompletePredictions(predictionsRequest).addOnCompleteListener(new OnCompleteListener<FindAutocompletePredictionsResponse>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<FindAutocompletePredictionsResponse> task) {
+//                        if (task.isSuccessful()) {
+//                            FindAutocompletePredictionsResponse predictionsResponse = task.getResult();
+//                            if (predictionsResponse != null) {
+//                                predictions = predictionsResponse.getAutocompletePredictions();
+//                                List<String> suggestionList = new ArrayList<>();
+//                                for (int i = 0; i < predictions.size(); i++) {
+//                                    AutocompletePrediction prediction = predictions.get(i);
+//                                    System.out.println("prediction: " + predictions.get(i).toString());
+//                                    suggestionList.add(prediction.getFullText(null).toString());
+//                                }
+//                                searchBar.updateLastSuggestions(suggestionList);
+//                                if (!searchBar.isSuggestionsVisible()) {
+//                                    searchBar.showSuggestionsList();
+//                                }
+//                            }
+//                        } else {
+//                            Log.i("PlacesError", "prediction fetching task unsuccessful");
+//                        }
+//                    }
+//                });
             }
 
             @Override
@@ -218,6 +247,15 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
 
         });
+        searchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields).build(MapViewActivity.this);
+                startActivityForResult(intent, 1);
+            }
+        });
+
 
         //Header
         View header = navigationView.getHeaderView(0);
@@ -238,6 +276,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
             }
         });
+
+
 
     }
 
@@ -293,38 +333,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
         this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
-        // Directions
-        this.navigationButton = findViewById(R.id.floating_navigation_button);
-        this.navigationButton.hide();
-        this.navigationButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MapViewActivity.this);
-                builder.setMessage("Open Google Maps?")
-                        .setCancelable(true)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + destinationMarker.getPosition().latitude + "," + destinationMarker.getPosition().longitude);
-                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                                mapIntent.setPackage("com.google.android.apps.maps");
-                                try {
-                                    if (mapIntent.resolveActivity(MapViewActivity.this.getPackageManager()) != null) {
-                                        startActivity(mapIntent);
-                                    }
-                                } catch (NullPointerException e){
-                                    Log.e("NavigationButton", "onClick: NullPointerException: Couldn't open map. " + e.getMessage());
-                                    Toast.makeText(MapViewActivity.this, "Couldn't Open Google Maps Application", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                dialog.cancel();
-                            }
-                        });
-                final AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
+        // Navigation toolbar
+        this.googleMap.getUiSettings().setMapToolbarEnabled(true);
+
+        // Add shelters to google map
+        addShelterMarkersToGoogleMap();
     }
 
     @Override
@@ -333,6 +346,19 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         if (requestCode == 50 && resultCode == RESULT_OK) {
             getDeviceLocation();
         }
+        else if (requestCode == 1 && resultCode == RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            Log.i("AUTO COMPLETE", "Place: " + place.getName() + ", " + place.getId());
+        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+            Status status = Autocomplete.getStatusFromIntent(data);
+            Toast.makeText(getBaseContext(), status.getStatusMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        Log.i("Clicked Marker Information", marker.getTitle() + ", " + marker.getSnippet());
+        return false;
     }
 
     /**
@@ -374,7 +400,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     /**
      * Adding the shelters location from mongoDB into the map.
      */
-    public void add_shelters_into_map(GoogleMap googleMap) {
+    public void addShelterMarkersToGoogleMap() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
@@ -382,16 +408,22 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
+            Marker shelterMarker = this.googleMap.addMarker(new MarkerOptions().position(latLng)
+                    .title(object.getString("name"))
+                    .snippet(object.getString("address")));
+            shelterMarker.setTag(0);
         }
+        // Marker for testing navigation
+        Marker marker = this.googleMap.addMarker(new MarkerOptions().position(new LatLng(45.507951, -122.717545)).title("title").snippet("snippet"));
+        marker.setTag(0);
+        this.googleMap.setOnMarkerClickListener(this);
     }
 
     /**
      * Adding the shelters information from the local shelters.json file to mongoDB.
-     * TODO: You must place the 'shelters.json' file in 'app/src/main/assets' directory before you use the current function.
      * Use this function only to add the file information into your local db.
      */
-    public void add_shelters_to_mongodb() {
+    public void addSheltersToMongodb() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -446,7 +478,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     * search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
+     * Search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
      * @param address - input received from search bar.
      */
     public void searchAddress(String address) {
@@ -475,7 +507,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters information from the local shelters.json file to mongoDB.
      * Use this function only to add the file information into your local db.
      */
-    public void add_addresses_to_mongodb() {
+    public void addAddressesToMongodb() {
         try {
             JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "addresses.json"));
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
@@ -496,7 +528,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     *
+     * Starts specific function/intent from the navigation bar based on the item selected.
      * @param item - selected item from side navigation bar.
      * @return true to keep item selected, false otherwise.
      */
@@ -530,6 +562,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Switches the application theme to [night mode/day mode].
+     */
     public void nightModeSwitch() {
         if (((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).isChecked()) {
             ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
@@ -547,6 +582,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * Adds the shelters from mongoDB to firebase DB.
+     * TODO: Use only once.
+     */
     public void addSheltersToFireBaseDataBase() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
@@ -568,6 +607,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Find shelters addresses.
+     * @param latitude - shelter latitude
+     * @param longitude - shelter longitude
+     * @return address
+     * @throws IOException when gpc or internet is offline
+     */
     public String findSheltersAddresses(double latitude, double longitude) throws IOException {
         Geocoder geocoder;
         List<Address> addresses;

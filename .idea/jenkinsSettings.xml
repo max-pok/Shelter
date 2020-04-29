@@ -6,7 +6,7 @@
         <option name="displayAborted" value="false" />
       </RssSettings>
     </option>
-    <option name="serverUrl" value="" />
+    <option name="serverUrl" value="http://147.234.32.36/" />
     <option name="useGreenColor" value="true" />
   </component>
 </project>
