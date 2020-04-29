@@ -3,7 +3,7 @@ package com.e.shelter;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -11,14 +11,16 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 
-import com.e.shelter.utilities.Member;
+import com.e.shelter.utilities.Shelter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -48,11 +50,9 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mongodb.BasicDBObject;
@@ -60,7 +60,10 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,6 +86,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap googleMap;
@@ -100,6 +104,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private FirebaseFirestore database;
+
+    private DirectionsAPI directionsAPI;
+    private FloatingActionButton navigationButton;
+    private MarkerOptions destinationMarker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,8 +293,38 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
         this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
-        //add_shelters_into_map(this.googleMap);
-        add_shelters_to_mongodb();
+        // Directions
+        this.navigationButton = findViewById(R.id.floating_navigation_button);
+        this.navigationButton.hide();
+        this.navigationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MapViewActivity.this);
+                builder.setMessage("Open Google Maps?")
+                        .setCancelable(true)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + destinationMarker.getPosition().latitude + "," + destinationMarker.getPosition().longitude);
+                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                mapIntent.setPackage("com.google.android.apps.maps");
+                                try {
+                                    if (mapIntent.resolveActivity(MapViewActivity.this.getPackageManager()) != null) {
+                                        startActivity(mapIntent);
+                                    }
+                                } catch (NullPointerException e){
+                                    Log.e("NavigationButton", "onClick: NullPointerException: Couldn't open map. " + e.getMessage());
+                                    Toast.makeText(MapViewActivity.this, "Couldn't Open Google Maps Application", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                dialog.cancel();
+                            }
+                        });
+                final AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     @Override
@@ -353,34 +392,38 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Use this function only to add the file information into your local db.
      */
     public void add_shelters_to_mongodb() {
-        // TODO: add more information, for example: open/close, accessibility, capacity.
-        JSONArray obj = null;
-        try {
-            obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
-
-            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            DB shelter_db = mongoClient.getDB("SafeZone_DB");
-            DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
-            for (int i = 0; i < obj.length(); i++) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    JSONObject value = (JSONObject) obj.get(i);
-                    BasicDBObject document = new BasicDBObject();
-                    document.put("name", value.get("name"));
-                    document.put("lat", value.get("lat"));
-                    document.put("lon", value.get("lon"));
-                    String address = findSheltersAddresses(Double.parseDouble(String.valueOf(value.get("lat"))), Double.parseDouble(String.valueOf(value.get("lon"))));
-                    document.put("address", address);
-                    document.put("status", "open");
-                    document.put("capacity", "1.25 meter per person");
-                    shelter_db_collection.insert(document);
-                } catch (IOException e) {
+                    JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
+                    MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+                    MongoCollection<Document> shelter_db_collection = database.getCollection("Shelters");
+                    System.out.println("connected to DB " + obj.length());
+                    for (int i = 0; i < obj.length(); i++) {
+                        try {
+                            JSONObject value = (JSONObject) obj.get(i);
+                            String address = findSheltersAddresses(Double.parseDouble(value.get("lat").toString()), Double.parseDouble(value.get("lon").toString()));
+                            Document document = new Document("name", value.get("name"))
+                                    .append("lat", value.get("lat"))
+                                    .append("lon", value.get("lon"))
+                                    .append("address", address)
+                                    .append("status", "open")
+                                    .append("capacity", "1.25 square meters per person")
+                                    .append("rating", 0.0);
+                            shelter_db_collection.insertOne(document);
+                        } catch (IOException e) {
+                            System.out.println("Error. Trying to find the address again.");
+                            i--;
+                        }
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        });
+        thread.start();
     }
 
     /**
@@ -505,7 +548,24 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void addSheltersToFireBaseDataBase() {
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+        DBCursor cursor = shelter_db_collection.find();
+        database = FirebaseFirestore.getInstance();
+        CollectionReference Shelters = database.collection("Shelters");
+        while (cursor.hasNext()) {
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            Shelter shelter = new Shelter(object.getString("name"),
+                    object.getString("address"),
+                    object.getString("lat"),
+                    object.getString("lon"),
+                    object.getString("status"),
+                    object.getString("capacity"),
+                    object.getDouble("rating"));
+            Shelters.add(shelter);
 
+        }
     }
 
     public String findSheltersAddresses(double latitude, double longitude) throws IOException {

@@ -9,11 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.e.shelter.utilities.Member;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -21,7 +17,6 @@ import com.mongodb.MongoClient;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static com.mongodb.client.model.Filters.eq;
 
 
 

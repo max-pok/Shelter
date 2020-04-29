@@ -46,6 +46,15 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="16dp" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floating_navigation_button"
+            style="@style/Widget.Design.FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/navigation_icon_white"
+            tools:ignore="MissingConstraints"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
