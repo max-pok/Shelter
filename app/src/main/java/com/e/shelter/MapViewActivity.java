@@ -1,25 +1,31 @@
 package com.e.shelter;
 
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.FragmentActivity;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.e.shelter.utilities.Member;
-import com.e.shelter.utilities.Shelter;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
+
+import com.e.shelter.utilities.InfoWindowData;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -50,17 +56,12 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -70,31 +71,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import android.os.StrictMode;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
+/*
+import com.e.shelter.utilities.Member;
+import com.e.shelter.utilities.Shelter;
+*/
 
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
@@ -299,6 +285,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
         addSheltersToFireBaseDataBase();
+        add_shelters_into_map(this.googleMap);
     }
 
     @Override
@@ -353,11 +340,34 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
+
         while (cursor.hasNext()) {
+
+
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
-        }
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng).snippet("Address: " + object.getString("address")).title(object.getString("name"));
+            InfoWindowData info = new InfoWindowData();
+            info.setName(object.getString("name"));
+            info.setAddress(object.getString("address"));
+            info.setStatus(" Status: " + object.getString("status"));
+            info.setCapacity("Capacity : "+ object.getString("capacity"));
+            info.setRating("Rating : "+ object.getString("rating"));
+
+            //info.setRating("Rating : " + object.getString("rating"));
+            CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(this);
+            googleMap.setInfoWindowAdapter(customInfoWindow);
+            Marker m = googleMap.addMarker(markerOptions);
+            m.setTag(info);
+            m.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+
+            // .snippet("Snoqualmie Falls is located 25 miles east of Seattle.")
+                   // .icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_BLUE));
+            //googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
+    }
     }
 
     /**
@@ -521,7 +531,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void addSheltersToFireBaseDataBase() {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        /*MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
@@ -537,7 +547,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("capacity"));
             Shelters.add(shelter);
 
-        }
+        }*/
     }
 
     public String findSheltersAddresses(double latitude, double longitude) throws IOException {

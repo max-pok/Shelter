@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "291672225421",
+    "firebase_url": "https://shelter-497f6.firebaseio.com",
+    "project_id": "shelter-497f6",
+    "storage_bucket": "shelter-497f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291672225421:android:d454bda672b39358ab54c4",
+        "android_client_info": {
+          "package_name": "com.e.shelter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291672225421-c2pjl7ecji44hch9lpl9fbk0d0ru7fmn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.e.shelter",
+            "certificate_hash": "99257b979d8d42122136ff29061398ae1aa52aa3"
+          }
+        },
+        {
+          "client_id": "291672225421-nb0kogu38ei1rdbb3r9gprfg7cmgglvb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcZNVkyBq9YglSjDJwPVHIq446prQGyCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291672225421-nb0kogu38ei1rdbb3r9gprfg7cmgglvb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
