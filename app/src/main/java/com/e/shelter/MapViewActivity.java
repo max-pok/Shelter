@@ -3,7 +3,6 @@ package com.e.shelter;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import android.app.AlertDialog;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -11,17 +10,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.e.shelter.utilities.Shelter;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -45,24 +41,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -78,11 +65,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import android.os.StrictMode;
 import android.text.Editable;
@@ -96,14 +82,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
-public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
+public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener, PlaceSelectionListener {
 
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
     private MaterialSearchBar searchBar;
-    private PlacesClient placesClient;
-    private List<AutocompletePrediction> predictions;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location lastKnownLocation;
     private LocationCallback locationCallback;
@@ -114,7 +97,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private FirebaseFirestore database;
-    private List<Place.Field> fields;
+    private List<String> suggestions = new ArrayList<>();
+    private MaterialCardView shelterInformationCardView;
+    private TextView shelterName;
+    private TextView shelterAddress;
+    private TextView shelterStatus;
+    private TextView shelterCapacity;
+    private TextView shelterRating;
 
 
     @Override
@@ -136,30 +125,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapViewActivity.this);
-        System.out.println(getString(R.string.map_key));
-        Places.initialize(MapViewActivity.this, getString(R.string.map_key));
-        placesClient = Places.createClient(this);
 
-        //Autocomplete search
-        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
-        // and once again when the user makes a selection (for example when calling fetchPlace()).
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-        // Create a RectangularBounds object.
-        RectangularBounds bounds = RectangularBounds.newInstance(
-                new LatLng(-33.880490, 151.184363),
-                new LatLng(-33.858754, 151.229596));
-        // Use the builder to create a FindAutocompletePredictionsRequest.
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                // Call either setLocationBias() OR setLocationRestriction().
-                .setLocationBias(bounds)
-                //.setLocationRestriction(bounds)
-                .setOrigin(new LatLng(-33.8749937,151.2041382))
-                .setCountries("AU", "NZ")
-                .setTypeFilter(TypeFilter.ADDRESS)
-                .setSessionToken(token)
-                .build();
-
+        //Autocomplete
 
 
         //Hooks
@@ -207,55 +174,30 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
-//                        .setOrigin(new LatLng(-33.8749937,151.2041382))
-//                        .setCountries("AU", "NZ")
-//                        .setTypeFilter(TypeFilter.ADDRESS)
-//                        .setSessionToken(token)
-//                        .setQuery(s.toString())
-//                        .build();
-//                placesClient.findAutocompletePredictions(predictionsRequest).addOnCompleteListener(new OnCompleteListener<FindAutocompletePredictionsResponse>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<FindAutocompletePredictionsResponse> task) {
-//                        if (task.isSuccessful()) {
-//                            FindAutocompletePredictionsResponse predictionsResponse = task.getResult();
-//                            if (predictionsResponse != null) {
-//                                predictions = predictionsResponse.getAutocompletePredictions();
-//                                List<String> suggestionList = new ArrayList<>();
-//                                for (int i = 0; i < predictions.size(); i++) {
-//                                    AutocompletePrediction prediction = predictions.get(i);
-//                                    System.out.println("prediction: " + predictions.get(i).toString());
-//                                    suggestionList.add(prediction.getFullText(null).toString());
-//                                }
-//                                searchBar.updateLastSuggestions(suggestionList);
-//                                if (!searchBar.isSuggestionsVisible()) {
-//                                    searchBar.showSuggestionsList();
-//                                }
-//                            }
-//                        } else {
-//                            Log.i("PlacesError", "prediction fetching task unsuccessful");
-//                        }
-//                    }
-//                });
+                Log.d("LOG_TAG", getClass().getSimpleName() + " text changed " + searchBar.getText());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 if (searchLocationMarker != null) {
                     searchLocationMarker.remove();
+                    searchBar.clearSuggestions();
                 }
             }
 
         });
-        searchBar.setOnClickListener(new View.OnClickListener() {
+        searchBar.setCardViewElevation(10);
+        searchBar.setSuggstionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
-            public void onClick(View v) {
-                fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields).build(MapViewActivity.this);
-                startActivityForResult(intent, 1);
+            public void OnItemClickListener(int position, View v) {
+
+            }
+
+            @Override
+            public void OnItemDeleteListener(int position, View v) {
+
             }
         });
-
 
         //Header
         View header = navigationView.getHeaderView(0);
@@ -277,8 +219,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         });
 
-
-
+        //CardView
+        shelterInformationCardView = findViewById(R.id.card);
+        shelterName = findViewById(R.id.cardShelterName);
+        shelterAddress = findViewById(R.id.cardAddress);
+        shelterStatus = findViewById(R.id.cardStatus);
+        shelterCapacity = findViewById(R.id.cardCapacity);
+        shelterRating = findViewById(R.id.cardRating);
     }
 
     /**
@@ -335,6 +282,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Navigation toolbar
         this.googleMap.getUiSettings().setMapToolbarEnabled(true);
+        this.googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                shelterInformationCardView.setVisibility(View.INVISIBLE);
+            }
+        });
 
         // Add shelters to google map
         addShelterMarkersToGoogleMap();
@@ -346,18 +299,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         if (requestCode == 50 && resultCode == RESULT_OK) {
             getDeviceLocation();
         }
-        else if (requestCode == 1 && resultCode == RESULT_OK) {
-            Place place = Autocomplete.getPlaceFromIntent(data);
-            Log.i("AUTO COMPLETE", "Place: " + place.getName() + ", " + place.getId());
-        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-            Status status = Autocomplete.getStatusFromIntent(data);
-            Toast.makeText(getBaseContext(), status.getStatusMessage(), Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
         Log.i("Clicked Marker Information", marker.getTitle() + ", " + marker.getSnippet());
+        shelterInformationCardView.setVisibility(View.VISIBLE);
+        shelterName.setText("Name: " + marker.getTitle());
+        shelterAddress.setText("Address: " + marker.getSnippet());
         return false;
     }
 
@@ -479,6 +428,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
+     *
      * @param address - input received from search bar.
      */
     public void searchAddress(String address) {
@@ -500,7 +450,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 return;
             }
         }
-        Toast.makeText(MapViewActivity.this, "Address not found", Toast.LENGTH_LONG).show();
+        Snackbar.make(Objects.requireNonNull(getCurrentFocus()), "Address not found", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        //Toast.makeText(MapViewActivity.this, "Address not found", Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -529,6 +480,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Starts specific function/intent from the navigation bar based on the item selected.
+     *
      * @param item - selected item from side navigation bar.
      * @return true to keep item selected, false otherwise.
      */
@@ -545,6 +497,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 return false;
             case R.id.nav_night_mode_switch:
                 nightModeSwitch();
+                return false;
+            case R.id.nav_favorite_shelters:
+                Intent favIntent = new Intent(this, FavoritesActivity.class);
+                startActivity(favIntent);
                 return false;
         }
         return false;
@@ -609,7 +565,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Find shelters addresses.
-     * @param latitude - shelter latitude
+     *
+     * @param latitude  - shelter latitude
      * @param longitude - shelter longitude
      * @return address
      * @throws IOException when gpc or internet is offline
@@ -626,5 +583,21 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return address;
     }
 
+    @Override
+    public void onPlaceSelected(@NonNull Place place) {
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), defaultZoom));
+//        searchLocationMarker = googleMap.addMarker(new MarkerOptions()
+//                .position(place.getLatLng())
+//                .title(place.getAddress())
+//                .snippet(place.getName())
+//                .icon(BitmapDescriptorFactory.defaultMarker(150)));
+        Log.i("onPlaceSelected", "Place: " + place.getName() + ", " + place.getId());
+    }
+
+    @Override
+    public void onError(@NonNull Status status) {
+        //Log.e(status.getStatusMessage(), status.getStatus());
+        System.out.println(status.getStatus() + " - " + status.getStatusMessage());
+    }
 }
 
