@@ -68,7 +68,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -83,7 +82,6 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
@@ -240,8 +238,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 if (saveShelterButton.getText().equals("SAVE")) {
-                    addShelterToFavorite();
-                } else System.out.println("saved");
+                    addSelectedShelterToFavorites();
+                    saveShelterButton.setText("SAVED");
+                    saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
+                } else {
+                    removeSelectedShelterFromFavorites();
+                    saveShelterButton.setText("SAVE ");
+                    saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
+                }
             }
         });
     }
@@ -346,7 +350,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             BasicDBObject object = (BasicDBObject) cursor.next();
             if (object.getString("user_email").equals(userEmail)) {
                 BasicDBList favShelters = (BasicDBList) object.get("favorite_shelters");
-                for (int i = 0; i < favShelters.size() ; i++) {
+                for (int i = 0; i < favShelters.size(); i++) {
                     BasicDBList favSheltersInfo = (BasicDBList) favShelters.get(i);
                     if (favSheltersInfo.get(0).equals(shelterName)) return true;
                 }
@@ -611,6 +615,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Find shelters addresses.
+     *
      * @param latitude  - shelter latitude
      * @param longitude - shelter longitude
      * @return address
@@ -645,7 +650,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         System.out.println(status.getStatus() + " - " + status.getStatusMessage());
     }
 
-    public void addShelterToFavorite() {
+    public void addSelectedShelterToFavorites() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("FavoriteShelters");
@@ -664,9 +669,31 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 newobj.append("user_email", userEmail);
                 newobj.append("favorite_shelters", favShelters);
                 shelter_db_collection.update(cursor.getQuery(), newobj);
-                saveShelterButton.setText("Saved");
-                saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
                 break;
+            }
+        }
+    }
+
+    public void removeSelectedShelterFromFavorites() {
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection shelter_db_collection = shelter_db.getCollection("FavoriteShelters");
+        DBCursor cursor = shelter_db_collection.find();
+        while (cursor.hasNext()) {
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            if (object.getString("user_email").equals(userEmail)) {
+                BasicDBList favShelters = (BasicDBList) object.get("favorite_shelters");
+                for (int i = 0; i < favShelters.size(); i++) {
+                    BasicDBList favSheltersInfo = (BasicDBList) favShelters.get(i);
+                    if (favSheltersInfo.get(0).equals(selectedMarker.getTitle())) {
+                        favShelters.remove(favSheltersInfo);
+                        BasicDBObject newOBJ = new BasicDBObject();
+                        newOBJ.append("user_email", userEmail)
+                                .append("favorite_shelters", favShelters);
+                        shelter_db_collection.update(cursor.getQuery(), newOBJ);
+                        break;
+                    }
+                }
             }
         }
     }
