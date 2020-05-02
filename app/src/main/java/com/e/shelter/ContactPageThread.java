@@ -39,6 +39,7 @@ public class ContactPageThread extends Thread{
             Document myDoc = contactCollection.find(eq("name", "עיריית באר שבע")).first();
             if(myDoc!=null)
             {
+                mongoClient.close();
                 System.out.println("you have this database");
             }
             else {
