@@ -111,6 +111,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton rateShelterButton;
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
+    private List<String> favoriteShelters = new ArrayList<>();;
 
 
     @Override
@@ -132,7 +133,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapViewActivity.this);
-
 
         //Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -248,6 +248,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
+
     }
 
     /**
@@ -308,6 +309,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Add shelters to google map
         addShelterMarkersToGoogleMap();
+
+        // Get favorite shelters from DB
+        retrieveFavoriteShelters();
     }
 
     @Override
@@ -342,6 +346,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public boolean checkIfShelterInFavorite(String shelterName) {
+        return favoriteShelters.contains(shelterName);
+    }
+
+    public void retrieveFavoriteShelters() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("FavoriteShelters");
@@ -352,12 +360,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 BasicDBList favShelters = (BasicDBList) object.get("favorite_shelters");
                 for (int i = 0; i < favShelters.size(); i++) {
                     BasicDBList favSheltersInfo = (BasicDBList) favShelters.get(i);
-                    if (favSheltersInfo.get(0).equals(shelterName)) return true;
+                    favoriteShelters.add(favSheltersInfo.get(0).toString());
                 }
                 break;
             }
         }
-        return false;
     }
 
     /**
@@ -609,7 +616,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("capacity"),
                     object.getDouble("rating"));
             Shelters.add(shelter);
-
         }
     }
 
@@ -658,6 +664,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             if (object.getString("user_email").equals(userEmail)) {
+                //Add shelter to DB
                 BasicDBList favShelters = (BasicDBList) object.get("favorite_shelters");
                 BasicDBList info = new BasicDBList();
                 info.add(selectedMarker.getTitle());
@@ -669,6 +676,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 newobj.append("user_email", userEmail);
                 newobj.append("favorite_shelters", favShelters);
                 shelter_db_collection.update(cursor.getQuery(), newobj);
+                mongoClient.close();
+                Log.i("Added To Favorite", "Shelter '" + selectedMarker.getTitle() + "' added to DB.");
+                //Add shelter to array list
+                favoriteShelters.add(selectedMarker.getTitle());
+                Log.i("Added To Favorite", "Shelter '" + selectedMarker.getTitle() + "' added to ArrayList.");
+
+                Toast.makeText(MapViewActivity.this,  "Added To Favorites", Toast.LENGTH_LONG).show();
                 break;
             }
         }
@@ -686,11 +700,19 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 for (int i = 0; i < favShelters.size(); i++) {
                     BasicDBList favSheltersInfo = (BasicDBList) favShelters.get(i);
                     if (favSheltersInfo.get(0).equals(selectedMarker.getTitle())) {
+                        //Remove shelter from DB
                         favShelters.remove(favSheltersInfo);
                         BasicDBObject newOBJ = new BasicDBObject();
                         newOBJ.append("user_email", userEmail)
                                 .append("favorite_shelters", favShelters);
                         shelter_db_collection.update(cursor.getQuery(), newOBJ);
+                        Log.i("Removed From Favorite", "Shelter '" + selectedMarker.getTitle() + "' removed from DB.");
+                        mongoClient.close();
+                        //Remove shelter from array list
+                        favoriteShelters.remove(selectedMarker.getTitle());
+                        Log.i("Removed From Favorite", "Shelter '" + selectedMarker.getTitle() + "' removed from ArrayList.");
+
+                        Toast.makeText(MapViewActivity.this, "Removed From Favorites", Toast.LENGTH_LONG).show();
                         break;
                     }
                 }
