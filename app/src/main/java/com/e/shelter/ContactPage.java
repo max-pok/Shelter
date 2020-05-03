@@ -40,7 +40,6 @@ public class ContactPage extends AppCompatActivity {
         setContentView(R.layout.contacts_of_municipality);
         createContactDataBase();
         showPage();
-        updateInfo();
 
 
     }
@@ -50,6 +49,11 @@ public class ContactPage extends AppCompatActivity {
         contactThread.start();
     }
     public void showPage() {
+        //Connect to MongoDB
+//        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+//        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+//        MongoCollection<Document> contactCollection = database.getCollection("contactPage");
+
         // Get MongoDb Database. If The Database Doesn't Exists, MongoDb Will Automatically Create It For You
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
@@ -67,9 +71,6 @@ public class ContactPage extends AppCompatActivity {
         }
         mongoClient.close();
         }
-    public void updateInfo()
-    {
-        //test test
-    }
+
 
     }

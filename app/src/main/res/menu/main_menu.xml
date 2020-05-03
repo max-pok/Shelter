@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item android:title="General">
+
+            <menu>
+                <item
+                    android:id="@+id/nightmode_switch"
+                    android:icon="@drawable/nightmode_icon_black"
+                    android:title="Night mode" />
+
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/settings_icon_black"
+                    android:title="Settings" />
+
+            </menu>
+        </item>
+        <item android:title="Account">
+            <menu>
+                <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@drawable/logout_icon_black"
+                    android:title="Log out" />
+
+            </menu>
+        </item>
+        <item android:title="About">
+            <menu>
+                <item
+                    android:id="@+id/nav_info"
+                    android:icon="@drawable/info_icon_black"
+                    android:title="Information" />
+
+            </menu>
+        </item>
+
+
+    </group>
+</menu>

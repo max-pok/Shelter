@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'windsekirun/jenkins-android-docker:1.1.1'
+        }
+    }
     options {
         // Stop the build early in case of compile or test failures
         skipStagesAfterUnstable()
@@ -15,19 +19,16 @@ pipeline {
                 sh 'chmod +x ./gradlew'
             }
         }
-        stage('Build') {
+        stage('Compile') {
             steps {
-                sh './gradlew build'
+                // Compile the app and its dependencies
+                sh './gradlew compileDebugSources'
             }
         }
         stage('Unit & Integration Tests') {
             steps {
                 script {
-                    try {
-                        sh './gradlew clean test --no-daemon' //run a gradle task
-                    } finally {
-                        junit '**/build/test-results/test/*.xml' //make the junit test results available in any case (success & failure)
-                    }
+                    sh './gradlew test' //run a gradle test
                 }
             }
         }
@@ -39,10 +40,8 @@ pipeline {
         }
     }
     post {
-        always { //Send an email to the person that broke the build
-            step([$class                  : 'Mailer',
-                  notifyEveryUnstableBuild: true,
-                  recipients              : [emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']])].join(' ')])
+        always {
+            emailext body: 'Build Failed', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
         }
     }
 }
