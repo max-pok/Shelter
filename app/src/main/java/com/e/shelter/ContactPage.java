@@ -40,7 +40,6 @@ public class ContactPage extends AppCompatActivity {
         setContentView(R.layout.contacts_of_municipality);
         createContactDataBase();
         showPage();
-        ///check
 
 
     }
