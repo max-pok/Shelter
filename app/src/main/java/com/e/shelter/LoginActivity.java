@@ -24,7 +24,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class LoginActivity extends AppCompatActivity {
     public static String email="adirat@ac.sce.ac.il";
     public static String password;
-    private boolean[] checkuser;
+    public static boolean[] checkuser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
