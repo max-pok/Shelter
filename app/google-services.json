@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "336518580671",
+    "firebase_url": "https://safezone-feb87.firebaseio.com",
+    "project_id": "safezone-feb87",
+    "storage_bucket": "safezone-feb87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336518580671:android:9fba5966e0973fac89f90a",
+        "android_client_info": {
+          "package_name": "com.e.shelter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336518580671-m2gmrcusnpdj9947agrtg8gp5p4qjkbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJPjl0NRJZfU31EkWUjR2jQpq2_hDNsvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336518580671-m2gmrcusnpdj9947agrtg8gp5p4qjkbp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
