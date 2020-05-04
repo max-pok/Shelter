@@ -31,7 +31,6 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
         <activity android:name=".ChangePassActivity" />
-        <activity android:name=".UserReviewActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
