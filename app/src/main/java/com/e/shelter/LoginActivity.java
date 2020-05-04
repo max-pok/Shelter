@@ -105,10 +105,25 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
+        //temporary
+        Button reviewButton = (Button) findViewById(R.id.review_button);
+        reviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowReviewPage();
+            }
+
+        });
+
 
     }
     public void ShowContactPage() {
         startActivity(new Intent(getBaseContext(), ContactPage.class));
+    }
+
+    //temporary
+    public void ShowReviewPage() {
+        startActivity(new Intent(getBaseContext(),UserReviewActivity.class));
     }
 
     public String getEmail(){

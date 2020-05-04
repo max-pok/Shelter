@@ -102,6 +102,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/SignUpButton" />
 
+    <Button
+        android:id="@+id/review_button"
+        android:layout_width="124dp"
+        android:layout_height="42dp"
+        android:background="@android:drawable/divider_horizontal_dark"
+        android:text="User review"
+        app:layout_constraintBottom_toTopOf="@+id/contact_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUpButton" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
