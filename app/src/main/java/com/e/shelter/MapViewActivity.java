@@ -1,19 +1,32 @@
 package com.e.shelter;
 
-import androidx.fragment.app.FragmentActivity;
-
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 
-import android.content.Intent;
-import android.content.IntentSender;
-import android.location.Location;
-import android.os.Bundle;
-
+import com.e.shelter.utilities.InfoWindowData;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -29,6 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,13 +57,17 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,18 +76,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import android.os.StrictMode;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+/*
+import com.e.shelter.utilities.Member;
+import com.e.shelter.utilities.Shelter;
+*/
 
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
     private MaterialSearchBar searchBar;
@@ -84,10 +100,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
-
+    private FirebaseFirestore database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
@@ -124,7 +142,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         searchBar = findViewById(R.id.searchBar);
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
-            public void onSearchStateChanged(boolean enabled) {}
+            public void onSearchStateChanged(boolean enabled) {
+            }
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
@@ -154,7 +173,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 FindAutocompletePredictionsRequest predictionsRequest = FindAutocompletePredictionsRequest.builder()
-                        .setCountry("iw")
+                        .setCountry("israel")
                         .setTypeFilter(TypeFilter.ADDRESS)
                         .setSessionToken(token)
                         .setQuery(s.toString())
@@ -189,8 +208,29 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     searchLocationMarker.remove();
                 }
             }
+
         });
-        //Toggle Functions
+
+        //Header
+        View header = navigationView.getHeaderView(0);
+        TextView header_email = header.findViewById(R.id.email_header);
+        Intent intent = getIntent();
+        String value = intent.getStringExtra("email");
+        if (value != null) header_email.setText(value);
+
+        //Switch
+        navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+                } else
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+            }
+        });
+
     }
 
     /**
@@ -242,7 +282,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         // Google map settings
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.getUiSettings().setZoomControlsEnabled(true);
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
+        this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
+        addSheltersToFireBaseDataBase();
         add_shelters_into_map(this.googleMap);
     }
 
@@ -254,6 +297,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Finds device location, if it fails the function retrieves the last known location.
+     */
     public void getDeviceLocation() {
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
@@ -295,11 +341,35 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
+        LoginActivity loginActivity =new LoginActivity();
+
         while (cursor.hasNext()) {
+
+
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
-        }
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng).snippet("Address: " + object.getString("address")).title(object.getString("name"));
+            InfoWindowData info = new InfoWindowData();
+            info.setName(object.getString("name"));
+            info.setAddress(object.getString("address"));
+            info.setStatus(" Status: " + object.getString("status"));
+            info.setCapacity("Capacity : "+ object.getString("capacity"));
+            info.setRating("Rating : "+ object.getString("rating"));
+
+            //info.setRating("Rating : " + object.getString("rating"));
+            CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(this);
+            googleMap.setInfoWindowAdapter(customInfoWindow);
+            Marker m = googleMap.addMarker(markerOptions);
+            m.setTag(info);
+            m.showInfoWindow();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+
+            // .snippet("Snoqualmie Falls is located 25 miles east of Seattle.")
+                   // .icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_BLUE));
+            //googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
+    }
     }
 
     /**
@@ -308,23 +378,37 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Use this function only to add the file information into your local db.
      */
     public void add_shelters_to_mongodb() {
-        // TODO: add more information, for example: open/close, accessibility, capacity.
-        try {
-            JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
-            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            DB shelter_db = mongoClient.getDB("SafeZone_DB");
-            DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
-            for (int i = 0; i < obj.length(); i++) {
-                JSONObject value = (JSONObject) obj.get(i);
-                BasicDBObject document = new BasicDBObject();
-                document.put("name", value.get("name"));
-                document.put("lat", value.get("lat"));
-                document.put("lon", value.get("lon"));
-                shelter_db_collection.insert(document);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
+                    MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+                    MongoCollection<Document> shelter_db_collection = database.getCollection("Shelters");
+                    System.out.println("connected to DB " + obj.length());
+                    for (int i = 0; i < obj.length(); i++) {
+                        try {
+                            JSONObject value = (JSONObject) obj.get(i);
+                            String address = findSheltersAddresses(Double.parseDouble(value.get("lat").toString()), Double.parseDouble(value.get("lon").toString()));
+                            Document document = new Document("name", value.get("name"))
+                                    .append("lat", value.get("lat"))
+                                    .append("lon", value.get("lon"))
+                                    .append("address", address)
+                                    .append("status", "open")
+                                    .append("capacity", "1.25 square meters per person");
+                            shelter_db_collection.insertOne(document);
+                        } catch (IOException e) {
+                            System.out.println("Error. Trying to find the address again.");
+                            i--;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        });
+        thread.start();
     }
 
     /**
@@ -346,6 +430,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return json;
     }
 
+    /**
+     * search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
+     * @param address - input received from search bar.
+     */
     public void searchAddress(String address) {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
@@ -362,15 +450,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                         .title(object.get("StreetName") + " " + object.get("HouseNumber"))
                         .snippet(object.get("StreetName") + " " + object.get("HouseNumber"))
                         .icon(BitmapDescriptorFactory.defaultMarker(150)));
-                break;
+                return;
             }
         }
-
+        Toast.makeText(MapViewActivity.this, "Address not found", Toast.LENGTH_LONG).show();
     }
 
     /**
      * Adding the shelters information from the local shelters.json file to mongoDB.
-     * TODO: You must place the 'addresses.json' file in 'app/src/main/assets' directory before you use the current function.
      * Use this function only to add the file information into your local db.
      */
     public void add_addresses_to_mongodb() {
@@ -393,6 +480,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     *
+     * @param item - selected item from side navigation bar.
+     * @return true to keep item selected, false otherwise.
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -403,10 +495,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             case R.id.nav_settings:
                 Intent settingsActive = new Intent(this, SettingsActivity.class);
                 startActivity(settingsActive);
+                return false;
+            case R.id.nav_night_mode_switch:
+                nightModeSwitch();
+                return false;
         }
         return false;
     }
 
+    /**
+     * Back button press functionality
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -416,4 +515,54 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    public void nightModeSwitch() {
+        if (((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).isChecked()) {
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
+        } else
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
+
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+                } else
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+            }
+        });
+    }
+
+    public void addSheltersToFireBaseDataBase() {
+        /*MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+        DBCursor cursor = shelter_db_collection.find();
+        database = FirebaseFirestore.getInstance();
+        CollectionReference Shelters = database.collection("Shelters");
+        while (cursor.hasNext()) {
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            Shelter shelter = new Shelter(object.getString("name"),
+                    object.getString("address"),
+                    object.getString("lat"),
+                    object.getString("lon"),
+                    object.getString("status"),
+                    object.getString("capacity"));
+            Shelters.add(shelter);
+
+        }*/
+    }
+
+    public String findSheltersAddresses(double latitude, double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(MapViewActivity.this, Locale.getDefault());
+
+        addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        System.out.println("address = " + address);
+        return address;
+    }
+
 }
+
