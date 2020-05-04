@@ -78,6 +78,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.e.shelter.R.layout.activity_main_window;
+
 /*
 import com.e.shelter.utilities.Member;
 import com.e.shelter.utilities.Shelter;
@@ -108,7 +110,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_window);
+        setContentView(activity_main_window);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);

@@ -9,6 +9,9 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import static com.e.shelter.R.layout.activity_signup;
+
 public class SignupActivity extends AppCompatActivity {
     public static String email;
     public static String password;
@@ -20,7 +23,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(activity_signup);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         builder.setMessage("This email exists, Choose another one!")

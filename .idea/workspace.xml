@@ -11,7 +11,13 @@
   <component name="ChangeListManager">
     <list default="true" id="4a5d7f3a-8f30-4f70-8dd8-0ec1484b460b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/ContactPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/ContactPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/EditShelterDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/EditShelterDetails.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/MapViewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/MapViewActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/SettingsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/SettingsActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/SignupActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/SignupActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/UserReviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/UserReviewActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/map_api.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/map_api.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

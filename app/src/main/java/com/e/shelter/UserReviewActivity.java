@@ -5,11 +5,13 @@ import android.os.StrictMode;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.e.shelter.R.layout.activity_user_review;
+
 public class UserReviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_review);
+        setContentView(activity_user_review);
     }
 
 }

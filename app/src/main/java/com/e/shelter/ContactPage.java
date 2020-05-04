@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import static com.e.shelter.R.layout.contacts_of_municipality;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
@@ -37,7 +38,7 @@ public class ContactPage extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.contacts_of_municipality);
+        setContentView(contacts_of_municipality);
         createContactDataBase();
         showPage();
 

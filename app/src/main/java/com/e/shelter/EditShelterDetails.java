@@ -6,6 +6,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.e.shelter.R.layout.edit_shelter_details;
+
 public class EditShelterDetails extends AppCompatActivity {
     public static String name;
     public static String status;
@@ -25,7 +27,7 @@ public class EditShelterDetails extends AppCompatActivity {
     }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_shelter_details);
+        setContentView(edit_shelter_details);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         //show_current_shelter_details();
