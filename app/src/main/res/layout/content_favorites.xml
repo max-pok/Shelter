@@ -14,7 +14,6 @@
         android:layout_marginTop="10dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -34,7 +33,7 @@
 
 
                 <TextView
-                    android:id="@+id/favcardShelterName"
+                    android:id="@+id/favCardShelterName"
                     android:layout_width="wrap_content"
                     android:text="Name: "
                     android:layout_height="wrap_content"
@@ -42,7 +41,7 @@
 
 
                 <TextView
-                    android:id="@+id/favcardAddress"
+                    android:id="@+id/favCardAddress"
                     android:text="Address: "
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -56,7 +55,7 @@
                     android:id="@+id/favCardRemoveButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="120dp"
+                    android:layout_marginStart="100dp"
                     android:backgroundTint="@color/quantum_googred700"
                     android:text="Remove"
                     app:mt_borderlessRippleEnabled="true"
@@ -68,6 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:backgroundTint="@color/quantum_cyan"
                     android:text="Navigate"
                     app:mt_borderlessRippleEnabled="true"

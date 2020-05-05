@@ -114,7 +114,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters = new ArrayList<>();
-    ;
 
 
     @Override
@@ -210,9 +209,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //Header
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
-        Intent intent = getIntent();
-        userEmail = intent.getStringExtra("email");
-        //userEmail = "maxim.p9@gmail.com";
+        //userEmail = getIntent().getStringExtra("email");
+        userEmail = "maxim.p9@gmail.com";
         if (userEmail != null) header_email.setText(userEmail);
 
         //Switch
@@ -360,7 +358,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         assert myDoc != null;
         List<Document> favList = (List<Document>) myDoc.get("favorite_shelters");
         for (int i = 0; i < favList.size(); i++) {
-            favoriteShelters.add(favList.get(i).get("shelter_name").toString());
+            favoriteShelters.add(Objects.requireNonNull(favList.get(i).get("shelter_name")).toString());
         }
     }
 
@@ -556,6 +554,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 favIntent.putExtra("userEmail", userEmail);
                 startActivity(favIntent);
                 return false;
+            case R.id.nav_logout:
+                break;
         }
         return false;
     }
@@ -691,5 +691,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         Toast.makeText(MapViewActivity.this, "Removed from favorites", Toast.LENGTH_LONG).show();
     }
+
 }
 

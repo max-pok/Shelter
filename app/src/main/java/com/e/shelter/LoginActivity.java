@@ -69,11 +69,14 @@ public class LoginActivity extends AppCompatActivity {
                             Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
                             myIntent.putExtra("email", email); //Optional parameters
                             startActivity(myIntent);
+                            finish();
                         }
                         else{ //This is simple user
                             System.out.println("this is simple user\n");
-                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
-
+                            Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
+                            myIntent.putExtra("email", email); //Optional parameters
+                            startActivity(myIntent);
+                            finish();
                         }
                     }
                     else{
