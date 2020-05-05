@@ -113,7 +113,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton rateShelterButton;
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
-    private List<String> favoriteShelters = new ArrayList<>();
+    private List<String> favoriteShelters;
 
 
     @Override
@@ -321,6 +321,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         if (requestCode == 50 && resultCode == RESULT_OK) {
             getDeviceLocation();
         }
+        if (requestCode == 2) {
+            retrieveFavoriteShelters();
+        }
     }
 
     @Override
@@ -351,6 +354,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void retrieveFavoriteShelters() {
+        favoriteShelters = new ArrayList<>();
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
         MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
@@ -552,7 +556,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             case R.id.nav_favorite_shelters:
                 Intent favIntent = new Intent(this, FavoritesActivity.class);
                 favIntent.putExtra("userEmail", userEmail);
-                startActivity(favIntent);
+                startActivityForResult(favIntent, 2);
                 return false;
             case R.id.nav_logout:
                 break;
@@ -691,6 +695,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         Toast.makeText(MapViewActivity.this, "Removed from favorites", Toast.LENGTH_LONG).show();
     }
+
 
 }
 

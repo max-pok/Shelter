@@ -1,6 +1,7 @@
 package com.e.shelter.adapers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.e.shelter.FavoritesActivity;
 import com.e.shelter.R;
@@ -23,6 +26,7 @@ import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -34,6 +38,8 @@ public class CustomListAdapter extends ArrayAdapter<FavoriteCard> {
     private int mResource;
     private int lastPosition = -1;
     private String mUserEmail;
+    CustomListAdapter adapter;
+    ArrayList<FavoriteCard> cards;
 
     /**
      * Holds variables in a View
@@ -56,10 +62,12 @@ public class CustomListAdapter extends ArrayAdapter<FavoriteCard> {
         mContext = context;
         mResource = resource;
         mUserEmail = userEmail;
+        adapter = this;
+        cards = objects;
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
         final ViewHolder holder;
         if (convertView == null) {
@@ -77,9 +85,9 @@ public class CustomListAdapter extends ArrayAdapter<FavoriteCard> {
             result = convertView;
         }
 
-        Animation animation = AnimationUtils.loadAnimation(mContext,
-                (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
-        result.startAnimation(animation);
+//        Animation animation = AnimationUtils.loadAnimation(mContext,
+//                (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
+//        result.startAnimation(animation);
         lastPosition = position;
 
         String name = getItem(position).getName();
@@ -91,6 +99,13 @@ public class CustomListAdapter extends ArrayAdapter<FavoriteCard> {
             @Override
             public void onClick(View v) {
                 removeSelectedShelterFromFavorites(position);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        holder.navigateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -109,6 +124,8 @@ public class CustomListAdapter extends ArrayAdapter<FavoriteCard> {
 
         //removing shelter from DB
         mongoCollection.updateOne(eq("user_email", mUserEmail), Updates.pull("favorite_shelters", shelterToRemove));
+
+        cards.remove(position);
 
         Toast.makeText(mContext, "Removed from favorites", Toast.LENGTH_LONG).show();
     }

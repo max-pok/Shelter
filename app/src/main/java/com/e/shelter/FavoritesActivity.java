@@ -56,8 +56,14 @@ public class FavoritesActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
-        finish();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(2);
+        finish();
     }
 
     public void createFavoriteCardList() {
@@ -74,4 +80,5 @@ public class FavoritesActivity extends AppCompatActivity {
                     Double.parseDouble(Objects.requireNonNull(favList.get(i).get("lon")).toString())));
         }
     }
+
 }

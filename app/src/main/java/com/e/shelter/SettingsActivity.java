@@ -39,7 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
             case android.R.id.home:
                 super.onBackPressed();
                 return true;
-      }
+        }
       return super.onOptionsItemSelected(item);
     }
+
 }
