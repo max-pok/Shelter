@@ -79,6 +79,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+
 /*
 import com.e.shelter.utilities.Member;
 import com.e.shelter.utilities.Shelter;
@@ -352,11 +355,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout) findViewById(R.id.map_relative_layout);
         mapWrapperLayout.init(googleMap, getPixelsFromDp(this, 39 + 20));
         //connect to DB
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        final MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+        final DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
-        LoginActivity loginActivity =new LoginActivity();
 
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
@@ -378,8 +380,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             this.capacityTxt = (TextView)infowindow.findViewById(R.id.capacityTxt);
             this.ratingTxt = (TextView)infowindow.findViewById(R.id.ratingTxt);
 
-
-
             this.favorite_btn = (Button)infowindow.findViewById(R.id.favorite_btn);
             this.edit_btn = (Button)infowindow.findViewById(R.id.edit_btn);
             //Buttons clicks
@@ -395,9 +395,20 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, getResources().getDrawable(R.drawable.btn_bg),getResources().getDrawable(R.drawable.btn_bg)){
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
-                    //editShelterDetails.show_current_shelter_details();
-                  Intent i =new  Intent(MapViewActivity.this, EditShelterDetails.class);
+                   String lon= Double.toString(marker.getPosition().longitude);
+                   String lat=Double.toString(marker.getPosition().latitude);
+                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
+
+                    Intent i =new  Intent(MapViewActivity.this, EditShelterDetails.class);
                     if(i !=null){
+                        i.putExtra("name",marker.getTitle());
+                        i.putExtra("address",marker.getSnippet());
+                        i.putExtra("status",myDoc.get("status").toString());
+                        i.putExtra("capacity",myDoc.get("capacity").toString());
+                        i.putExtra("lon",lon);
+                        i.putExtra("lat",lat);
                         startActivity(i);
                     }
                     Toast.makeText(getApplicationContext(), "click on edit buttun", Toast.LENGTH_LONG).show();
@@ -424,7 +435,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     // We must call this to set the current marker and infoWindow references
                     // to the MapWrapperLayout
                     mapWrapperLayout.setMarkerWithInfoWindow(marker, infowindow);
-                    /*test*/
                     return infowindow;
                 }
             });
@@ -434,6 +444,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     .snippet(info.getAddress())
                     .position(latLng)
             );
+
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
     }
