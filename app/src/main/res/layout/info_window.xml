@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="12dip" />
+                    android:textSize="12dip"      />
 
             </LinearLayout>
         </LinearLayout>
