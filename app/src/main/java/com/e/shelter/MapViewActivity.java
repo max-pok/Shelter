@@ -196,13 +196,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         searchBar.setCardViewElevation(10);
         searchBar.setSuggstionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
-            public void OnItemClickListener(int position, View v) {
-
-            }
+            public void OnItemClickListener(int position, View v) { }
 
             @Override
             public void OnItemDeleteListener(int position, View v) {
-
             }
         });
 

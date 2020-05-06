@@ -1,24 +1,18 @@
 package com.e.shelter;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import com.e.shelter.adapers.CustomListAdapter;
+import com.e.shelter.adapers.FavoriteListAdapter;
 import com.e.shelter.utilities.FavoriteCard;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Updates;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.bson.Document;
 
@@ -49,7 +43,7 @@ public class FavoritesActivity extends AppCompatActivity {
         shelterCardListView = findViewById(R.id.favListView);
         createFavoriteCardList();
 
-        CustomListAdapter adapter = new CustomListAdapter(this, R.layout.content_favorites, list, getIntent().getStringExtra("userEmail"));
+        FavoriteListAdapter adapter = new FavoriteListAdapter(this, R.layout.content_favorites, list, getIntent().getStringExtra("userEmail"));
         shelterCardListView.setAdapter(adapter);
     }
 
