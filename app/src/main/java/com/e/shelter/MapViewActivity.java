@@ -87,7 +87,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
-        GoogleMap.OnMarkerClickListener, PlaceSelectionListener, GoogleMap.OnMapClickListener {
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
 
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
@@ -106,11 +106,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialCardView shelterInformationCardView;
     private TextView shelterName;
     private TextView shelterAddress;
-    private TextView shelterStatus;
-    private TextView shelterCapacity;
-    private TextView shelterRating;
     private String userEmail;
-    private MaterialButton rateShelterButton;
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters;
@@ -227,10 +223,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         shelterInformationCardView = findViewById(R.id.card);
         shelterName = findViewById(R.id.cardShelterName);
         shelterAddress = findViewById(R.id.cardAddress);
-        shelterStatus = findViewById(R.id.cardStatus);
-        shelterCapacity = findViewById(R.id.cardCapacity);
-        shelterRating = findViewById(R.id.cardRating);
-        rateShelterButton = findViewById(R.id.cardRateButton);
         saveShelterButton = findViewById(R.id.CardSaveButton);
         saveShelterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -503,7 +495,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         }
         Snackbar.make(Objects.requireNonNull(getCurrentFocus()), "Address not found", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-        //Toast.makeText(MapViewActivity.this, "Address not found", Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -635,23 +626,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
         System.out.println("address = " + address);
         return address;
-    }
-
-    @Override
-    public void onPlaceSelected(@NonNull Place place) {
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), defaultZoom));
-//        searchLocationMarker = googleMap.addMarker(new MarkerOptions()
-//                .position(place.getLatLng())
-//                .title(place.getAddress())
-//                .snippet(place.getName())
-//                .icon(BitmapDescriptorFactory.defaultMarker(150)));
-        Log.i("onPlaceSelected", "Place: " + place.getName() + ", " + place.getId());
-    }
-
-    @Override
-    public void onError(@NonNull Status status) {
-        //Log.e(status.getStatusMessage(), status.getStatus());
-        System.out.println(status.getStatus() + " - " + status.getStatusMessage());
     }
 
     public void addSelectedShelterToFavorites() {
