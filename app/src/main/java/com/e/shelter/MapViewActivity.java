@@ -424,6 +424,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     // We must call this to set the current marker and infoWindow references
                     // to the MapWrapperLayout
                     mapWrapperLayout.setMarkerWithInfoWindow(marker, infowindow);
+                    /*test*/
                     return infowindow;
                 }
             });
