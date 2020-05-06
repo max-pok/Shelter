@@ -1,10 +1,10 @@
 package com.e.shelter.utilities;
 public class InfoWindowData {
-    private String name;
-    private String address;
-    private String status;
-    private String capacity;
-    private String rating;
+    public static String name;
+    public static String address;
+    public static String status;
+    public static String capacity;
+    public static String rating;
 
     public String getName() {
         return name;

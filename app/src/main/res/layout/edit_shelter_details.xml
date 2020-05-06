@@ -11,7 +11,7 @@
         android:layout_width="258dp"
         android:layout_height="43dp"
         android:layout_marginTop="45dp"
-        android:text="Edit Shelter Details"
+        android:text="@string/edit_shelter_details"
         android:textColor="#673AB7"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,84 +22,101 @@
         android:id="@+id/name_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name: "
+        android:layout_marginStart="43dp"
+        android:text="@string/name"
         android:textColor="#0E0606"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="128dp" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/editText_name"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/status_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status: "
+        android:layout_marginTop="178dp"
+        android:text="@string/status"
         android:textColor="#000000"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="179dp" />
+        app:layout_constraintStart_toStartOf="@+id/name_"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Address: "
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="7dp"
+        android:text="@string/address"
         android:textAllCaps="false"
         android:textColor="#0C0707"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="224dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/editText_address"
+        app:layout_constraintEnd_toStartOf="@+id/editText_address" />
 
     <TextView
         android:id="@+id/capacity_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Capacity: "
+        android:layout_marginTop="11dp"
+        android:text="@string/capacity"
         android:textColor="#000000"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="266dp" />
+        app:layout_constraintEnd_toStartOf="@+id/editText_address"
+        app:layout_constraintTop_toBottomOf="@+id/editText_address" />
 
     <EditText
         android:id="@+id/editText_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="13dp"
         android:ems="10"
+        android:hint="name"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="120dp" />
+        android:text="text"
+        app:layout_constraintBottom_toTopOf="@+id/status_"
+        app:layout_constraintStart_toEndOf="@+id/status_" />
 
     <EditText
         android:id="@+id/editText_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:autofillHints=""
         android:ems="10"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="165dp" />
+        app:layout_constraintStart_toStartOf="@+id/editText_name"
+        app:layout_constraintTop_toBottomOf="@+id/editText_name"
+        tools:text="text" />
 
     <EditText
         android:id="@+id/editText_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:autofillHints=""
         android:ems="10"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="210dp" />
+        app:layout_constraintStart_toStartOf="@+id/editText_status"
+        app:layout_constraintTop_toBottomOf="@+id/editText_status"
+        tools:text="text" />
 
     <EditText
         android:id="@+id/editText_capacity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:autofillHints=""
         android:ems="10"
         android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="255dp" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/capacity_"
+        app:layout_constraintStart_toEndOf="@+id/capacity_"
+        tools:text="text" />
 
     <Button
         android:id="@+id/button_update"
         android:layout_width="107dp"
         android:layout_height="39dp"
-        android:text="Update"
-        tools:layout_editor_absoluteX="167dp"
-        tools:layout_editor_absoluteY="325dp" />
+        android:layout_marginStart="46dp"
+        android:layout_marginTop="25dp"
+        android:text="@string/update"
+        app:layout_constraintStart_toStartOf="@+id/editText_capacity"
+        app:layout_constraintTop_toBottomOf="@+id/editText_capacity" />
 </androidx.constraintlayout.widget.ConstraintLayout>
