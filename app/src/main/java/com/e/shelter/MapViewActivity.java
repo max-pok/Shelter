@@ -387,7 +387,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
                     // Here we can perform some action triggered after clicking the button
-                    Toast.makeText(MapViewActivity.this, "click on button 1", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapViewActivity.this, "click on add to Favorite", Toast.LENGTH_SHORT).show();
                 }
             };
             this.favorite_btn.setOnTouchListener(infoButtonListener);
@@ -448,6 +448,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
     }
+        //mongoClient.close();
     }
     public static int getPixelsFromDp(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
