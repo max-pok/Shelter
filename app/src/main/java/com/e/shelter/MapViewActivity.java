@@ -352,6 +352,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters location from mongoDB into the map.
      */
     public void add_shelters_into_map(GoogleMap googleMap) {
+        LoginActivity loginActivity = new LoginActivity();
         final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout) findViewById(R.id.map_relative_layout);
         mapWrapperLayout.init(googleMap, getPixelsFromDp(this, 39 + 20));
         //connect to DB
@@ -382,6 +383,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             this.favorite_btn = (Button)infowindow.findViewById(R.id.favorite_btn);
             this.edit_btn = (Button)infowindow.findViewById(R.id.edit_btn);
+           if (loginActivity.checkuser[1]== true){
+                edit_btn.setVisibility(View.VISIBLE);
+            }
+
             //Buttons clicks
             this.infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
                 @Override

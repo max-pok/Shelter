@@ -153,6 +153,7 @@
             android:layout_height="40dip"
             android:layout_marginLeft="10dip"
             android:background="@drawable/btn_bg"
+            android:visibility="invisible"
             android:text="Edit" />
 
     </LinearLayout>
