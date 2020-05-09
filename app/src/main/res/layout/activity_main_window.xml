@@ -23,11 +23,18 @@
         android:fitsSystemWindows="true"
         tools:context=".MapViewActivity">
 
-        <fragment
-            android:id="@+id/mapAPI"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <com.e.shelter.MapWrapperLayout
+            android:id="@+id/map_relative_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+            <fragment
+                android:id="@+id/mapAPI"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.e.shelter.MapViewActivity" />
+
+        </com.e.shelter.MapWrapperLayout>
 
         <com.mancj.materialsearchbar.MaterialSearchBar
             android:id="@+id/searchBar"

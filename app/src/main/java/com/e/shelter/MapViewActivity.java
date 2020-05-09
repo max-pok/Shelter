@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
@@ -78,7 +79,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.e.shelter.R.layout.activity_main_window;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 /*
 import com.e.shelter.utilities.Member;
@@ -103,6 +105,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private FirebaseFirestore database;
+    private ViewGroup infowindow;
+    private TextView infoTitle;
+    private TextView infoSnippet;
+    private TextView statusTxt;
+    private TextView capacityTxt;
+    private TextView ratingTxt;
+    private OnInfoWindowElemTouchListener infoButtonListener;
+    private Button edit_btn;
+    private Button favorite_btn;
+    public Context ctx =this;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +123,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
-        setContentView(activity_main_window);
+        setContentView(R.layout.activity_main_window);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -339,39 +352,112 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters location from mongoDB into the map.
      */
     public void add_shelters_into_map(GoogleMap googleMap) {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        LoginActivity loginActivity = new LoginActivity();
+        final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout) findViewById(R.id.map_relative_layout);
+        mapWrapperLayout.init(googleMap, getPixelsFromDp(this, 39 + 20));
+        //connect to DB
+        final MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+        final DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
-        LoginActivity loginActivity =new LoginActivity();
 
         while (cursor.hasNext()) {
-
-
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng).snippet("Address: " + object.getString("address")).title(object.getString("name"));
-            InfoWindowData info = new InfoWindowData();
+            //Save the information about the shelter
+            markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
+            final InfoWindowData info = new InfoWindowData();
             info.setName(object.getString("name"));
             info.setAddress(object.getString("address"));
-            info.setStatus(" Status: " + object.getString("status"));
-            info.setCapacity("Capacity : "+ object.getString("capacity"));
-            info.setRating("Rating : "+ object.getString("rating"));
+            info.setStatus(object.getString("status"));
+            info.setCapacity( object.getString("capacity"));
+            info.setRating(object.getString("rating"));
 
-            //info.setRating("Rating : " + object.getString("rating"));
-            CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(this);
-            googleMap.setInfoWindowAdapter(customInfoWindow);
-            Marker m = googleMap.addMarker(markerOptions);
-            m.setTag(info);
-            m.showInfoWindow();
+            this.infowindow = (ViewGroup)getLayoutInflater().inflate(R.layout.info_window, null);
+            this.infoTitle = (TextView)infowindow.findViewById(R.id.nameTxt);
+            this.infoSnippet = (TextView)infowindow.findViewById(R.id.addressTxt);
+            this.statusTxt = (TextView)infowindow.findViewById(R.id.statusTxt);
+            this.capacityTxt = (TextView)infowindow.findViewById(R.id.capacityTxt);
+            this.ratingTxt = (TextView)infowindow.findViewById(R.id.ratingTxt);
+
+            this.favorite_btn = (Button)infowindow.findViewById(R.id.favorite_btn);
+            this.edit_btn = (Button)infowindow.findViewById(R.id.edit_btn);
+            if (loginActivity.checkuser[1]== true){
+                edit_btn.setVisibility(View.VISIBLE);
+            }
+
+            //Buttons clicks
+            this.infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    // Here we can perform some action triggered after clicking the button
+                    Toast.makeText(MapViewActivity.this, "click on add to Favorite", Toast.LENGTH_SHORT).show();
+                }
+            };
+            this.favorite_btn.setOnTouchListener(infoButtonListener);
+
+            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, getResources().getDrawable(R.drawable.btn_bg),getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    String lon= Double.toString(marker.getPosition().longitude);
+                    String lat=Double.toString(marker.getPosition().latitude);
+                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
+
+                    Intent i =new  Intent(MapViewActivity.this, EditShelterDetails.class);
+                    if(i !=null){
+                        i.putExtra("name",marker.getTitle());
+                        i.putExtra("address",marker.getSnippet());
+                        i.putExtra("status",myDoc.get("status").toString());
+                        i.putExtra("capacity",myDoc.get("capacity").toString());
+                        i.putExtra("lon",lon);
+                        i.putExtra("lat",lat);
+                        startActivity(i);
+                    }
+                    Toast.makeText(getApplicationContext(), "click on edit buttun", Toast.LENGTH_LONG).show();
+                }
+            };
+            edit_btn.setOnTouchListener(infoButtonListener);
+            //Set the information window
+            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    // Setting up the infoWindow with current's marker info
+                    infoTitle.setText(marker.getTitle());
+                    infoSnippet.setText(marker.getSnippet());
+                    statusTxt.setText(info.getStatus());
+                    capacityTxt.setText(info.getCapacity());
+                    ratingTxt.setText(info.getRating());
+                    infoButtonListener.setMarker(marker);
+
+                    // We must call this to set the current marker and infoWindow references
+                    // to the MapWrapperLayout
+                    mapWrapperLayout.setMarkerWithInfoWindow(marker, infowindow);
+                    return infowindow;
+                }
+            });
+            //Add markers
+            googleMap.addMarker(new MarkerOptions()
+                    .title(info.getName())
+                    .snippet(info.getAddress())
+                    .position(latLng)
+            );
+
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-
-            // .snippet("Snoqualmie Falls is located 25 miles east of Seattle.")
-                   // .icon(BitmapDescriptorFactory.defaultMarker( BitmapDescriptorFactory.HUE_BLUE));
-            //googleMap.addMarker(new MarkerOptions().position(latLng).title(object.getString("name")));
+        }
+        //mongoClient.close();
     }
+    public static int getPixelsFromDp(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale + 0.5f);
     }
 
     /**
@@ -550,7 +636,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("status"),
                     object.getString("capacity"));
             Shelters.add(shelter);
-
         }*/
     }
 
@@ -567,4 +652,3 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 }
-

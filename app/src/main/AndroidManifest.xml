@@ -31,7 +31,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
         <activity android:name=".ChangePassActivity" />
-        <activity android:name=".UserReviewActivity"/>
+        <activity android:name=".EditShelterDetails" />
 
 
         <uses-library
@@ -41,7 +41,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key" />
-
     </application>
 
 </manifest>

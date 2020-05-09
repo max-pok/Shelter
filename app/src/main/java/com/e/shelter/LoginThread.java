@@ -22,7 +22,7 @@ public class LoginThread extends Thread {
     LoginThread(String email,String password){
         this.flag= new boolean[2];
         this.flag[0]=false;
-        this.flag[1]=true;
+        this.flag[1]=false;
         this.email=email;
         this.password=password;
     }
@@ -50,7 +50,7 @@ public class LoginThread extends Thread {
             if (myDoc!=null){//The user exist
                 //flag[0] show if the user exist
                 flag[0]=true;
-                if (myDoc.get("user_type")=="admin"){
+                if (myDoc.get("user_type").equals("admin")){
                     flag[1]=true;
                 }
                 System.out.println(myDoc.toJson());
