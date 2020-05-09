@@ -121,7 +121,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
 
@@ -231,7 +230,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         TextView header_email = header.findViewById(R.id.email_header);
         Intent intent = getIntent();
         String value = intent.getStringExtra("email");
+
+
         if (value != null) header_email.setText(value);
+
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -382,6 +384,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             this.ratingTxt = (TextView)infowindow.findViewById(R.id.ratingTxt);
 
             this.favorite_btn = (Button)infowindow.findViewById(R.id.favorite_btn);
+
             this.edit_btn = (Button)infowindow.findViewById(R.id.edit_btn);
             if (loginActivity.checkuser[1]== true){
                 edit_btn.setVisibility(View.VISIBLE);

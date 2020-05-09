@@ -11,14 +11,11 @@
   <component name="ChangeListManager">
     <list default="true" id="4a5d7f3a-8f30-4f70-8dd8-0ec1484b460b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/LoginActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/MapViewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/MapViewActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/SignupActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/SignupActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/UserReviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/UserReviewActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/UserReviewThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/e/shelter/UserReviewThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_signup.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_signup.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_user_review.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_user_review.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/contacts_of_municipality.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/contacts_of_municipality.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/info_window.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/info_window.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

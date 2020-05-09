@@ -11,6 +11,7 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 public class UserReviewThread extends Thread{
@@ -31,11 +32,11 @@ public class UserReviewThread extends Thread{
             MongoCollection<Document> contactCollection = database.getCollection("userReviews");
             //Find if the email exist in users collection according to email
 
-            Document myDoc = contactCollection.find(eq("userID", "")).first();
+            Document myDoc = contactCollection.find(and(eq("userID", userID), eq("review", review))).first();
             if(myDoc!=null)
             {
                 mongoClient.close();
-                System.out.println("you have this database");
+                System.out.println("you have already submitted this review");
             }
             else {
                 //new Document for users collection

@@ -76,6 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                             System.out.println("this is simple user\n");
                             startActivity(new Intent(getBaseContext(), MapViewActivity.class));
 
+
+
                         }
                     }
                     else{

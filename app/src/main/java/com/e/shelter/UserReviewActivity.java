@@ -1,5 +1,6 @@
 package com.e.shelter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -18,8 +19,8 @@ import com.mongodb.MongoClient;
 import static com.e.shelter.R.layout.activity_user_review;
 
 public class UserReviewActivity extends AppCompatActivity {
-    public static String firstName;
-    public static String lastName;
+    public static String user;
+    public static String review;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -34,6 +35,18 @@ public class UserReviewActivity extends AppCompatActivity {
                 addReview();
             }
         });
+
+//        //Header
+//        View header = navigationView.getHeaderView(0);
+//        TextView header_email = header.findViewById(R.id.email_header);
+//        Intent intent = getIntent();
+//        String value = intent.getStringExtra("email");
+//
+//
+//        if (value != null) header_email.setText(value);
+//        System.out.println("#########################");
+//        System.out.println("#########################");
+//        System.out.println(value);
     }
     public void createReviewDataBase()
     {
@@ -42,12 +55,13 @@ public class UserReviewActivity extends AppCompatActivity {
     }
     public void addReview() {
         //get strings from sign up text boxes
-        EditText firstnameInput = (EditText)findViewById(R.id.reviewInput);
-        EditText lastnameInput = (EditText)findViewById(R.id.nameInput);
-        firstName= firstnameInput.getText().toString();
-        lastName= lastnameInput.getText().toString();
+        EditText nameInput = (EditText)findViewById(R.id.nameInput);
+        EditText reviewInput = (EditText)findViewById(R.id.reviewInput);
+
+        user= nameInput.getText().toString();
+        review= reviewInput.getText().toString();
         //start new thread to add a new user.
-        UserReviewThread signupThread= new UserReviewThread(firstName,lastName);
+        UserReviewThread signupThread= new UserReviewThread(user,review);
         signupThread.start();
         Thread t = Thread.currentThread();// The main thread
 
