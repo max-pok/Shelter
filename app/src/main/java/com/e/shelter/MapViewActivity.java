@@ -407,6 +407,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
 
                     Intent i =new  Intent(MapViewActivity.this, EditShelterDetails.class);
+
                     if(i !=null){
                         i.putExtra("name",marker.getTitle());
                         i.putExtra("address",marker.getSnippet());

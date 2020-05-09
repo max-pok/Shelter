@@ -17,9 +17,9 @@ public class UserReviewThread extends Thread{
     public static String userID;
     public static String review;
     //c'tor
-    UserReviewThread(){
-        this.userID="";
-        this.review="";
+    UserReviewThread(String id,String review){
+        this.userID=id;
+        this.review=review;
     }
     public void run()
     {
@@ -40,7 +40,7 @@ public class UserReviewThread extends Thread{
             else {
                 //new Document for users collection
                 ArrayList<Document> newReview = new ArrayList<Document>();
-                newReview.add(new Document().append("userID", "1234").append("review", "בדיקה"));
+                newReview.add(new Document().append("userID", userID).append("review", review));
 
                 //insert the document to users collection
                 contactCollection.insertMany(newReview);

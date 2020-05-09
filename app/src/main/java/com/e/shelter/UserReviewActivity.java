@@ -2,6 +2,9 @@ package com.e.shelter;
 
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,20 +18,41 @@ import com.mongodb.MongoClient;
 import static com.e.shelter.R.layout.activity_user_review;
 
 public class UserReviewActivity extends AppCompatActivity {
+    public static String firstName;
+    public static String lastName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(activity_user_review);
-        createReviewDataBase();
-        showPage();
+//        createReviewDataBase();
+        Button SignupButton = (Button) findViewById(R.id.SendButton);
+        SignupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addReview();
+            }
+        });
     }
     public void createReviewDataBase()
     {
-        UserReviewThread userThread= new UserReviewThread();
-        userThread.start();
+//        UserReviewThread userThread= new UserReviewThread();
+//        userThread.start();
     }
+    public void addReview() {
+        //get strings from sign up text boxes
+        EditText firstnameInput = (EditText)findViewById(R.id.reviewInput);
+        EditText lastnameInput = (EditText)findViewById(R.id.nameInput);
+        firstName= firstnameInput.getText().toString();
+        lastName= lastnameInput.getText().toString();
+        //start new thread to add a new user.
+        UserReviewThread signupThread= new UserReviewThread(firstName,lastName);
+        signupThread.start();
+        Thread t = Thread.currentThread();// The main thread
+
+    }
+
     public void showPage() {
         //Connect to MongoDB
 //        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
