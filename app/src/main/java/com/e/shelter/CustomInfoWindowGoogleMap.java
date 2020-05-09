@@ -49,7 +49,7 @@ public class CustomInfoWindowGoogleMap implements GoogleMap.InfoWindowAdapter {
         InfoWindowData infoWindowData = (InfoWindowData) marker.getTag();
 
         status_tv.setText(infoWindowData.getStatus());
-      capacity_tv.setText(infoWindowData.getCapacity());
+        capacity_tv.setText(infoWindowData.getCapacity());
         rating_tv.setText(infoWindowData.getRating());
         Button edit = (Button) view.findViewById(R.id.admin_edit);
         edit.setOnClickListener(new View.OnClickListener() {
