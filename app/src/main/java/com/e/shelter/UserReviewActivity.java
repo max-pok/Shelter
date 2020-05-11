@@ -28,8 +28,8 @@ public class UserReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(activity_user_review);
 //        createReviewDataBase();
-        Button SignupButton = (Button) findViewById(R.id.SendButton);
-        SignupButton.setOnClickListener(new View.OnClickListener() {
+        Button SendButton = (Button) findViewById(R.id.SendButton);
+        SendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addReview();

@@ -48,7 +48,6 @@ public class UserReviewThread extends Thread{
             }
 
             //close the DB connection
-            mongoClient.close();
         } catch (MongoException m) {
             Log.e("Error " + m, "" + m);
         }

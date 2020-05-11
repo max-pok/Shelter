@@ -2,6 +2,7 @@ package com.e.shelter;
 
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,7 +23,10 @@ import com.mongodb.DBCursor;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.bson.Document;
+import org.json.JSONException;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -30,48 +34,58 @@ import java.util.ListIterator;
 import static com.e.shelter.R.layout.contacts_of_municipality;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import java.security.NoSuchAlgorithmException;
 
 public class ContactPage extends AppCompatActivity {
-
+    private TextView tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(contacts_of_municipality);
-        createContactDataBase();
         showPage();
 
 
+
+
     }
-    public void createContactDataBase()
-    {
-        ContactPageThread contactThread= new ContactPageThread();
+
+    public void createContactDataBase() {
+        ContactPageThread contactThread = new ContactPageThread();
         contactThread.start();
     }
+
     public void showPage() {
         //Connect to MongoDB
-//        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-//        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-//        MongoCollection<Document> contactCollection = database.getCollection("contactPage");
+        int countContacts = 1;
 
         // Get MongoDb Database. If The Database Doesn't Exists, MongoDb Will Automatically Create It For You
+
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("contactPage");
+        if(shelter_db_collection==null)
+            createContactDataBase();
+
         DBCursor cursor = shelter_db_collection.find();
-        int countContacts=1;
+
         while (cursor.hasNext()) {
-            BasicDBObject object = (BasicDBObject) cursor.next();
-            TextView tv = (TextView)findViewById(R.id.textView+countContacts);
-            tv.setText((String)object.get("name"));
-            TextView tv1 = (TextView)findViewById(R.id.phoneInput+countContacts);
-            tv1.setText((String)object.get("phoneNumber"));
             countContacts++;
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            this.tv = (TextView) findViewById(R.id.textView+2);
+            //System.out.println(object.get("name"));
+//            TextView tv1 = (TextView) findViewById(R.id.phoneInput + countContacts);
+            tv.setText((CharSequence) object.get("name"));
+//            tv1.setText((String) object.get("phoneNumber"));
+
+
 
         }
-        mongoClient.close();
-        }
+            mongoClient.close();
+
+    }
 
 
     }
+

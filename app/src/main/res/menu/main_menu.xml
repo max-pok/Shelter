@@ -28,6 +28,16 @@
 
             </menu>
         </item>
+        <item
+            android:title="User Reviews">
+            <menu>
+                <item
+                    android:id="@+id/review_info"
+                    android:icon="@drawable/info_icon_black"
+                    android:title="User Reviews"
+                    android:visible="false" />
+            </menu>
+        </item>
         <item android:title="About">
             <menu>
                 <item

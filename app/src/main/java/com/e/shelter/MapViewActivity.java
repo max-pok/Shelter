@@ -1,5 +1,6 @@
 package com.e.shelter;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -11,6 +12,7 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -59,6 +62,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.maps.android.quadtree.PointQuadTree;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -114,6 +118,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private OnInfoWindowElemTouchListener infoButtonListener;
     private Button edit_btn;
     private Button favorite_btn;
+    private Button review_btn;
+    private Button rating_btn;
+    private MenuItem see_review;
     public Context ctx =this;
 
 
@@ -385,6 +392,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             this.favorite_btn = (Button)infowindow.findViewById(R.id.favorite_btn);
 
+
             this.edit_btn = (Button)infowindow.findViewById(R.id.edit_btn);
             if (loginActivity.checkuser[1]== true){
                 edit_btn.setVisibility(View.VISIBLE);
@@ -399,6 +407,45 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             };
             this.favorite_btn.setOnTouchListener(infoButtonListener);
+
+            //add user review
+            this.review_btn = (Button)infowindow.findViewById(R.id.review_button);
+            if (loginActivity.checkuser[1]== true){
+                review_btn.setVisibility(View.INVISIBLE);
+            }
+
+            this.infoButtonListener = new OnInfoWindowElemTouchListener(review_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    // Here we can perform some action triggered after clicking the button
+                    Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
+                    if(i !=null) {
+                        startActivity(i);
+                    }
+                    Toast.makeText(MapViewActivity.this, "click on add review", Toast.LENGTH_SHORT).show();
+                }
+            };
+            this.review_btn.setOnTouchListener(infoButtonListener);
+
+            //ratings
+
+            this.rating_btn = (Button)infowindow.findViewById(R.id.rate_btn);
+            if (loginActivity.checkuser[1]== true){
+                rating_btn.setVisibility(View.VISIBLE);
+            }
+
+            this.infoButtonListener = new OnInfoWindowElemTouchListener(rating_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    // Here we can perform some action triggered after clicking the button
+                    Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
+                    if(i !=null) {
+                        startActivity(i);
+                    }
+                    Toast.makeText(MapViewActivity.this, "click on add rating", Toast.LENGTH_SHORT).show();
+                }
+            };
+            this.rating_btn.setOnTouchListener(infoButtonListener);
 
             infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, getResources().getDrawable(R.drawable.btn_bg),getResources().getDrawable(R.drawable.btn_bg)){
                 @Override
@@ -579,10 +626,22 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
+
         switch (item.getItemId()) {
             case R.id.nav_info:
                 Intent intent = new Intent(this, ContactPage.class);
                 startActivity(intent);
+                return false;
+            case R.id.review_info:
+                LoginActivity loginActivity = new LoginActivity();
+                this.see_review = (MenuItem)findViewById(R.id.review_info);
+                if (loginActivity.checkuser[1]== true){
+                    see_review.setVisible(true);
+                }
+                Intent seeReviews = new Intent(this, UserReviewActivity.class);
+                startActivity(seeReviews);
                 return false;
             case R.id.nav_settings:
                 Intent settingsActive = new Intent(this, SettingsActivity.class);
