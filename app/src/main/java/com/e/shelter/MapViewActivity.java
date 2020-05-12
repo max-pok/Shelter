@@ -19,7 +19,6 @@ import android.os.Bundle;
 
 import com.e.shelter.utilities.Shelter;
 import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -41,8 +40,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationView;
@@ -192,7 +189,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         searchBar.setCardViewElevation(10);
         searchBar.setSuggstionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
-            public void OnItemClickListener(int position, View v) { }
+            public void OnItemClickListener(int position, View v) {
+            }
 
             @Override
             public void OnItemDeleteListener(int position, View v) {
@@ -317,7 +315,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     public void onMapClick(LatLng latLng) {
-        shelterInformationCardView.setVisibility(View.INVISIBLE);
+        //shelterInformationCardView.setVisibility(View.INVISIBLE);
         selectedMarker = null;
     }
 
@@ -325,16 +323,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public boolean onMarkerClick(final Marker marker) {
         Log.i("Clicked Marker Information", marker.getTitle() + ", " + marker.getSnippet());
         selectedMarker = marker;
-        shelterInformationCardView.setVisibility(View.VISIBLE);
-        shelterName.setText("Name: " + marker.getTitle());
-        shelterAddress.setText("Address: " + marker.getSnippet());
-        if (checkIfShelterInFavorite(marker.getTitle())) {
-            saveShelterButton.setText("SAVED");
-            saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
-        } else {
-            saveShelterButton.setText("SAVE");
-            saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
-        }
+//        shelterInformationCardView.setVisibility(View.VISIBLE);
+//        shelterName.setText("Name: " + marker.getTitle());
+//        shelterAddress.setText("Address: " + marker.getSnippet());
+//        if (checkIfShelterInFavorite(marker.getTitle())) {
+//            saveShelterButton.setText("SAVED");
+//            saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
+//        } else {
+//            saveShelterButton.setText("SAVE");
+//            saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
+//        }
         return false;
     }
 
@@ -573,15 +571,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         } else
             ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
 
-        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
-                } else
-                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
-            }
-        });
+        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+                        } else
+                            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+
+                    }
+                });
     }
 
     /**
