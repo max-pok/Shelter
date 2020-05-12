@@ -106,8 +106,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView capacityTxt;
     private TextView ratingTxt;
     private OnInfoWindowElemTouchListener infoButtonListener;
-    private Button edit_btn;
-    private Button favorite_btn;
+    private MaterialButton edit_btn;
+    private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
     private String userEmail;
     private MaterialButton saveShelterButton;
@@ -240,6 +240,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 //            }
 //        });
 
+        //Info Window
+        this.infowindow = (ViewGroup) getLayoutInflater().inflate(R.layout.info_window, null);
+        this.infoTitle = (TextView) infowindow.findViewById(R.id.nameTxt);
+        this.infoSnippet = (TextView) infowindow.findViewById(R.id.addressTxt);
+        this.statusTxt = (TextView) infowindow.findViewById(R.id.statusTxt);
+        this.capacityTxt = (TextView) infowindow.findViewById(R.id.capacityTxt);
+        this.ratingTxt = (TextView) infowindow.findViewById(R.id.ratingTxt);
+
+        this.favorite_btn = infowindow.findViewById(R.id.favorite_btn);
+        this.edit_btn = infowindow.findViewById(R.id.edit_btn);
+
     }
 
     /**
@@ -314,6 +325,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         if (requestCode == 2) {
             retrieveFavoriteShelters();
         }
+        if (requestCode == 3) {
+            add_shelters_into_map();
+            //selectedMarker.showInfoWindow();
+        }
     }
 
     @Override
@@ -325,6 +340,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public boolean onMarkerClick(Marker marker) {
         selectedMarker = marker;
+        if (checkIfShelterInFavorite(marker.getTitle())) {
+            favorite_btn.setText("SAVED");
+            favorite_btn.setIconResource(R.drawable.savedbookmark_icon_white);
+        } else {
+            favorite_btn.setText("SAVE");
+            favorite_btn.setIconResource(R.drawable.savebookmark_icon_white);
+        }
         return false;
     }
 
@@ -407,38 +429,31 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             info.setCapacity(object.getString("capacity"));
             info.setRating(object.getString("rating"));
 
-            this.infowindow = (ViewGroup) getLayoutInflater().inflate(R.layout.info_window, null);
-            this.infoTitle = (TextView) infowindow.findViewById(R.id.nameTxt);
-            this.infoSnippet = (TextView) infowindow.findViewById(R.id.addressTxt);
-            this.statusTxt = (TextView) infowindow.findViewById(R.id.statusTxt);
-            this.capacityTxt = (TextView) infowindow.findViewById(R.id.capacityTxt);
-            this.ratingTxt = (TextView) infowindow.findViewById(R.id.ratingTxt);
 
-            this.favorite_btn = (Button) infowindow.findViewById(R.id.favorite_btn);
-            this.edit_btn = (Button) infowindow.findViewById(R.id.edit_btn);
 //            if (loginActivity.checkuser[1] == true) {
                 edit_btn.setVisibility(View.VISIBLE);
 //            }
 
             //Buttons clicks
-            infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)) {
+            infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, null, null) {
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
                     // Here we can perform some action triggered after clicking the button
                     if (favorite_btn.getText().equals("SAVE")) {
                         addSelectedShelterToFavorites();
                         favorite_btn.setText("SAVED");
-                        //favorite_btn.set(R.drawable.savedbookmark_icon_white);
+                        favorite_btn.setIconResource(R.drawable.savedbookmark_icon_white);
                     } else {
                         removeSelectedShelterFromFavorites();
-                        favorite_btn.setText("SAVE ");
-                        //favorite_btn.setIconResource(R.drawable.savebookmark_icon_white);
+                        favorite_btn.setText("SAVE");
+                        favorite_btn.setIconResource(R.drawable.savebookmark_icon_white);
                     }
+                    selectedMarker.showInfoWindow();
                 }
             };
             favorite_btn.setOnTouchListener(infoButtonListener);
 
-            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)) {
+            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, null, null) {
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
                     String lon = Double.toString(marker.getPosition().longitude);
@@ -484,6 +499,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     return infowindow;
                 }
             });
+
 
             //Add markers
             googleMap.addMarker(new MarkerOptions()

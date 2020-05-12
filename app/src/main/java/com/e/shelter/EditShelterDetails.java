@@ -67,7 +67,8 @@ public class EditShelterDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(update_details()){
-                    goodMessage.show();
+                    setResult(3);
+                    finish();
 
                 }
                 else{
@@ -117,6 +118,12 @@ public class EditShelterDetails extends AppCompatActivity {
             }
             return true;
 
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
     }
 
