@@ -144,7 +144,8 @@
             android:layout_width="131dp"
             android:layout_height="40dip"
             android:background="@drawable/btn_bg"
-            android:text="Add to favorite" />
+            app:icon="@drawable/savebookmark_icon_white"
+            android:text="Save" />
 
 
         <Button

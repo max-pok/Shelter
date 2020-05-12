@@ -33,14 +33,12 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-<<<<<<< HEAD
     <string name="update">update</string>
     <string name="capacity">Capacity:</string>
     <string name="address">Address:</string>
     <string name="name">Name:</string>
     <string name="status">Status:</string>
     <string name="edit_shelter_details">Edit Shelter Details</string>
-=======
     <string name="title_activity_favorites">FavoritesActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
