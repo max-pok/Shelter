@@ -1,18 +1,25 @@
 <resources>
 
     <!-- Base application theme. -->
+<<<<<<< HEAD
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+=======
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+>>>>>>> map_directions
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="simple_switch" parent="Theme.AppCompat.Light">
@@ -40,6 +47,7 @@
         </item>
     </style>
 
+<<<<<<< HEAD
     <style name="AppTheme.NoActionBar." parent="Theme.MaterialComponents.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -49,5 +57,7 @@
 
 
 
+=======
+>>>>>>> map_directions
 
 </resources>

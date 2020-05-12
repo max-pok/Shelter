@@ -2,6 +2,7 @@ package com.e.shelter;
 
 import android.util.Log;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
@@ -80,10 +81,17 @@ public class SignupThread extends Thread {
                 newSimpleUser.put("lastName",lastName);
                 newSimpleUser.put("phone",phone);
                 newSimpleUser.put("address",address);
-                //insert the document to simpleUsers ollection
+                //insert the document to simpleUsers collection
                 simpleUsersCollection.insertOne(newSimpleUser);
                 //change the flag to true because the registration was successful
                 flag=true;
+
+                //Create favorite shelter document for new user
+                MongoCollection<Document> favoriteSheltersCollection = database.getCollection("FavoriteShelters");
+                Document favShelterDocument = new Document();
+                favShelterDocument.put("user_email", email);
+                favShelterDocument.put("favorite_shelters", new BasicDBList());
+                favoriteSheltersCollection.insertOne(favShelterDocument);
             }
             //close the DB connection
             mongoClient.close();

@@ -30,6 +30,7 @@ android {
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -45,6 +46,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.maps.android:android-maps-utils:1.0.2'
     implementation 'com.google.android.libraries.places:places:2.2.0'
+    implementation 'com.google.firebase:firebase-database:19.3.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.0'
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.2'
     implementation 'com.github.mancj:MaterialSearchBar:0.8.1'
     implementation 'com.google.android.material:material:1.1.0'
@@ -53,7 +56,11 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+<<<<<<< HEAD
     implementation 'com.google.firebase:firebase-firestore:20.2.0'
     implementation 'com.google.android.material:material:1.0.0'
 
+=======
+    implementation 'com.google.firebase:firebase-firestore:21.4.3'
+>>>>>>> map_directions
 }

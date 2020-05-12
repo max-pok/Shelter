@@ -1,20 +1,32 @@
 {
   "project_info": {
+<<<<<<< HEAD
     "project_number": "291672225421",
     "firebase_url": "https://shelter-497f6.firebaseio.com",
     "project_id": "shelter-497f6",
     "storage_bucket": "shelter-497f6.appspot.com"
+=======
+    "project_number": "726026815462",
+    "firebase_url": "https://shelter-272408.firebaseio.com",
+    "project_id": "shelter-272408",
+    "storage_bucket": "shelter-272408.appspot.com"
+>>>>>>> map_directions
   },
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD
         "mobilesdk_app_id": "1:291672225421:android:d454bda672b39358ab54c4",
+=======
+        "mobilesdk_app_id": "1:726026815462:android:188e6fdf231b780d593827",
+>>>>>>> map_directions
         "android_client_info": {
           "package_name": "com.e.shelter"
         }
       },
       "oauth_client": [
         {
+<<<<<<< HEAD
           "client_id": "291672225421-c2pjl7ecji44hch9lpl9fbk0d0ru7fmn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -24,19 +36,38 @@
         },
         {
           "client_id": "291672225421-nb0kogu38ei1rdbb3r9gprfg7cmgglvb.apps.googleusercontent.com",
+=======
+          "client_id": "726026815462-spssd4cq6cecc7taub32ha0qd2g9p644.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.e.shelter",
+            "certificate_hash": "d5d452d85ac2f98e45c0e484b267d66ff3ccdb23"
+          }
+        },
+        {
+          "client_id": "726026815462-dl01qg3ssm094juqkgejne71qp5gkmr7.apps.googleusercontent.com",
+>>>>>>> map_directions
           "client_type": 3
         }
       ],
       "api_key": [
         {
+<<<<<<< HEAD
           "current_key": "AIzaSyAcZNVkyBq9YglSjDJwPVHIq446prQGyCc"
+=======
+          "current_key": "AIzaSyBQo5Ql8d07qaW0AOjMnu9dqR0TugMMjE8"
+>>>>>>> map_directions
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
+<<<<<<< HEAD
               "client_id": "291672225421-nb0kogu38ei1rdbb3r9gprfg7cmgglvb.apps.googleusercontent.com",
+=======
+              "client_id": "726026815462-dl01qg3ssm094juqkgejne71qp5gkmr7.apps.googleusercontent.com",
+>>>>>>> map_directions
               "client_type": 3
             }
           ]

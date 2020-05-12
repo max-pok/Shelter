@@ -17,7 +17,6 @@ import com.mongodb.MongoClient;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static com.mongodb.client.model.Filters.eq;
 
 
 
@@ -27,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     public static boolean[] checkuser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
@@ -71,11 +69,14 @@ public class LoginActivity extends AppCompatActivity {
                             Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
                             myIntent.putExtra("email", email); //Optional parameters
                             startActivity(myIntent);
+                            finish();
                         }
                         else{ //This is simple user
                             System.out.println("this is simple user\n");
-                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
-
+                            Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
+                            myIntent.putExtra("email", email); //Optional parameters
+                            startActivity(myIntent);
+                            finish();
                         }
                     }
                     else{
@@ -104,9 +105,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
-
-
     }
+
     public void ShowContactPage() {
         startActivity(new Intent(getBaseContext(), ContactPage.class));
     }
@@ -164,4 +164,6 @@ public class LoginActivity extends AppCompatActivity {
         users_collection.insert(document);
         mongoClient.close();
     }
+
+
 }
