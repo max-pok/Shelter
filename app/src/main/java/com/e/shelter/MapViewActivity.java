@@ -382,6 +382,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             info.setStatus(object.getString("status"));
             info.setCapacity( object.getString("capacity"));
             info.setRating(object.getString("rating"));
+            info.setid(object.getObjectId("_id"));
+
 
             this.infowindow = (ViewGroup)getLayoutInflater().inflate(R.layout.info_window, null);
             this.infoTitle = (TextView)infowindow.findViewById(R.id.nameTxt);
@@ -438,7 +440,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
                     // Here we can perform some action triggered after clicking the button
-                    Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
+                    Intent i =new  Intent(MapViewActivity.this, RatingActivity.class);
                     if(i !=null) {
                         startActivity(i);
                     }
