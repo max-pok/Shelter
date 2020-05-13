@@ -103,11 +103,11 @@
         app:layout_constraintEnd_toEndOf="@+id/SignUpButton" />
 
     <Button
-        android:id="@+id/review_button"
+        android:id="@+id/button_update"
         android:layout_width="124dp"
         android:layout_height="42dp"
         android:background="@android:drawable/divider_horizontal_dark"
-        android:text="User review"
+        android:text="contact update"
         app:layout_constraintBottom_toTopOf="@+id/contact_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

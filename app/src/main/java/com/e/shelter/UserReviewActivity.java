@@ -48,11 +48,7 @@ public class UserReviewActivity extends AppCompatActivity {
 //        System.out.println("#########################");
 //        System.out.println(value);
     }
-    public void createReviewDataBase()
-    {
-//        UserReviewThread userThread= new UserReviewThread();
-//        userThread.start();
-    }
+
     public void addReview() {
         //get strings from sign up text boxes
         EditText nameInput = (EditText)findViewById(R.id.nameInput);

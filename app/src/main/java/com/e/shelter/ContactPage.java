@@ -58,7 +58,7 @@ public class ContactPage extends AppCompatActivity {
 
     public void showPage() {
         //Connect to MongoDB
-        int countContacts = 1;
+
 
         // Get MongoDb Database. If The Database Doesn't Exists, MongoDb Will Automatically Create It For You
 
@@ -69,16 +69,16 @@ public class ContactPage extends AppCompatActivity {
             createContactDataBase();
 
         DBCursor cursor = shelter_db_collection.find();
-
+        int countContacts = 0;
         while (cursor.hasNext()) {
-            countContacts++;
+            System.out.println("countContacts= "+countContacts);
             BasicDBObject object = (BasicDBObject) cursor.next();
-            this.tv = (TextView) findViewById(R.id.textView+2);
+            this.tv = (TextView) findViewById(R.id.mycontact1+countContacts);
             //System.out.println(object.get("name"));
-//            TextView tv1 = (TextView) findViewById(R.id.phoneInput + countContacts);
+            TextView tv1 = (TextView) findViewById(R.id.phoneInput1+countContacts);
             tv.setText((CharSequence) object.get("name"));
-//            tv1.setText((String) object.get("phoneNumber"));
-
+            tv1.setText((String) object.get("phoneNumber"));
+            countContacts+=1;
 
 
         }

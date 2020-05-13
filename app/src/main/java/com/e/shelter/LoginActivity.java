@@ -108,11 +108,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //temporary
-        Button reviewButton = (Button) findViewById(R.id.review_button);
-        reviewButton.setOnClickListener(new View.OnClickListener() {
+        Button button_update = (Button) findViewById(R.id.button_update);
+        button_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowReviewPage();
+                ShowUpdateContact();
             }
 
         });
@@ -124,8 +124,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //temporary
-    public void ShowReviewPage() {
-        startActivity(new Intent(getBaseContext(),UserReviewActivity.class));
+    public void ShowUpdateContact() {
+        startActivity(new Intent(getBaseContext(),UpdateContactActivity.class));
     }
 
     public String getEmail(){

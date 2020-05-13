@@ -36,7 +36,7 @@ public class ContactPageThread extends Thread{
             MongoCollection<Document> contactCollection = database.getCollection("contactPage");
             //Find if the email exist in users collection according to email
 
-            Document myDoc = contactCollection.find(eq("name", "עיריית באר שבע")).first();
+            Document myDoc = contactCollection.find(eq("name", "Be'er Sheva municipality")).first();
             if(myDoc!=null)
             {
                 mongoClient.close();
