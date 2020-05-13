@@ -32,7 +32,7 @@ public class RatingActivity extends AppCompatActivity {
 
     private String shelter_add;
     private int oldcount;
-    private float old_avg;
+    private int old_avg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -54,6 +54,7 @@ public class RatingActivity extends AppCompatActivity {
         String rating=rateInput.getText().toString();
         int rating1=Integer.parseInt(rating);
 
+        //current address
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             shelter_add = extras.getString("address");
