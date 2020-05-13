@@ -88,7 +88,6 @@ public class RatingActivity extends AppCompatActivity {
                 updateDoc.put("average",(old_avg+rating1)/(oldcount+1));
                 ratingCollection.replaceOne(and(eq("shelter_id", this.shelter_add), eq("counter", oldcount),eq("average",old_avg)),updateDoc);
                 System.out.println("newContact1" + myDoc);
-
             }
             //startActivity(new Intent(getBaseContext(), MapViewActivity.class));
 

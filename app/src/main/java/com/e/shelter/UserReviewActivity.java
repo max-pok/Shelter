@@ -21,6 +21,8 @@ import static com.e.shelter.R.layout.activity_user_review;
 public class UserReviewActivity extends AppCompatActivity {
     public static String user;
     public static String review;
+    private String shelter_add;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -56,8 +58,14 @@ public class UserReviewActivity extends AppCompatActivity {
 
         user= nameInput.getText().toString();
         review= reviewInput.getText().toString();
+        //current address
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            shelter_add = extras.getString("address");
+            //The key argument here must match that used in the other activity
+        }
         //start new thread to add a new user.
-        UserReviewThread signupThread= new UserReviewThread(user,review);
+        UserReviewThread signupThread= new UserReviewThread(user,review,shelter_add);
         signupThread.start();
         Thread t = Thread.currentThread();// The main thread
 

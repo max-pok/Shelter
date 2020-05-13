@@ -17,10 +17,13 @@ import static com.mongodb.client.model.Filters.eq;
 public class UserReviewThread extends Thread{
     public static String userID;
     public static String review;
+    public static String address;
+
     //c'tor
-    UserReviewThread(String id,String review){
+    UserReviewThread(String id,String review,String add){
         this.userID=id;
         this.review=review;
+        this.address=add;
     }
     public void run()
     {
@@ -32,7 +35,7 @@ public class UserReviewThread extends Thread{
             MongoCollection<Document> contactCollection = database.getCollection("userReviews");
             //Find if the email exist in users collection according to email
 
-            Document myDoc = contactCollection.find(and(eq("userID", userID), eq("review", review))).first();
+            Document myDoc = contactCollection.find(and(eq("userID", userID), eq("review", review), eq("address", address))).first();
             if(myDoc!=null)
             {
                 mongoClient.close();
@@ -41,7 +44,7 @@ public class UserReviewThread extends Thread{
             else {
                 //new Document for users collection
                 ArrayList<Document> newReview = new ArrayList<Document>();
-                newReview.add(new Document().append("userID", userID).append("review", review));
+                newReview.add(new Document().append("userID", userID).append("review", review).append("address",address));
 
                 //insert the document to users collection
                 contactCollection.insertMany(newReview);
