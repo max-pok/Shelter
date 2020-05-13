@@ -59,15 +59,16 @@
 
     <Button
         android:id="@+id/SignUpButton"
-        android:layout_width="93dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="161dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="41dp"
         android:background="@android:drawable/divider_horizontal_dark"
         android:shadowColor="@android:color/background_dark"
         android:text="SIGN UP"
         android:textColorHint="@android:color/background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LoginButton" />
 
@@ -91,16 +92,6 @@
         android:layout_height="wrap_content"
         app:barrierDirection="left"
         tools:layout_editor_absoluteX="411dp" />
-
-    <Button
-        android:id="@+id/contact_button"
-        android:layout_width="84dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="32dp"
-        android:background="@android:drawable/divider_horizontal_dark"
-        android:text="Contact"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/SignUpButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

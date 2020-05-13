@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 
 public class LoginActivity extends AppCompatActivity {
-    public static String email="adirat@ac.sce.ac.il";
+    public static String email;
     public static String password;
     public static boolean[] checkuser;
     @Override
@@ -97,19 +97,16 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
-        Button contactButton = (Button) findViewById(R.id.contact_button);
+       /* Button contactButton = (Button) findViewById(R.id.contact_button);
         contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ShowContactPage();
             }
 
-        });
+        });*/
     }
 
-    public void ShowContactPage() {
-        startActivity(new Intent(getBaseContext(), ContactPage.class));
-    }
 
     public String getEmail(){
         return email;

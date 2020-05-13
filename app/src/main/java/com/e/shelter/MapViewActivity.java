@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,8 +25,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
-
-import com.e.shelter.utilities.InfoWindowData;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -206,8 +203,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //Header
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
-        //userEmail = getIntent().getStringExtra("email");
-        userEmail = "maxim.p9@gmail.com";
+        userEmail = getIntent().getStringExtra("email");
         if (userEmail != null) header_email.setText(userEmail);
 
         //Switch
@@ -422,14 +418,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             MarkerOptions markerOptions = new MarkerOptions();
             //Save the information about the shelter
             markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
-            final InfoWindowData info = new InfoWindowData();
-            info.setName(object.getString("name"));
-            info.setAddress(object.getString("address"));
-            info.setStatus(object.getString("status"));
-            info.setCapacity(object.getString("capacity"));
-            info.setRating(object.getString("rating"));
-
-
 //            if (loginActivity.checkuser[1] == true) {
                 edit_btn.setVisibility(View.VISIBLE);
 //            }
@@ -485,12 +473,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
                 @Override
                 public View getInfoContents(Marker marker) {
+                    String lon = Double.toString(marker.getPosition().longitude);
+                    String lat = Double.toString(marker.getPosition().latitude);
+                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
                     // Setting up the infoWindow with current's marker info
                     infoTitle.setText(marker.getTitle());
                     infoSnippet.setText(marker.getSnippet());
-                    statusTxt.setText(info.getStatus());
-                    capacityTxt.setText(info.getCapacity());
-                    ratingTxt.setText(info.getRating());
+                    statusTxt.setText(myDoc.get("status").toString());
+                    capacityTxt.setText(myDoc.get("capacity").toString());
+                    ratingTxt.setText(myDoc.get("rating").toString());
                     infoButtonListener.setMarker(marker);
 
                     // We must call this to set the current marker and infoWindow references
@@ -502,11 +495,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
 
             //Add markers
-            googleMap.addMarker(new MarkerOptions()
-                    .title(info.getName())
-                    .snippet(info.getAddress())
-                    .position(latLng)
-            );
+            googleMap.addMarker(markerOptions);
 
             googleMap.setOnMarkerClickListener(this);
 

@@ -1,8 +1,8 @@
 package com.e.shelter;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +11,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.e.shelter.utilities.InfoWindowData;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -49,6 +47,9 @@ public class EditShelterDetails extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                        Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
+                        startActivity(myIntent);
+
                     }
                 });
         final AlertDialog errorMessage = builder.create();
@@ -74,9 +75,6 @@ public class EditShelterDetails extends AppCompatActivity {
                 else{
                     errorMessage.show();
                 }
-
-
-
 
             }
 
