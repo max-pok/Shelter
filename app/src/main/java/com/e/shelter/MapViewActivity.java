@@ -122,6 +122,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private Button rating_btn;
     private MenuItem see_review;
     public Context ctx =this;
+    private String currentAddress;
 
 
     @Override
@@ -373,7 +374,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
-            MarkerOptions markerOptions = new MarkerOptions();
+            final MarkerOptions markerOptions = new MarkerOptions();
             //Save the information about the shelter
             markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
             final InfoWindowData info = new InfoWindowData();
@@ -422,6 +423,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     // Here we can perform some action triggered after clicking the button
                     Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
                     if(i !=null) {
+                        i.putExtra("address", currentAddress);
                         startActivity(i);
                     }
                     Toast.makeText(MapViewActivity.this, "click on add review", Toast.LENGTH_SHORT).show();
@@ -439,11 +441,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             this.infoButtonListener = new OnInfoWindowElemTouchListener(rating_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
-                    // Here we can perform some action triggered after clicking the button
-                    Intent i =new  Intent(MapViewActivity.this, RatingActivity.class);
-                    if(i !=null) {
-                        startActivity(i);
-                    }
+                    //Intent i =new  Intent(MapViewActivity.this, RatingActivity.class);
+                    Intent intent = new Intent(getBaseContext(), RatingActivity.class);
+                    intent.putExtra("address", currentAddress);
+                    startActivity(intent);
+
                     Toast.makeText(MapViewActivity.this, "click on add rating", Toast.LENGTH_SHORT).show();
                 }
             };
@@ -477,6 +479,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
                 public View getInfoWindow(Marker marker) {
+                    currentAddress=marker.getSnippet();
+                    System.out.println("@@@@@@@@"+marker.getSnippet());
                     return null;
                 }
 

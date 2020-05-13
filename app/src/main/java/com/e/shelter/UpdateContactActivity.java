@@ -80,29 +80,28 @@ public class UpdateContactActivity extends AppCompatActivity {
 
         if(myDoc!=null) {
             oldNumber = myDoc.get("phoneNumber").toString();
-            System.out.println("%%%%%" + oldNumber);
             myDoc.getObjectId("_id");
             Document updateDoc = new Document();
             updateDoc.put("name", contactName);
             updateDoc.put("phoneNumber", newNumber);
             contactCollection.replaceOne(and(eq("name", contactName), eq("phoneNumber", oldNumber)), updateDoc);
-
         }
         else {
             Document updateDoc = new Document();
             updateDoc.put("name", contactName);
             updateDoc.put("phoneNumber", newNumber);
             contactCollection.insertOne(updateDoc);
-            setContentView(R.layout.contacts_of_municipality);
-            LinearLayout llMain = findViewById(R.id.linearLayout0);
-            TextView textView = new TextView(this);
-            textView.setText("I am added dynamically to the view");
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-            );
-            textView.setLayoutParams(params);
-            llMain.addView(textView);
+            //trying to add textview to the end of linear layout
+            //setContentView(R.layout.contacts_of_municipality);
+//            LinearLayout llMain = findViewById(R.id.linearLayout0);
+//            TextView textView = new TextView(this);
+//            textView.setText("I am added dynamically to the view");
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                    LinearLayout.LayoutParams.MATCH_PARENT,
+//                    LinearLayout.LayoutParams.MATCH_PARENT
+//            );
+//            textView.setLayoutParams(params);
+//            llMain.addView(textView);
         }
         mongoClient.close();
         startActivity(new Intent(getBaseContext(), ContactPage.class));
