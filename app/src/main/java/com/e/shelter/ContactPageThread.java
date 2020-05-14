@@ -45,13 +45,13 @@ public class ContactPageThread extends Thread{
             else {
                 //new Document for users collection
                 ArrayList<Document> newContact = new ArrayList<Document>();
-                newContact.add(new Document().append("name", "עיריית באר שבע").append("phoneNumber", "08-6463777/106"));
-                newContact.add(new Document().append("name", "משטרת ישראל").append("phoneNumber", "100"));
-                newContact.add(new Document().append("name", "מגן דוד אדום").append("phoneNumber", "101"));
-                newContact.add(new Document().append("name", "כיבוי אש").append("phoneNumber", "102"));
-                newContact.add(new Document().append("name", "פיקוד העורף").append("phoneNumber", "104"));
-                newContact.add(new Document().append("name", "בית החולים סורוקה").append("phoneNumber", "08-6400111"));
-                newContact.add(new Document().append("name", "חברת חשמל").append("phoneNumber", "103"));
+                newContact.add(new Document().append("name", "Be'er Sheva municipality").append("phoneNumber", "08-6463777/106"));
+                newContact.add(new Document().append("name", "Police").append("phoneNumber", "100"));
+                newContact.add(new Document().append("name", "Ambulance").append("phoneNumber", "101"));
+                newContact.add(new Document().append("name", "Firefighters").append("phoneNumber", "102"));
+                newContact.add(new Document().append("name", "HFC").append("phoneNumber", "104"));
+                newContact.add(new Document().append("name", "Soroka Hospital").append("phoneNumber", "08-6400111"));
+                newContact.add(new Document().append("name", "IEC").append("phoneNumber", "103"));
 
                 //insert the document to users collection
                 contactCollection.insertMany(newContact);
