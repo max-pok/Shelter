@@ -44,6 +44,7 @@ public class ContactPage extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(contacts_of_municipality);
+        //createContactDataBase();
         showPage();
 
 

@@ -7,6 +7,7 @@ import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -41,6 +42,7 @@ public class RatingActivity extends AppCompatActivity {
         setContentView(rating_activity);
         InfoWindowData info = new InfoWindowData();
 
+
         Button buttonUpdate = (Button) findViewById(R.id.Rate_button);
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,8 +62,10 @@ public class RatingActivity extends AppCompatActivity {
             shelter_add = extras.getString("address");
             //The key argument here must match that used in the other activity
         }
-        if(rating1>10 | rating1<0)
-            startActivity(new Intent(getBaseContext(), RatingActivity.class));
+        if (rating1>10 | rating1<0) {
+          //  startActivity(new Intent(getBaseContext(), RatingActivity.class));
+            Toast.makeText(RatingActivity.this, "Error", Toast.LENGTH_LONG).show();
+        }
         else {
             //Connect to MongoDB
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
@@ -115,10 +119,8 @@ public class RatingActivity extends AppCompatActivity {
                 sheltersCollection.replaceOne((eq("address", this.shelter_add)),updateDoc1);
             }
 
+            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
         }
-        startActivity(new Intent(getBaseContext(), MapViewActivity.class));
-
-
 
     }
 }

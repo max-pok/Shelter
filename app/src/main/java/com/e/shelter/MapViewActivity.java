@@ -237,7 +237,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
         Intent intent = getIntent();
-        String value = intent.getStringExtra("email");
+        //String value = intent.getStringExtra("email");
+        String value = "maxim.p9@gmail.com";
 
 
         if (value != null) header_email.setText(value);
