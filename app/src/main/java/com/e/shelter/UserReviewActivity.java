@@ -1,0 +1,89 @@
+package com.e.shelter;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+
+import static com.e.shelter.R.layout.activity_user_review;
+
+public class UserReviewActivity extends AppCompatActivity {
+    public static String user;
+    public static String review;
+    public  String email;
+    private String shelter_add;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        super.onCreate(savedInstanceState);
+        setContentView(activity_user_review);
+//        createReviewDataBase();
+        Button SendButton = (Button) findViewById(R.id.SendButton);
+        SendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addReview();
+            }
+        });
+
+    }
+
+    public void addReview() {
+        //get strings from sign up text boxes
+        EditText nameInput = (EditText)findViewById(R.id.nameInput);
+        EditText reviewInput = (EditText)findViewById(R.id.reviewInput);
+
+        user= nameInput.getText().toString();
+        review= reviewInput.getText().toString();
+        //current address
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            shelter_add = extras.getString("address");
+            email=extras.getString("email");
+            //The key argument here must match that used in the other activity
+        }
+        //start new thread to add a new user.
+        UserReviewThread signupThread= new UserReviewThread(user,review,shelter_add,email);
+        signupThread.start();
+        Thread t = Thread.currentThread();// The main thread
+        startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
+
+    }
+
+    public void showPage() {
+
+
+        // Get MongoDb Database. If The Database Doesn't Exists, MongoDb Will Automatically Create It For You
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection shelter_db_collection = shelter_db.getCollection("userReviews");
+        DBCursor cursor = shelter_db_collection.find();
+        int countContacts=1;
+        while (cursor.hasNext()) {
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            TextView tv = (TextView)findViewById(R.id.textView+countContacts);
+            tv.setText((String)object.get("userID"));
+            TextView tv1 = (TextView)findViewById(R.id.textView+countContacts);
+            tv1.setText((String)object.get("review"));
+            countContacts++;
+
+        }
+        mongoClient.close();
+    }
+
+
+}
