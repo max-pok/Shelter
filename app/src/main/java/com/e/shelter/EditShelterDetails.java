@@ -70,7 +70,6 @@ public class EditShelterDetails extends AppCompatActivity {
                 if(update_details()){
                     setResult(3);
                     finish();
-
                 }
                 else{
                     errorMessage.show();

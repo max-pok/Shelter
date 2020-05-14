@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.e.shelter.MapViewActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.FavoriteCard;
 import com.google.android.material.button.MaterialButton;

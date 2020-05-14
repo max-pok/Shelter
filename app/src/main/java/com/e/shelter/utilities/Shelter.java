@@ -8,6 +8,7 @@ public class Shelter {
     private String status;
     private String capacity;
     private double rating;
+    private int rateCount;
 
     public Shelter(String name, String address, String lat, String lon, String status, String capacity, double rating) {
         this.name = name;
@@ -17,7 +18,10 @@ public class Shelter {
         this.status = status;
         this.capacity = capacity;
         this.rating = rating;
+        this.rateCount = 0;
     }
+
+    public Shelter() {}
 
     public void setName(String name) {
         this.name = name;
@@ -73,5 +77,13 @@ public class Shelter {
 
     public double getRating() {
         return rating;
+    }
+
+    public int getRateCount() {
+        return rateCount;
+    }
+
+    public void setRateCount(int rateCount) {
+        this.rateCount = rateCount;
     }
 }
