@@ -9,6 +9,9 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import static com.e.shelter.R.layout.activity_signup;
+
 public class SignupActivity extends AppCompatActivity {
     public static String email;
     public static String password;
@@ -20,7 +23,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(activity_signup);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         builder.setMessage("This email exists, Choose another one!")
@@ -43,7 +46,7 @@ public class SignupActivity extends AppCompatActivity {
                 });
         final AlertDialog goodMessage = builder2.create();
         //sign up button
-        Button SignupButton = (Button) findViewById(R.id.SignupButton2);
+        Button SignupButton = (Button) findViewById(R.id.SendButton);
         SignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,8 +68,8 @@ public class SignupActivity extends AppCompatActivity {
     public boolean addUser() throws InterruptedException {
         boolean flag;
         //get strings from sign up text boxes
-        EditText firstnameInput = (EditText)findViewById(R.id.fnameInput);
-        EditText lastnameInput = (EditText)findViewById(R.id.lnameInput);
+        EditText firstnameInput = (EditText)findViewById(R.id.reviewInput);
+        EditText lastnameInput = (EditText)findViewById(R.id.nameInput);
         EditText passwordInput = (EditText)findViewById(R.id.passInput);
         EditText emailInput = (EditText)findViewById(R.id.emailInput);
         EditText phoneInput = (EditText)findViewById(R.id.phoneInput);

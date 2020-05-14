@@ -36,6 +36,9 @@
         <activity android:name=".ContactPage" />
         <activity android:name=".ChangePassActivity" />
         <activity android:name=".EditShelterDetails" />
+        <activity android:name=".UserReviewActivity" />
+        <activity android:name=".UpdateContactActivity" />
+        <activity android:name=".RatingActivity" />
 
 
         <uses-library

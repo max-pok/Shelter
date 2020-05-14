@@ -86,35 +86,35 @@ public class EditShelterDetails extends AppCompatActivity {
 
     }
     public boolean update_details(){
-            try {
-                MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-                String lon = getIntent().getStringExtra("lon");
-                String lat = getIntent().getStringExtra("lat");
-                MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-                MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-                Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
-                Document updateDoc = new Document();
-                System.out.println(this.editText_name.getText());
-                System.out.println(this.editText_address.getText().toString());
-                System.out.println(this.editText_capacity.getText().toString());
-                System.out.println(this.editText_status.getText().toString());
-                updateDoc.put("name", this.editText_name.getText().toString());
-                updateDoc.put("lat", lat);
-                updateDoc.put("lon", lon);
-                updateDoc.put("address", this.editText_address.getText().toString());
-                updateDoc.put("capacity", this.editText_capacity.getText().toString());
-                updateDoc.put("status", this.editText_status.getText().toString());
-                updateDoc.put("rating", myDoc.get("rating"));
-                mongoCollection.replaceOne(and(eq("lon", lon), eq("lat", lat)), updateDoc);
-                mongoClient.close();
-            }
-            catch (Exception e){
+        try {
+            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+            String lon = getIntent().getStringExtra("lon");
+            String lat = getIntent().getStringExtra("lat");
+            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+            MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+            Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
+            Document updateDoc = new Document();
+            System.out.println(this.editText_name.getText());
+            System.out.println(this.editText_address.getText().toString());
+            System.out.println(this.editText_capacity.getText().toString());
+            System.out.println(this.editText_status.getText().toString());
+            updateDoc.put("name", this.editText_name.getText().toString());
+            updateDoc.put("lat", lat);
+            updateDoc.put("lon", lon);
+            updateDoc.put("address", this.editText_address.getText().toString());
+            updateDoc.put("capacity", this.editText_capacity.getText().toString());
+            updateDoc.put("status", this.editText_status.getText().toString());
+            updateDoc.put("rating", myDoc.get("rating"));
+            mongoCollection.replaceOne(and(eq("lon", lon), eq("lat", lat)), updateDoc);
+            mongoClient.close();
+        }
+        catch (Exception e){
 
-                Log.e("Error " + e, "" + e);
-                return false;
+            Log.e("Error " + e, "" + e);
+            return false;
 
-            }
-            return true;
+        }
+        return true;
 
 
     }

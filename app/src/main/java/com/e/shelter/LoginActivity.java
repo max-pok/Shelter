@@ -73,10 +73,17 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         else{ //This is simple user
                             System.out.println("this is simple user\n");
+<<<<<<< HEAD
                             Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
                             myIntent.putExtra("email", email); //Optional parameters
                             startActivity(myIntent);
                             finish();
+=======
+                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
+
+
+>>>>>>> complaint_form
                         }
                     }
                     else{
@@ -104,9 +111,34 @@ public class LoginActivity extends AppCompatActivity {
                 ShowContactPage();
             }
 
+<<<<<<< HEAD
         });*/
     }
 
+=======
+        });
+
+        //temporary
+        Button button_update = (Button) findViewById(R.id.button_update);
+        button_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowUpdateContact();
+            }
+
+        });
+
+
+    }
+    public void ShowContactPage() {
+        startActivity(new Intent(getBaseContext(), ContactPage.class));
+    }
+
+    //temporary
+    public void ShowUpdateContact() {
+        startActivity(new Intent(getBaseContext(),UpdateContactActivity.class));
+    }
+>>>>>>> complaint_form
 
     public String getEmail(){
         return email;
