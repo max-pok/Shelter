@@ -103,6 +103,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView capacityTxt;
     private TextView ratingTxt;
     private OnInfoWindowElemTouchListener infoButtonListener;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
     private MaterialButton edit_btn;
     private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
@@ -110,6 +114,18 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters;
+<<<<<<< HEAD
+=======
+=======
+    private Button edit_btn;
+    private Button favorite_btn;
+    private Button review_btn;
+    private Button rating_btn;
+    private MenuItem see_review;
+    public Context ctx =this;
+    private String currentAddress;
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
 
 
     @Override
@@ -203,8 +219,23 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //Header
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
+<<<<<<< HEAD
         userEmail = getIntent().getStringExtra("email");
         if (userEmail != null) header_email.setText(userEmail);
+=======
+<<<<<<< HEAD
+        userEmail = getIntent().getStringExtra("email");
+        if (userEmail != null) header_email.setText(userEmail);
+=======
+        Intent intent = getIntent();
+        //String value = intent.getStringExtra("email");
+        String value = "maxim.p9@gmail.com";
+
+
+        if (value != null) header_email.setText(value);
+>>>>>>> complaint_form
+
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -415,10 +446,43 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
             MarkerOptions markerOptions = new MarkerOptions();
             //Save the information about the shelter
             markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
 //            if (loginActivity.checkuser[1] == true) {
+<<<<<<< HEAD
+=======
+=======
+            final MarkerOptions markerOptions = new MarkerOptions();
+            //Save the information about the shelter
+            markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
+            final InfoWindowData info = new InfoWindowData();
+            info.setName(object.getString("name"));
+            info.setAddress(object.getString("address"));
+            info.setStatus(object.getString("status"));
+            info.setCapacity( object.getString("capacity"));
+            info.setRating(object.getString("rating"));
+            info.setid(object.getObjectId("_id"));
+
+
+            this.infowindow = (ViewGroup)getLayoutInflater().inflate(R.layout.info_window, null);
+            this.infoTitle = (TextView)infowindow.findViewById(R.id.nameTxt);
+            this.infoSnippet = (TextView)infowindow.findViewById(R.id.addressTxt);
+            this.statusTxt = (TextView)infowindow.findViewById(R.id.statusTxt);
+            this.capacityTxt = (TextView)infowindow.findViewById(R.id.capacityTxt);
+            this.ratingTxt = (TextView)infowindow.findViewById(R.id.ratingTxt);
+
+            this.favorite_btn = (Button)infowindow.findViewById(R.id.favorite_btn);
+
+
+            this.edit_btn = (Button)infowindow.findViewById(R.id.edit_btn);
+            if (loginActivity.checkuser[1]== true){
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
                 edit_btn.setVisibility(View.VISIBLE);
 //            }
 
@@ -441,15 +505,84 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             };
             favorite_btn.setOnTouchListener(infoButtonListener);
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
             infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, null, null) {
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
                     String lon = Double.toString(marker.getPosition().longitude);
                     String lat = Double.toString(marker.getPosition().latitude);
+<<<<<<< HEAD
+=======
+=======
+
+
+
+
+            //add user review
+            this.review_btn = (Button)infowindow.findViewById(R.id.review_button);
+            if (loginActivity.checkuser[1]== true){
+                review_btn.setVisibility(View.INVISIBLE);
+            }
+
+            this.infoButtonListener = new OnInfoWindowElemTouchListener(review_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    //user name to send for review.
+                    LoginActivity loginActivity1 = new LoginActivity();
+                    String email = loginActivity1.getEmail();
+//                    System.out.println("$$$$$$$$$$$$$$$$$");
+//                    System.out.println("email"+email);
+//
+                    // Here we can perform some action triggered after clicking the button
+                    Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
+                    if(i !=null) {
+                        i.putExtra("address", currentAddress);
+                        i.putExtra("email", email);
+                        startActivity(i);
+                    }
+                    Toast.makeText(MapViewActivity.this, "click on add review", Toast.LENGTH_SHORT).show();
+                }
+            };
+            this.review_btn.setOnTouchListener(infoButtonListener);
+
+            //ratings
+
+            this.rating_btn = (Button)infowindow.findViewById(R.id.rate_btn);
+            if (loginActivity.checkuser[1]== true){
+                rating_btn.setVisibility(View.INVISIBLE);
+            }
+
+            this.infoButtonListener = new OnInfoWindowElemTouchListener(rating_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    //Intent i =new  Intent(MapViewActivity.this, RatingActivity.class);
+                    Intent intent = new Intent(getBaseContext(), RatingActivity.class);
+                    intent.putExtra("address", currentAddress);
+                    startActivity(intent);
+
+                    Toast.makeText(MapViewActivity.this, "click on add rating", Toast.LENGTH_SHORT).show();
+                }
+            };
+            this.rating_btn.setOnTouchListener(infoButtonListener);
+
+            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, getResources().getDrawable(R.drawable.btn_bg),getResources().getDrawable(R.drawable.btn_bg)){
+                @Override
+                protected void onClickConfirmed(View v, Marker marker) {
+                    String lon= Double.toString(marker.getPosition().longitude);
+                    String lat=Double.toString(marker.getPosition().latitude);
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
                     MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
                     MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
                     Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
                     Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
                     if (i != null) {
                         i.putExtra("name", marker.getTitle());
@@ -458,6 +591,20 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                         i.putExtra("capacity", myDoc.get("capacity").toString());
                         i.putExtra("lon", lon);
                         i.putExtra("lat", lat);
+<<<<<<< HEAD
+=======
+=======
+                    Intent i =new  Intent(MapViewActivity.this, EditShelterDetails.class);
+
+                    if(i !=null){
+                        i.putExtra("name",marker.getTitle());
+                        i.putExtra("address",marker.getSnippet());
+                        i.putExtra("status",myDoc.get("status").toString());
+                        i.putExtra("capacity",myDoc.get("capacity").toString());
+                        i.putExtra("lon",lon);
+                        i.putExtra("lat",lat);
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
                         startActivity(i);
                     }
                     Toast.makeText(getApplicationContext(), "click on edit buttun", Toast.LENGTH_LONG).show();
@@ -481,9 +628,21 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     // Setting up the infoWindow with current's marker info
                     infoTitle.setText(marker.getTitle());
                     infoSnippet.setText(marker.getSnippet());
+<<<<<<< HEAD
                     statusTxt.setText(myDoc.get("status").toString());
                     capacityTxt.setText(myDoc.get("capacity").toString());
                     ratingTxt.setText(myDoc.get("rating").toString());
+=======
+<<<<<<< HEAD
+                    statusTxt.setText(myDoc.get("status").toString());
+                    capacityTxt.setText(myDoc.get("capacity").toString());
+                    ratingTxt.setText(myDoc.get("rating").toString());
+=======
+                    statusTxt.setText(info.getStatus());
+                    capacityTxt.setText(info.getCapacity());
+                    ratingTxt.setText(info.getRating());
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
                     infoButtonListener.setMarker(marker);
 
                     // We must call this to set the current marker and infoWindow references
@@ -682,8 +841,33 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                         } else
                             googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
+<<<<<<< HEAD
                     }
                 });
+=======
+<<<<<<< HEAD
+                    }
+                });
+=======
+    public void addSheltersToFireBaseDataBase() {
+        /*MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        DB shelter_db = mongoClient.getDB("SafeZone_DB");
+        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+        DBCursor cursor = shelter_db_collection.find();
+        database = FirebaseFirestore.getInstance();
+        CollectionReference Shelters = database.collection("Shelters");
+        while (cursor.hasNext()) {
+            BasicDBObject object = (BasicDBObject) cursor.next();
+            Shelter shelter = new Shelter(object.getString("name"),
+                    object.getString("address"),
+                    object.getString("lat"),
+                    object.getString("lon"),
+                    object.getString("status"),
+                    object.getString("capacity"));
+            Shelters.add(shelter);
+        }*/
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
     }
 
 

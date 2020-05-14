@@ -13,9 +13,19 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< HEAD
         setContentView(R.layout.settings_activity);
         setTitle("Settings");
 
+=======
+<<<<<<< HEAD
+        setContentView(R.layout.settings_activity);
+        setTitle("Settings");
+
+=======
+        setContentView(settings_activity);
+>>>>>>> complaint_form
+>>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings, new SettingsFragment())
