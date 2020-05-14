@@ -410,13 +410,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             };
             this.favorite_btn.setOnTouchListener(infoButtonListener);
-            //user name to send for review. but cannot see for RegularUser
-//            View header = navigationView.getHeaderView(0);
-//            TextView header_email = header.findViewById(R.id.email_header);
-//            Intent intent = getIntent();
-//            String value = intent.getStringExtra("email");
-//            System.out.println("$$$$$$$$$$$$$$$$$");
-//            System.out.println(value);
+
+
+
 
 
             //add user review
@@ -428,10 +424,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             this.infoButtonListener = new OnInfoWindowElemTouchListener(review_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){
                 @Override
                 protected void onClickConfirmed(View v, Marker marker) {
+                    //user name to send for review.
+                    LoginActivity loginActivity1 = new LoginActivity();
+                    String email = loginActivity1.getEmail();
+//                    System.out.println("$$$$$$$$$$$$$$$$$");
+//                    System.out.println("email"+email);
+//
                     // Here we can perform some action triggered after clicking the button
                     Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
                     if(i !=null) {
                         i.putExtra("address", currentAddress);
+                        i.putExtra("email", email);
                         startActivity(i);
                     }
                     Toast.makeText(MapViewActivity.this, "click on add review", Toast.LENGTH_SHORT).show();

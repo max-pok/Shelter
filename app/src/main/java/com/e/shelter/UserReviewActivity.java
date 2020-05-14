@@ -21,6 +21,7 @@ import static com.e.shelter.R.layout.activity_user_review;
 public class UserReviewActivity extends AppCompatActivity {
     public static String user;
     public static String review;
+    public  String email;
     private String shelter_add;
 
     @Override
@@ -51,10 +52,11 @@ public class UserReviewActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             shelter_add = extras.getString("address");
+            email=extras.getString("email");
             //The key argument here must match that used in the other activity
         }
         //start new thread to add a new user.
-        UserReviewThread signupThread= new UserReviewThread(user,review,shelter_add);
+        UserReviewThread signupThread= new UserReviewThread(user,review,shelter_add,email);
         signupThread.start();
         Thread t = Thread.currentThread();// The main thread
         startActivity(new Intent(getBaseContext(), MapViewActivity.class));
@@ -63,10 +65,7 @@ public class UserReviewActivity extends AppCompatActivity {
     }
 
     public void showPage() {
-        //Connect to MongoDB
-//        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-//        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-//        MongoCollection<Document> contactCollection = database.getCollection("contactPage");
+
 
         // Get MongoDb Database. If The Database Doesn't Exists, MongoDb Will Automatically Create It For You
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
