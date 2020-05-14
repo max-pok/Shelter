@@ -140,61 +140,46 @@
         android:layout_below="@+id/toplayout"
         android:orientation="horizontal">
 
-<<<<<<< HEAD
         <com.google.android.material.button.MaterialButton
-=======
-<<<<<<< HEAD
-        <com.google.android.material.button.MaterialButton
-=======
-
-        <Button
->>>>>>> complaint_form
->>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
             android:id="@+id/favorite_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="2dp"
             android:backgroundTint="@color/quantum_cyan"
             android:text="SAVE"
             app:mt_borderlessRippleEnabled="true"
-            app:icon="@drawable/savebookmark_icon_white"
             tools:ignore="MissingConstraints" />
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_btn"
-            android:layout_width="84dp"
-            android:layout_height="40dip"
-            android:layout_marginLeft="10dip"
-<<<<<<< HEAD
-            android:visibility="invisible"
-            android:text="Edit" />
-=======
-<<<<<<< HEAD
-            android:visibility="invisible"
-            android:text="Edit" />
-=======
-            android:background="@drawable/btn_bg"
-            android:text="Edit"
-            android:visibility="invisible" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/toplayout"
-        android:layout_marginTop="46dp"
-        android:orientation="horizontal">>
-
-        <Button
             android:id="@+id/rate_btn"
-            android:layout_width="131dp"
-            android:layout_height="40dip"
-            android:background="@drawable/btn_bg"
-            android:text="Rate"/>
->>>>>>> complaint_form
->>>>>>> b936bd217bfc901bdcbd80c8ae8b535886fcda11
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:backgroundTint="@color/quantum_cyan"
+            android:text="rate"
+            app:mt_borderlessRippleEnabled="true"
+            tools:ignore="MissingConstraints" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:backgroundTint="@color/quantum_cyan"
+            android:text="edit"
+            app:mt_borderlessRippleEnabled="true"
+            tools:ignore="MissingConstraints" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/review_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:backgroundTint="@color/quantum_cyan"
+            android:text="review"
+            app:mt_borderlessRippleEnabled="true"
+            tools:ignore="MissingConstraints" />
 
     </LinearLayout>
 </RelativeLayout>
