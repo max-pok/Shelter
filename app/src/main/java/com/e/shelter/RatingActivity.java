@@ -70,13 +70,26 @@ public class RatingActivity extends AppCompatActivity {
             MongoCollection<Document> ratingCollection = database.getCollection("ratingDB");
             //Find if the name exist in contact collection according to input
             Document myDoc = ratingCollection.find(eq("shelter_id", this.shelter_add)).first();
+            Document myDoc1 = sheltersCollection.find(eq("address", this.shelter_add)).first();
+
             //new shelter for rating list
             if(myDoc==null) {
                 //adding rating through shelter id to rating db and counter.
                 Document newShelter = new Document();
                 newShelter.append("shelter_id", this.shelter_add).append("counter", 1).append("average",rating1);
                 ratingCollection.insertOne(newShelter);
-                System.out.println("newContact" + newShelter);
+
+                //updating the shelter db
+                Document updateDoc = new Document();
+                updateDoc.put("name",myDoc1.getString("name").toString());
+                updateDoc.put("lat",myDoc1.getString("lat").toString());
+                updateDoc.put("lon",myDoc1.getString("lon").toString());
+                updateDoc.put("address",myDoc1.getString("address").toString());
+                updateDoc.put("status",myDoc1.getString("status").toString());
+                updateDoc.put("capacity",myDoc1.getString("capacity").toString());
+                updateDoc.put("rating",rating1);
+                sheltersCollection.replaceOne((eq("rating", 0)),updateDoc);
+
             }
             else
             {
@@ -87,11 +100,24 @@ public class RatingActivity extends AppCompatActivity {
                 updateDoc.put("counter", oldcount+1);
                 updateDoc.put("average",(old_avg+rating1)/(oldcount+1));
                 ratingCollection.replaceOne(and(eq("shelter_id", this.shelter_add), eq("counter", oldcount),eq("average",old_avg)),updateDoc);
-                System.out.println("newContact1" + myDoc);
+
+                int new_avg=(old_avg+rating1)/(oldcount+1);
+
+                //updating the shelter db
+                Document updateDoc1 = new Document();
+                updateDoc1.put("name",myDoc1.getString("name").toString());
+                updateDoc1.put("lat",myDoc1.getString("lat").toString());
+                updateDoc1.put("lon",myDoc1.getString("lon").toString());
+                updateDoc1.put("address",myDoc1.getString("address").toString());
+                updateDoc1.put("status",myDoc1.getString("status").toString());
+                updateDoc1.put("capacity",myDoc1.getString("capacity").toString());
+                updateDoc1.put("rating",new_avg);
+                sheltersCollection.replaceOne((eq("address", this.shelter_add)),updateDoc1);
             }
-            //startActivity(new Intent(getBaseContext(), MapViewActivity.class));
 
         }
+        startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
 
 
     }

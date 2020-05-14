@@ -410,6 +410,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             };
             this.favorite_btn.setOnTouchListener(infoButtonListener);
+            //user name to send for review. but cannot see for RegularUser
+//            View header = navigationView.getHeaderView(0);
+//            TextView header_email = header.findViewById(R.id.email_header);
+//            Intent intent = getIntent();
+//            String value = intent.getStringExtra("email");
+//            System.out.println("$$$$$$$$$$$$$$$$$");
+//            System.out.println(value);
+
 
             //add user review
             this.review_btn = (Button)infowindow.findViewById(R.id.review_button);
@@ -435,7 +443,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             this.rating_btn = (Button)infowindow.findViewById(R.id.rate_btn);
             if (loginActivity.checkuser[1]== true){
-                rating_btn.setVisibility(View.VISIBLE);
+                rating_btn.setVisibility(View.INVISIBLE);
             }
 
             this.infoButtonListener = new OnInfoWindowElemTouchListener(rating_btn, getResources().getDrawable(R.drawable.btn_bg), getResources().getDrawable(R.drawable.btn_bg)){

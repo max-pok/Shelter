@@ -181,7 +181,8 @@
             android:layout_width="131dp"
             android:layout_height="40dip"
             android:background="@drawable/btn_bg"
-            android:text="Rate" />
+            android:text="Rate"/>
+
     </LinearLayout>
 
 </RelativeLayout>

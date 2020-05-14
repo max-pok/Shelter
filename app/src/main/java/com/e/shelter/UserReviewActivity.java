@@ -38,17 +38,6 @@ public class UserReviewActivity extends AppCompatActivity {
             }
         });
 
-//        //Header
-//        View header = navigationView.getHeaderView(0);
-//        TextView header_email = header.findViewById(R.id.email_header);
-//        Intent intent = getIntent();
-//        String value = intent.getStringExtra("email");
-//
-//
-//        if (value != null) header_email.setText(value);
-//        System.out.println("#########################");
-//        System.out.println("#########################");
-//        System.out.println(value);
     }
 
     public void addReview() {
@@ -68,6 +57,8 @@ public class UserReviewActivity extends AppCompatActivity {
         UserReviewThread signupThread= new UserReviewThread(user,review,shelter_add);
         signupThread.start();
         Thread t = Thread.currentThread();// The main thread
+        startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+
 
     }
 
