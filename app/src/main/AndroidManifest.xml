@@ -36,6 +36,7 @@
         <activity android:name=".RatingActivity" />
         <activity android:name=".UserReviewActivity" />
         <activity android:name=".UpdateContactActivity" />
+        <activity android:name=".ManagerReviewActivity"/>
 
 
         <uses-library

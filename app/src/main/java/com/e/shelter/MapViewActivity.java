@@ -729,6 +729,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 favIntent.putExtra("userEmail", userEmail);
                 startActivityForResult(favIntent, 2);
                 return false;
+            case R.id.nav_review:
+                Intent reviewIntent = new Intent(this, ManagerReviewActivity.class);
+                reviewIntent.putExtra("userEmail", userEmail);
+                startActivityForResult(reviewIntent, 2);
+                return false;
             case R.id.nav_logout:
                 break;
         }
