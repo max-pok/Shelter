@@ -37,6 +37,11 @@
         <item android:title="About">
             <menu>
                 <item
+                    android:id="@+id/nav_report"
+                    android:icon="@drawable/report_icon_black"
+                    android:title="Report a problem" />
+
+                <item
                     android:id="@+id/nav_info"
                     android:icon="@drawable/info_icon_black"
                     android:title="Information" />

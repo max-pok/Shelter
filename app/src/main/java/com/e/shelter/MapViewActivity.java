@@ -132,7 +132,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private AppCompatRatingBar ratingBarInfoDialog;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -181,7 +180,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onButtonClicked(int buttonCode) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                selectedMarker.hideInfoWindow();
+                if (selectedMarker.isInfoWindowShown()) 
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     searchBar.disableSearch();
                     toggle.syncState();
@@ -656,7 +655,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters information from the local shelters.json file to mongoDB.
      * Use this function only to add the file information into your local db.
      */
-
     public void addSheltersToMongodb() {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -919,14 +917,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void addShelterToMapFromFireBase() {
-    }
-
-    public void showDialog() {
-        appRatingDialog.show();
-    }
-
-    public void rateSelectedShelter() {
-        System.out.println("ok\n");
     }
 
     @Override
