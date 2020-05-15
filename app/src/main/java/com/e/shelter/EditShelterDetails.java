@@ -70,7 +70,6 @@ public class EditShelterDetails extends AppCompatActivity {
                 if(update_details()){
                     setResult(3);
                     finish();
-
                 }
                 else{
                     errorMessage.show();
@@ -105,6 +104,7 @@ public class EditShelterDetails extends AppCompatActivity {
                 updateDoc.put("capacity", this.editText_capacity.getText().toString());
                 updateDoc.put("status", this.editText_status.getText().toString());
                 updateDoc.put("rating", myDoc.get("rating"));
+                updateDoc.put("rating_amount", myDoc.get("rating_amount"));
                 mongoCollection.replaceOne(and(eq("lon", lon), eq("lat", lat)), updateDoc);
                 mongoClient.close();
             }

@@ -7,9 +7,10 @@ public class Shelter {
     private String lon;
     private String status;
     private String capacity;
-    private double rating;
+    private String rating;
+    private String rateCount;
 
-    public Shelter(String name, String address, String lat, String lon, String status, String capacity, double rating) {
+    public Shelter(String name, String address, String lat, String lon, String status, String capacity, String rating, String rateCount) {
         this.name = name;
         this.address = address;
         this.lat = lat;
@@ -17,6 +18,7 @@ public class Shelter {
         this.status = status;
         this.capacity = capacity;
         this.rating = rating;
+        this.rateCount = rateCount;
     }
 
     public void setName(String name) {
@@ -43,10 +45,6 @@ public class Shelter {
         this.capacity = capacity;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
     public String getName() {
         return name;
     }
@@ -71,7 +69,33 @@ public class Shelter {
         return capacity;
     }
 
-    public double getRating() {
+    public String getRating() {
         return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getRateCount() {
+        return rateCount;
+    }
+
+    public void setRateCount(String rateCount) {
+        this.rateCount = rateCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Shelter{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", lat='" + lat + '\'' +
+                ", lon='" + lon + '\'' +
+                ", status='" + status + '\'' +
+                ", capacity='" + capacity + '\'' +
+                ", rating='" + rating + '\'' +
+                ", rateCount='" + rateCount + '\'' +
+                '}';
     }
 }

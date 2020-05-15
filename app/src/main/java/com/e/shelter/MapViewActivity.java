@@ -13,21 +13,22 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
-import com.e.shelter.utilities.InfoWindowData;
+import com.e.shelter.utilities.Shelter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -50,10 +51,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
@@ -65,6 +68,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
+import com.stepstone.apprating.AppRatingDialog;
+import com.stepstone.apprating.listener.RatingDialogListener;
 
 import org.bson.Document;
 import org.json.JSONArray;
@@ -73,17 +78,19 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import java.util.Objects;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 
-public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
+        GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RatingDialogListener {
 
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
@@ -98,25 +105,31 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private FirebaseFirestore database;
-    private ViewGroup infowindow;
+    private View infowindow;
     private TextView infoTitle;
     private TextView infoSnippet;
     private TextView statusTxt;
     private TextView capacityTxt;
     private TextView ratingTxt;
+    private TextView ratingCountTxt;
     private OnInfoWindowElemTouchListener infoButtonListener;
     private MaterialButton edit_btn;
-    private Button favorite_btn;
+    private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
     private String userEmail;
+    private String userName = "Max";
+    private String userLastName = "Pok";
     private MaterialButton saveShelterButton;
+    private MaterialButton editShelterButton;
+    private MaterialButton rateShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters;
-    private MaterialButton review_btn;
-    private MaterialButton rating_btn;
-    private MenuItem see_review;
-    public Context ctx = this;
-    private String currentAddress;
+    private LinearLayout bottomSheet;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private List<Shelter> sheltersList;
+    private Shelter selectedShelter;
+    private AppRatingDialog appRatingDialog;
+    private AppCompatRatingBar ratingBarInfoDialog;
 
 
     @Override
@@ -166,6 +179,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             @Override
             public void onButtonClicked(int buttonCode) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if (selectedMarker.isInfoWindowShown()) 
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     searchBar.disableSearch();
                     toggle.syncState();
@@ -214,7 +229,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         userEmail = "maxim.p9@gmail.com";
         if (userEmail != null) header_email.setText(userEmail);
 
-
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
         ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
@@ -228,34 +242,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         });
 
-        //CardView
-//        saveShelterButton = findViewById(R.id.CardSaveButton);
-//        saveShelterButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (saveShelterButton.getText().equals("SAVE")) {
-//                    addSelectedShelterToFavorites();
-//                    saveShelterButton.setText("SAVED");
-//                    saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
-//                } else {
-//                    removeSelectedShelterFromFavorites();
-//                    saveShelterButton.setText("SAVE ");
-//                    saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
-//                }
-//            }
-//        });
+        //Bottom Information Window
+        createBottomSheetDialog();
 
-        //Info Window
-        this.infowindow = (ViewGroup) getLayoutInflater().inflate(R.layout.info_window, null);
-        this.infoTitle = (TextView) infowindow.findViewById(R.id.nameTxt);
-        this.infoSnippet = (TextView) infowindow.findViewById(R.id.addressTxt);
-        this.statusTxt = (TextView) infowindow.findViewById(R.id.statusTxt);
-        this.capacityTxt = (TextView) infowindow.findViewById(R.id.capacityTxt);
-        this.ratingTxt = (TextView) infowindow.findViewById(R.id.ratingTxt);
-
-        //this.favorite_btn = infowindow.findViewById(R.id.favorite_btn);
-        this.edit_btn = infowindow.findViewById(R.id.edit_btn);
-
+        //Rating Dialog Window
+        createRatingDialog();
     }
 
     /**
@@ -269,11 +260,20 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.setMyLocationEnabled(true);
         this.googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         if (this.mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
+            //My Location Position
             View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             layoutParams.setMargins(0, 0, 40, 325);
+
+            //Toolbar position
+            View toolbar = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("4"));
+            RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+            rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            rlp.addRule(RelativeLayout.ALIGN_RIGHT, RelativeLayout.TRUE);
+            rlp.setMargins(0, 0, 0, 970);
         }
 
         // Check if GPS is enabled or not. If GPS is disabled request user to enable it.
@@ -310,6 +310,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
         this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
+
+
+
+
+
         // Navigation toolbar
         this.googleMap.getUiSettings().setMapToolbarEnabled(true);
         this.googleMap.setOnMapClickListener(this);
@@ -329,30 +334,152 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
         if (requestCode == 2) {
             retrieveFavoriteShelters();
+            if (selectedMarker != null) {
+                if (checkIfShelterInFavorite(selectedMarker.getTitle())) {
+                    saveShelterButton.setText("SAVED");
+                    saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
+                } else {
+                    saveShelterButton.setText("SAVE  ");
+                    saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
+                }
+            }
         }
         if (requestCode == 3) {
+            Log.i("TAG", "From Edit Screen");
             add_shelters_into_map();
-            //selectedMarker.showInfoWindow();
+            onMarkerClick(selectedMarker);
         }
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        //shelterInformationCardView.setVisibility(View.INVISIBLE);
         selectedMarker = null;
+        selectedShelter = null;
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        if (searchLocationMarker != null && searchLocationMarker.getTitle().equals(marker.getTitle())) return false;
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         selectedMarker = marker;
-//        if (checkIfShelterInFavorite(marker.getTitle())) {
-//            favorite_btn.setText("SAVED");
-//            favorite_btn.setIconResource(R.drawable.savedbookmark_icon_white);
-//        } else {
-//            favorite_btn.setText("SAVE");
-//            favorite_btn.setIconResource(R.drawable.savebookmark_icon_white);
-//        }
+
+        for (Shelter shelter : sheltersList) {
+            if (shelter != null && shelter.getName().equals(selectedMarker.getTitle())) {
+                selectedShelter = shelter;
+                break;
+            }
+        }
+        infoTitle.setText(selectedMarker.getTitle());
+        infoSnippet.setText(selectedMarker.getSnippet());
+        ratingCountTxt.setText(("(" + selectedShelter.getRateCount() + ")"));
+        ratingTxt.setText(String.valueOf(Double.parseDouble(selectedShelter.getRating())));
+        ratingBarInfoDialog.setRating(Float.parseFloat(selectedShelter.getRating()));
+        capacityTxt.setText(selectedShelter.getCapacity());
+        if (selectedShelter.getStatus().equals("open")) {
+            statusTxt.setTextColor(getResources().getColor(R.color.quantum_googgreen));
+        } else statusTxt.setTextColor(getResources().getColor(R.color.quantum_googred));
+        statusTxt.setText(selectedShelter.getStatus());
+
+        if (checkIfShelterInFavorite(marker.getTitle())) {
+            saveShelterButton.setText("SAVED");
+            saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
+        } else {
+            saveShelterButton.setText("SAVE  ");
+            saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
+        }
         return false;
+    }
+
+    public void createBottomSheetDialog() {
+        bottomSheet = findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        saveShelterButton = findViewById(R.id.info_window_save_button);
+        editShelterButton = findViewById(R.id.info_window_edit_button);
+        rateShelterButton = findViewById(R.id.info_window_rate_button);
+
+        infoTitle = findViewById(R.id.info_window_title);
+        infoSnippet = findViewById(R.id.info_window_address);
+        ratingTxt = findViewById(R.id.info_window_rating);
+        ratingCountTxt = findViewById(R.id.info_window_rating_count);
+        capacityTxt = findViewById(R.id.info_window_capacity);
+        statusTxt = findViewById(R.id.info_window_status);
+        ratingBarInfoDialog = findViewById(R.id.rating_bar_info_window);
+
+        //Save Button Function
+        saveShelterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (saveShelterButton.getText().equals("SAVE  ")) {
+                    addSelectedShelterToFavorites();
+                    saveShelterButton.setText("SAVED");
+                    saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
+
+                } else {
+                    removeSelectedShelterFromFavorites();
+                    saveShelterButton.setText("SAVE  ");
+                    saveShelterButton.setIconResource(R.drawable.savebookmark_icon_white);
+                }
+            }
+        });
+        //Edit Button Function
+        editShelterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
+                if (i != null) {
+                    i.putExtra("name", selectedMarker.getTitle());
+                    i.putExtra("address", selectedMarker.getSnippet());
+                    i.putExtra("status", selectedShelter.getStatus());
+                    i.putExtra("capacity", selectedShelter.getCapacity());
+                    i.putExtra("lon", selectedShelter.getLon());
+                    i.putExtra("lat", selectedShelter.getLat());
+                    startActivityForResult(i, 3);
+                }
+            }
+        });
+        //Rate Button Function
+        rateShelterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appRatingDialog.show();
+            }
+        });
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                bottomSheet.setAlpha(1 + slideOffset);
+            }
+        });
+    }
+
+    public void createRatingDialog() {
+        appRatingDialog = new AppRatingDialog.Builder()
+                .setPositiveButtonText("Send Feedback")
+                .setNegativeButtonText("Cancel")
+                .setNoteDescriptions(Arrays.asList("Very Bad", "Not good", "Quite OK", "Very Good", "Excellent"))
+                .setDefaultRating(5)
+                .setTitle("Rate this shelter")
+                .setDescription("Please select some stars and give your feedback")
+                .setCommentInputEnabled(true)
+                .setStarColor(R.color.quantum_googblue)
+                .setNoteDescriptionTextColor(R.color.quantum_googblue)
+                .setTitleTextColor(R.color.quantum_black_100)
+                .setDescriptionTextColor(R.color.quantum_grey)
+                .setHint("|")
+                .setHintTextColor(R.color.quantum_googblue)
+                .setCommentTextColor(R.color.quantum_googblue)
+                .setCommentBackgroundColor(R.color.quantum_bluegrey50)
+                .setWindowAnimation(R.style.MyDialogFadeAnimation)
+                .setCancelable(true)
+                .setCanceledOnTouchOutside(true)
+                .create(MapViewActivity.this);
     }
 
     public boolean checkIfShelterInFavorite(String shelterName) {
@@ -412,50 +539,34 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters location from mongoDB into the map.
      */
     public void add_shelters_into_map() {
-        LoginActivity loginActivity = new LoginActivity();
-        final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout) findViewById(R.id.map_relative_layout);
-        mapWrapperLayout.init(googleMap, getPixelsFromDp(this, 39 + 20));
+        //final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout) findViewById(R.id.map_relative_layout);
+        //mapWrapperLayout.init(googleMap, getPixelsFromDp(this, 39 + 20));
         //connect to DB
+        sheltersList = new ArrayList<>();
         final MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         final DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
-
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
             MarkerOptions markerOptions = new MarkerOptions();
             //Save the information about the shelter
             markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
-//            if (loginActivity.checkuser[1] == true) {
-            //Save the information about the shelter
-            markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
-            final InfoWindowData info = new InfoWindowData();
-            info.setName(object.getString("name"));
-            info.setAddress(object.getString("address"));
-            info.setStatus(object.getString("status"));
-            info.setCapacity( object.getString("capacity"));
-            info.setRating(object.getString("rating"));
-            info.setid(object.getObjectId("_id"));
-
-
-            this.infowindow = (ViewGroup)getLayoutInflater().inflate(R.layout.info_window, null);
-            this.infoTitle = (TextView)infowindow.findViewById(R.id.nameTxt);
-            this.infoSnippet = (TextView)infowindow.findViewById(R.id.addressTxt);
-            this.statusTxt = (TextView)infowindow.findViewById(R.id.statusTxt);
-            this.capacityTxt = (TextView)infowindow.findViewById(R.id.capacityTxt);
-            this.ratingTxt = infowindow.findViewById(R.id.ratingTxt);
-
-            this.favorite_btn = infowindow.findViewById(R.id.favorite_btn);
-
-            //if (loginActivity.checkuser[1]== true){
-                edit_btn.setVisibility(View.VISIBLE);
-//            }
-
-            //Buttons clicks
-            infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, null, null) {
-                @Override
-                protected void onClickConfirmed(View v, Marker marker) {
+            Shelter shelter = new Shelter(object.getString("name"), object.getString("address"),
+                    object.getString("lat"), object.getString("lon"),
+                    object.getString("status"), object.getString("capacity"),
+                    object.getString("rating"), object.getString("rating_amount"));
+            System.out.println(shelter);
+            sheltersList.add(shelter);
+            ////            if (loginActivity.checkuser[1] == true) {
+////            edit_btn.setVisibility(View.VISIBLE);
+////            }
+//
+//            //Buttons clicks
+//            infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, null, null) {
+//                @Override
+//                protected void onClickConfirmed(View v, Marker marker) {
 //                    // Here we can perform some action triggered after clicking the button
 //                    if (favorite_btn.getText().equals("SAVE")) {
 //                        addSelectedShelterToFavorites();
@@ -467,114 +578,61 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 //                        favorite_btn.setIconResource(R.drawable.savebookmark_icon_white);
 //                    }
 //                    selectedMarker.showInfoWindow();
-                    System.out.println("XXXXXXXXXXXX");
-                }
-            };
-            favorite_btn.setOnTouchListener(infoButtonListener);
-
-
-            //add user review
-            this.review_btn = infowindow.findViewById(R.id.review_btn);
-            //if (loginActivity.checkuser[1]== true){
-                review_btn.setVisibility(View.VISIBLE);
-            //}
-
-            infoButtonListener = new OnInfoWindowElemTouchListener(review_btn, null, null){
-                @Override
-                protected void onClickConfirmed(View v, Marker marker) {
-                    //user name to send for review.
-//                    System.out.println("$$$$$$$$$$$$$$$$$");
-//                    System.out.println("email"+email);
+//                }
+//            };
+//            favorite_btn.setOnTouchListener(infoButtonListener);
 //
-                    // Here we can perform some action triggered after clicking the button
-                    Intent i =new  Intent(MapViewActivity.this, UserReviewActivity.class);
-                    if(i !=null) {
-                        i.putExtra("address", currentAddress);
-                        i.putExtra("email", userEmail);
-                        startActivity(i);
-                    }
-                    Toast.makeText(MapViewActivity.this, "click on add review", Toast.LENGTH_SHORT).show();
-                }
-            };
-            this.review_btn.setOnTouchListener(infoButtonListener);
-
-            //ratings
-
-            this.rating_btn = infowindow.findViewById(R.id.rate_btn);
-            //if (loginActivity.checkuser[1]== true){
-                rating_btn.setVisibility(View.VISIBLE);
-            //}
-
-            infoButtonListener = new OnInfoWindowElemTouchListener(rating_btn, null, null){
-                @Override
-                protected void onClickConfirmed(View v, Marker marker) {
-                    //Intent i =new  Intent(MapViewActivity.this, RatingActivity.class);
-                    Intent intent = new Intent(getBaseContext(), RatingActivity.class);
-                    intent.putExtra("address", currentAddress);
-                    startActivity(intent);
-
-                    Toast.makeText(MapViewActivity.this, "click on add rating", Toast.LENGTH_SHORT).show();
-                }
-            };
-            this.rating_btn.setOnTouchListener(infoButtonListener);
-
-            this.edit_btn = infowindow.findViewById(R.id.edit_btn);
-            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, null, null) {
-                @Override
-                protected void onClickConfirmed(View v, Marker marker) {
-                    String lon = Double.toString(marker.getPosition().longitude);
-                    String lat = Double.toString(marker.getPosition().latitude);
-                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
-
-                    Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
-                    if (i != null) {
-                        i.putExtra("name", marker.getTitle());
-                        i.putExtra("address", marker.getSnippet());
-                        i.putExtra("status", myDoc.get("status").toString());
-                        i.putExtra("capacity", myDoc.get("capacity").toString());
-                        i.putExtra("lon", lon);
-                        i.putExtra("lat", lat);
-                        startActivity(i);
-                    }
-                    Toast.makeText(getApplicationContext(), "click on edit buttun", Toast.LENGTH_LONG).show();
-                }
-            };
-            this.edit_btn.setOnTouchListener(infoButtonListener);
-
-            //Set the information window
-            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                @Override
-                public View getInfoWindow(Marker marker) {
-                    return null;
-                }
-
-                @Override
-                public View getInfoContents(Marker marker) {
-                    String lon = Double.toString(marker.getPosition().longitude);
-                    String lat = Double.toString(marker.getPosition().latitude);
-                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
-                    // Setting up the infoWindow with current's marker info
-                    infoTitle.setText(marker.getTitle());
-                    infoSnippet.setText(marker.getSnippet());
-                    statusTxt.setText(myDoc.get("status").toString());
-                    capacityTxt.setText(myDoc.get("capacity").toString());
-                    ratingTxt.setText(myDoc.get("rating").toString());
-                    statusTxt.setText(info.getStatus());
-                    capacityTxt.setText(info.getCapacity());
-                    ratingTxt.setText(info.getRating());
-
-                    infoButtonListener.setMarker(marker);
-
-                    // We must call this to set the current marker and infoWindow references
-                    // to the MapWrapperLayout
-                    mapWrapperLayout.setMarkerWithInfoWindow(marker, infowindow);
-                    return infowindow;
-                }
-            });
+//            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, null, null) {
+//                @Override
+//                protected void onClickConfirmed(View v, Marker marker) {
+//                    String lon = Double.toString(marker.getPosition().longitude);
+//                    String lat = Double.toString(marker.getPosition().latitude);
+//                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+//                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+//                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
+//
+//                    Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
+//                    if (i != null) {
+//                        i.putExtra("name", marker.getTitle());
+//                        i.putExtra("address", marker.getSnippet());
+//                        i.putExtra("status", myDoc.get("status").toString());
+//                        i.putExtra("capacity", myDoc.get("capacity").toString());
+//                        i.putExtra("lon", lon);
+//                        i.putExtra("lat", lat);
+//                        startActivity(i);
+//                    }
+//                    Toast.makeText(getApplicationContext(), "click on edit buttun", Toast.LENGTH_LONG).show();
+//                }
+//            };
+//            edit_btn.setOnTouchListener(infoButtonListener);
+//            //Set the information window
+//            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//                @Override
+//                public View getInfoWindow(Marker marker) {
+//                    return null;
+//                }
+//
+//                @Override
+//                public View getInfoContents(Marker marker) {
+//                    String lon = Double.toString(marker.getPosition().longitude);
+//                    String lat = Double.toString(marker.getPosition().latitude);
+//                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+//                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+//                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
+//                    // Setting up the infoWindow with current's marker info
+//                    infoTitle.setText(marker.getTitle());
+//                    infoSnippet.setText(marker.getSnippet());
+//                    statusTxt.setText(myDoc.get("status").toString());
+//                    capacityTxt.setText(myDoc.get("capacity").toString());
+//                    ratingTxt.setText(myDoc.get("rating").toString());
+//                    infoButtonListener.setMarker(marker);
+//
+//                    // We must call this to set the current marker and infoWindow references
+//                    // to the MapWrapperLayout
+//                    mapWrapperLayout.setMarkerWithInfoWindow(marker, infowindow);
+//                    return infowindow;
+//                }
+//            });
 
 
             //Add markers
@@ -582,10 +640,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             googleMap.setOnMarkerClickListener(this);
 
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
 
         }
-        //mongoClient.close();
+        mongoClient.close();
     }
 
     public static int getPixelsFromDp(Context context, float dp) {
@@ -597,7 +655,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters information from the local shelters.json file to mongoDB.
      * Use this function only to add the file information into your local db.
      */
-
     public void addSheltersToMongodb() {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -770,8 +827,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 
+    /**
+     * Adds the shelters from mongoDB to firebase DB.
+     * TODO: Use only once.
+     */
     public void addSheltersToFireBaseDataBase() {
-        /*MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
         DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
@@ -784,36 +845,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("lat"),
                     object.getString("lon"),
                     object.getString("status"),
-                    object.getString("capacity"));
+                    object.getString("capacity"),
+                    object.getString("rating"),
+                    object.getString("rating_amount"));
             Shelters.add(shelter);
-        }*/
-
+        }
     }
-
-
-    /**
-     * Adds the shelters from mongoDB to firebase DB.
-     * TODO: Use only once.
-     */
-//    public void addSheltersToFireBaseDataBase() {
-//        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-//        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-//        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
-//        DBCursor cursor = shelter_db_collection.find();
-//        database = FirebaseFirestore.getInstance();
-//        CollectionReference Shelters = database.collection("Shelters");
-//        while (cursor.hasNext()) {
-//            BasicDBObject object = (BasicDBObject) cursor.next();
-//            Shelter shelter = new Shelter(object.getString("name"),
-//                    object.getString("address"),
-//                    object.getString("lat"),
-//                    object.getString("lon"),
-//                    object.getString("status"),
-//                    object.getString("capacity"));
-//            Shelters.add(shelter);
-//
-//        }
-//    }
 
     /**
      * Find shelters addresses.
@@ -851,9 +888,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         mongoClient.close();
 
         //adding shelter to array list
-//        favoriteShelters.add(selectedMarker.getTitle());
+        favoriteShelters.add(selectedMarker.getTitle());
 
-        Toast.makeText(MapViewActivity.this, "Saved to favorites", Toast.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(bottomSheet, "Saved to favorites", Snackbar.LENGTH_LONG);
+        snackbar.show();
+        //Toast.makeText(MapViewActivity.this, "Saved to favorites", Toast.LENGTH_LONG).show();
     }
 
     public void removeSelectedShelterFromFavorites() {
@@ -872,8 +911,76 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //removing shelter from array list
         favoriteShelters.remove(selectedMarker.getTitle());
 
-        Toast.makeText(MapViewActivity.this, "Removed from favorites", Toast.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(bottomSheet, "Removed from favorites", Snackbar.LENGTH_LONG);
+        snackbar.show();
+        //Toast.makeText(MapViewActivity.this, "Removed from favorites", Toast.LENGTH_LONG).show();
     }
 
+    public void addShelterToMapFromFireBase() {
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+        // Do Nothing
+    }
+
+    @Override
+    public void onNeutralButtonClicked() {
+        // Do Nothing
+    }
+
+    @Override
+    public void onPositiveButtonClicked(int i, String s) {
+        if (s.isEmpty()) {
+            Toast.makeText(MapViewActivity.this, "Please write a feedback", Toast.LENGTH_LONG).show();
+            appRatingDialog.show();
+        } else {
+            //add review for selected shelter
+            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+            MongoCollection<Document> mongoCollection = database.getCollection("UserReviews");
+            Document newReview = new Document()
+                    .append("shelter_name", selectedMarker.getTitle())
+                    .append("user_email", userEmail)
+                    .append("user_name", userName + " " + userLastName)
+                    .append("review", s)
+                    .append("stars", String.valueOf(i));
+            mongoCollection.insertOne(newReview);
+
+            //update shelter total rating
+            int amount = 0;
+            double averageRating, totalRating = 0;
+            DB reviews_db = mongoClient.getDB("SafeZone_DB");
+            DBCollection shelter_db_collection = reviews_db.getCollection("UserReviews");
+            DBCursor cursor = shelter_db_collection.find();
+            while (cursor.hasNext()) {
+                BasicDBObject object = (BasicDBObject) cursor.next();
+                if (object.get("shelter_name").equals(selectedMarker.getTitle())) {
+                    amount++;
+                    totalRating += Double.parseDouble(object.get("stars").toString());
+                }
+            }
+            averageRating = totalRating / amount;
+            DecimalFormat REAL_FORMATTER = new DecimalFormat("#.#");
+            MongoCollection<Document> mongoCollection2 = database.getCollection("Shelters");
+            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating", REAL_FORMATTER.format(averageRating)));
+            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating_amount", String.valueOf(amount)));
+            mongoClient.close();
+
+            //update marker window dialog
+            selectedShelter.setRating(REAL_FORMATTER.format(averageRating));
+            selectedShelter.setRateCount(String.valueOf(amount));
+            onMarkerClick(selectedMarker);
+        }
+    }
+
+    public void insertRatingCount() {
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+        MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
+        mongoCollection.updateMany(eq("rating","0"), Updates.set("rating", String.valueOf(0)));
+        mongoCollection.updateMany(eq("rating","0"), Updates.set("rating_amount", String.valueOf(0)));
+        mongoClient.close();
+    }
 }
 
