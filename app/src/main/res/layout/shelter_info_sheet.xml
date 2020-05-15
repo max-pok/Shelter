@@ -52,6 +52,7 @@
 
                 <androidx.appcompat.widget.AppCompatRatingBar
                     style="@style/Yellow.Small.AppCompatRatingBar"
+                    android:id="@+id/rating_bar_info_window"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="85dp"
@@ -102,7 +103,7 @@
                     app:iconTint="@color/colorPrimary"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
-                    app:strokeWidth="2dp" />
+                    app:strokeWidth="0dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/info_window_edit_button"
@@ -118,7 +119,7 @@
                     app:iconTint="@color/colorPrimary"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
-                    app:strokeWidth="2dp" />
+                    app:strokeWidth="0dp" />
 
 
                 <com.google.android.material.button.MaterialButton
@@ -135,7 +136,7 @@
                     app:iconTint="@color/colorPrimary"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
-                    app:strokeWidth="2dp" />
+                    app:strokeWidth="0dp" />
 
             </LinearLayout>
 
