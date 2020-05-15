@@ -17,13 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".FavoritesActivity"
-            android:label="@string/title_activity_favorites"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".MapViewActivity">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignupActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".MapViewActivity"/>
+        <activity android:name=".FavoritesActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
         <activity android:name=".ChangePassActivity" />
