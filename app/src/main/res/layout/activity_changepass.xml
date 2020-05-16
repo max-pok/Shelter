@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="64dp"
         android:ems="10"
-        android:hint="New password agian"
+        android:hint="New password again"
         android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/changepass_button"
         app:layout_constraintStart_toStartOf="@+id/newpass"
