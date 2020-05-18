@@ -34,6 +34,7 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
+        <activity android:name=".ShowReview" />
         <activity android:name=".ChangePassActivity" />
         <activity android:name=".EditShelterDetails" />
         <activity android:name=".RatingActivity" />
