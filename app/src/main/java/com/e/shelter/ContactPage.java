@@ -1,92 +1,90 @@
 package com.e.shelter;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.text.Html;
+import android.view.View;
+import android.widget.ListView;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.e.shelter.adapers.ContactListAdapter;
+import com.e.shelter.utilities.Contact;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.DBCursor;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.bson.Document;
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-
-import static com.e.shelter.R.layout.contacts_of_municipality;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import java.security.NoSuchAlgorithmException;
 
 public class ContactPage extends AppCompatActivity {
-    private TextView tv;
+
+    private ListView contactsListView;
+    private FloatingActionButton addButton;
+    private ArrayList<Contact> contactsArrayList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
-        setContentView(contacts_of_municipality);
-        //createContactDataBase();
-        showPage();
+        setContentView(R.layout.contacts_of_municipality);
 
+        retrieveContacts();
 
-
-
-    }
-
-    public void createContactDataBase() {
-        ContactPageThread contactThread = new ContactPageThread();
-        contactThread.start();
-    }
-
-    public void showPage() {
-        //Connect to MongoDB
-
-
-        // Get MongoDb Database. If The Database Doesn't Exists, MongoDb Will Automatically Create It For You
-
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("contactPage");
-        if(shelter_db_collection==null)
-            createContactDataBase();
-
-        DBCursor cursor = shelter_db_collection.find();
-        int countContacts = 0;
-        while (cursor.hasNext()) {
-            System.out.println("countContacts= "+countContacts);
-            BasicDBObject object = (BasicDBObject) cursor.next();
-            this.tv = (TextView) findViewById(R.id.mycontact1+countContacts);
-            //System.out.println(object.get("name"));
-            TextView tv1 = (TextView) findViewById(R.id.phoneInput1+countContacts);
-            tv.setText((CharSequence) object.get("name"));
-            tv1.setText((String) object.get("phoneNumber"));
-            countContacts+=1;
-
-
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Contacts</font>"));
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
-            mongoClient.close();
 
+        contactsListView = findViewById(R.id.contacts_list_view);
+
+        addButton = findViewById(R.id.add_contacts_button);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: add new contact
+            }
+        });
+
+        ContactListAdapter adapter = new ContactListAdapter(this, R.layout.content_contacts, contactsArrayList, getIntent().getStringExtra("userType"));
+        contactsListView.setAdapter(adapter);
     }
 
 
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    public void retrieveContacts() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+                DB shelter_db = mongoClient.getDB("SafeZone_DB");
+                DBCollection shelter_db_collection = shelter_db.getCollection("contactPage");
+                DBCursor cursor = shelter_db_collection.find();
+                while (cursor.hasNext()) {
+                    BasicDBObject object = (BasicDBObject) cursor.next();
+                    contactsArrayList.add(new Contact(object.getString("name"), object.getString("phoneNumber")));
+                }
+            }
+        });
+        thread.start();
+    }
+
+    public void createAddingContactDialog() {
+
+    }
+
+}
 

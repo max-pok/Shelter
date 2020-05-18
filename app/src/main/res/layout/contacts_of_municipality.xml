@@ -1,239 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SignupActivity"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="1dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linearLayout0"
+    <ListView
+        android:id="@+id/contacts_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="top|right"
-        android:orientation="vertical"
-        tools:context=".ContactPage">
-
-        <TextView
-            android:id="@+id/Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="מי אנחנו"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/Summary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="במדינת ישראל השימוש במקלטים לצורכי ביטחון הוא שימוש גבוה עקב המצב הביטחוני הקיים במדינה בעיקר בדרום הארץ עקב שיגור הטילים מעזה."
-            android:textColor="@android:color/tertiary_text_light"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/Summary1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="כאשר ישבנו וחשבנו חברי הצוות על הבעיה הקיימת כיום בתחום המקלטים בעיר באר שבע ובכלל בארץ."
-            android:textColor="@android:color/tertiary_text_light"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/Summary2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="מצאנו שיש הרבה מקלטים מוזנחים אשר לא ראויים לשהות של אזרחים כמו למשל בתחום הניקיון, נגישות לנכים , מקלטים נעולים שלא פתוחים בעת הצורך עזרה ראשונה במידת הצורך וכדומה."
-            android:textColor="@android:color/tertiary_text_light"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom|right"
-        android:orientation="vertical"
-        tools:context=".ContactPage">
-
-        <TextView
-            android:id="@+id/Contacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="גורם"
-            android:textAlignment="textEnd"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 1"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 2"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 3"
-            android:textAlignment="textEnd"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 4"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 5"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 6"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/mycontact7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="Contact 7"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
+        android:layout_height="wrap_content"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
+        android:divider="@null" />
 
 
-    </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_contacts_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/add_icon_black" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom|center"
-        android:orientation="vertical"
-        tools:context=".ContactPage">
 
-        <TextView
-            android:id="@+id/PhoneNumbers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="טלפון"
-            android:textAlignment="textEnd"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="101"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="Contact 2"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="Contact 3"
-            android:textAlignment="textEnd"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="Contact 4"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="Contact 5"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="Contact 6"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/phoneInput7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:autoLink="phone"
-            android:text="Contact 7"
-            android:textColor="@android:color/tertiary_text_light"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

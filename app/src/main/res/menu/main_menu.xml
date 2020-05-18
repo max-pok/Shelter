@@ -17,10 +17,14 @@
                     android:icon="@drawable/favorite_icon_black"/>
 
                 <item
+                    android:id="@+id/nav_show_reviews"
+                    android:icon="@drawable/comment_icon_black"
+                    android:title="Show User Reviews" />
+
+                <item
                     android:id="@+id/nav_settings"
                     android:icon="@drawable/settings_icon_black"
                     android:title="Settings" />
-
 
 
             </menu>

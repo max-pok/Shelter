@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.e.shelter.R;
-import com.e.shelter.utilities.FavoriteCard;
+import com.e.shelter.utilities.Contact;
 import com.google.android.material.button.MaterialButton;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -27,25 +27,27 @@ import java.util.ArrayList;
 
 import static com.mongodb.client.model.Filters.eq;
 
-public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
+public class ContactListAdapter extends ArrayAdapter<Contact> {
 
     private static final String TAG = "CustomListAdapter";
 
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
-    private String mUserEmail;
-    FavoriteListAdapter adapter;
-    ArrayList<FavoriteCard> cards;
+    private ContactListAdapter adapter;
+    private ArrayList<Contact> cards;
+    private String user_type;
+
 
     /**
      * Holds variables in a View
      */
     private static class ViewHolder {
         TextView name;
-        TextView address;
-        MaterialButton navigateButton;
+        TextView phoneNumber;
+        MaterialButton callButton;
         MaterialButton removeButton;
+        MaterialButton editButton;
     }
 
     /**
@@ -54,31 +56,32 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
      * @param resource
      * @param objects
      */
-    public FavoriteListAdapter(Context context, int resource, ArrayList<FavoriteCard> objects, String userEmail) {
+    public ContactListAdapter(Context context, int resource, ArrayList<Contact> objects, String userType) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
-        mUserEmail = userEmail;
         adapter = this;
         cards = objects;
+        user_type = userType;
     }
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
-        final ViewHolder holder;
+        final ContactListAdapter.ViewHolder holder;
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
-            holder = new ViewHolder();
-            holder.name = convertView.findViewById(R.id.favCardShelterName);
-            holder.address = convertView.findViewById(R.id.favCardAddress);
-            holder.navigateButton = convertView.findViewById(R.id.favCardNavigateButton);
-            holder.removeButton = convertView.findViewById(R.id.favCardRemoveButton);
+            holder = new ContactListAdapter.ViewHolder();
+            holder.name = convertView.findViewById(R.id.contactCardContactName);
+            holder.phoneNumber = convertView.findViewById(R.id.contactCardContactPhone);
+            holder.callButton = convertView.findViewById(R.id.contactCardCallButton);
+            holder.removeButton = convertView.findViewById(R.id.contactCardRemoveButton);
+            holder.editButton = convertView.findViewById(R.id.contactCardEditButton);
             result = convertView;
             convertView.setTag(holder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            holder = (ContactListAdapter.ViewHolder) convertView.getTag();
             result = convertView;
         }
 
@@ -87,46 +90,62 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
 //        result.startAnimation(animation);
         lastPosition = position;
 
-        String name = getItem(position).getName();
-        String address = getItem(position).getAddress();
-        Log.i(TAG, "Shelter name: " + name + ", Address: " + address);
+        final String name = getItem(position).getName();
+        final String phoneNumber = getItem(position).getPhoneNumber();
+        Log.i(TAG, "Contact name: " + name + ", Phone: " + phoneNumber);
         holder.name.setText(name);
-        holder.address.setText(address);
+        holder.phoneNumber.setText(phoneNumber);
+
+        if (user_type.equals("simpleUser")) {
+            holder.removeButton.setVisibility(View.INVISIBLE);
+            holder.editButton.setVisibility(View.INVISIBLE);
+        } else {
+            if (name.equals("משטרת ישראל | Israel Police") || name.equals("מגן דוד אדום | Magen David Adom")
+                    || name.equals("מכבי אש | Fire Department") || name.equals("פיקוד העורף | Home Front Command")) {
+                holder.removeButton.setVisibility(View.INVISIBLE);
+                holder.editButton.setVisibility(View.INVISIBLE);
+            }
+        }
+
         holder.removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeSelectedShelterFromFavorites(position);
+                removeSelectedContactFromContactsList(position);
                 adapter.notifyDataSetChanged();
             }
         });
-        holder.navigateButton.setOnClickListener(new View.OnClickListener() {
+        holder.callButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri navigationIntentUri = Uri.parse("google.navigation:q=" + getItem(position).getAddress());//creating intent with latlng
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, navigationIntentUri).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);;
-                mapIntent.setPackage("com.google.android.apps.maps");
-                mContext.startActivity(mapIntent);
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + phoneNumber));
+                mContext.startActivity(intent);
             }
         });
+        holder.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        });
+
 
         return convertView;
     }
 
-    public void removeSelectedShelterFromFavorites(int position) {
+    public void removeSelectedContactFromContactsList(int position) {
+        //TODO : FIX
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
         MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
         Document shelterToRemove = new Document()
                 .append("shelter_name", getItem(position).getName())
-                .append("address", getItem(position).getAddress())
-                .append("lat", getItem(position).getLatitude())
-                .append("lon", getItem(position).getLongitude());
+                .append("address", getItem(position).getPhoneNumber());
 
-        //removing shelter from DB
-        mongoCollection.updateOne(eq("user_email", mUserEmail), Updates.pull("favorite_shelters", shelterToRemove));
+        mongoCollection.updateOne(eq("name", getItem(position).getName()), Updates.pull("favorite_shelters", shelterToRemove));
 
         cards.remove(position);
 
-        Toast.makeText(mContext, "Removed from favorites", Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, "Removed from contacts list", Toast.LENGTH_LONG).show();
     }
 }

@@ -116,9 +116,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton edit_btn;
     private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
-    private String userEmail;
+    private String userEmail = "maxim.p9@gmail.com";
     private String userName = "Max";
     private String userLastName = "Pok";
+    private String userType = "admin";
     private MaterialButton saveShelterButton;
     private MaterialButton editShelterButton;
     private MaterialButton rateShelterButton;
@@ -180,7 +181,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onButtonClicked(int buttonCode) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (selectedMarker.isInfoWindowShown()) 
+                if (selectedMarker != null && selectedMarker.isInfoWindowShown()) selectedMarker.hideInfoWindow();
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     searchBar.disableSearch();
                     toggle.syncState();
@@ -226,7 +227,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
         //userEmail = getIntent().getStringExtra("email");
-        userEmail = "adir123";
+        //userEmail = "maxim.p9@gmail.com";
         if (userEmail != null) header_email.setText(userEmail);
 
         //Switch
@@ -427,7 +428,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         editShelterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
                 if (i != null) {
                     i.putExtra("name", selectedMarker.getTitle());
@@ -457,6 +457,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 bottomSheet.setAlpha(1 + slideOffset);
             }
         });
+
+        if (userType.equals("simpleUser")) {
+            editShelterButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void createRatingDialog() {
@@ -539,8 +543,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters location from mongoDB into the map.
      */
     public void add_shelters_into_map() {
-        //final MapWrapperLayout mapWrapperLayout = (MapWrapperLayout) findViewById(R.id.map_relative_layout);
-        //mapWrapperLayout.init(googleMap, getPixelsFromDp(this, 39 + 20));
         //connect to DB
         sheltersList = new ArrayList<>();
         final MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
@@ -557,98 +559,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("lat"), object.getString("lon"),
                     object.getString("status"), object.getString("capacity"),
                     object.getString("rating"), object.getString("rating_amount"));
-            System.out.println(shelter);
+
             sheltersList.add(shelter);
-            ////            if (loginActivity.checkuser[1] == true) {
-////            edit_btn.setVisibility(View.VISIBLE);
-////            }
-//
-//            //Buttons clicks
-//            infoButtonListener = new OnInfoWindowElemTouchListener(favorite_btn, null, null) {
-//                @Override
-//                protected void onClickConfirmed(View v, Marker marker) {
-//                    // Here we can perform some action triggered after clicking the button
-//                    if (favorite_btn.getText().equals("SAVE")) {
-//                        addSelectedShelterToFavorites();
-//                        favorite_btn.setText("SAVED");
-//                        favorite_btn.setIconResource(R.drawable.savedbookmark_icon_white);
-//                    } else {
-//                        removeSelectedShelterFromFavorites();
-//                        favorite_btn.setText("SAVE");
-//                        favorite_btn.setIconResource(R.drawable.savebookmark_icon_white);
-//                    }
-//                    selectedMarker.showInfoWindow();
-//                }
-//            };
-//            favorite_btn.setOnTouchListener(infoButtonListener);
-//
-//            infoButtonListener = new OnInfoWindowElemTouchListener(edit_btn, null, null) {
-//                @Override
-//                protected void onClickConfirmed(View v, Marker marker) {
-//                    String lon = Double.toString(marker.getPosition().longitude);
-//                    String lat = Double.toString(marker.getPosition().latitude);
-//                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-//                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-//                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
-//
-//                    Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
-//                    if (i != null) {
-//                        i.putExtra("name", marker.getTitle());
-//                        i.putExtra("address", marker.getSnippet());
-//                        i.putExtra("status", myDoc.get("status").toString());
-//                        i.putExtra("capacity", myDoc.get("capacity").toString());
-//                        i.putExtra("lon", lon);
-//                        i.putExtra("lat", lat);
-//                        startActivity(i);
-//                    }
-//                    Toast.makeText(getApplicationContext(), "click on edit buttun", Toast.LENGTH_LONG).show();
-//                }
-//            };
-//            edit_btn.setOnTouchListener(infoButtonListener);
-//            //Set the information window
-//            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-//                @Override
-//                public View getInfoWindow(Marker marker) {
-//                    return null;
-//                }
-//
-//                @Override
-//                public View getInfoContents(Marker marker) {
-//                    String lon = Double.toString(marker.getPosition().longitude);
-//                    String lat = Double.toString(marker.getPosition().latitude);
-//                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-//                    MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-//                    Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
-//                    // Setting up the infoWindow with current's marker info
-//                    infoTitle.setText(marker.getTitle());
-//                    infoSnippet.setText(marker.getSnippet());
-//                    statusTxt.setText(myDoc.get("status").toString());
-//                    capacityTxt.setText(myDoc.get("capacity").toString());
-//                    ratingTxt.setText(myDoc.get("rating").toString());
-//                    infoButtonListener.setMarker(marker);
-//
-//                    // We must call this to set the current marker and infoWindow references
-//                    // to the MapWrapperLayout
-//                    mapWrapperLayout.setMarkerWithInfoWindow(marker, infowindow);
-//                    return infowindow;
-//                }
-//            });
-
-
-            //Add markers
+            //Add marker
             googleMap.addMarker(markerOptions);
 
             googleMap.setOnMarkerClickListener(this);
-
-
-
         }
         mongoClient.close();
-    }
-
-    public static int getPixelsFromDp(Context context, float dp) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
     }
 
     /**
@@ -763,7 +681,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Starts specific function/intent from the navigation bar based on the item selected.
-     *
      * @param item - selected item from side navigation bar.
      * @return true to keep item selected, false otherwise.
      */
@@ -771,8 +688,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_info:
-                Intent intent = new Intent(this, ContactPage.class);
-                startActivity(intent);
+                Intent contactsIntent = new Intent(this, ContactPage.class);
+                contactsIntent.putExtra("userType", userType);
+                startActivity(contactsIntent);
                 return false;
             case R.id.nav_settings:
                 Intent settingsActive = new Intent(this, SettingsActivity.class);
