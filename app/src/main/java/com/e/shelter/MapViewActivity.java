@@ -116,7 +116,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton edit_btn;
     private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
-    private String userEmail = "maxim.p9@gmail.com";
+    private String userEmail = "adir123";
     private String userName = "Max";
     private String userLastName = "Pok";
     private String userType = "admin";
@@ -698,6 +698,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 return false;
             case R.id.nav_night_mode_switch:
                 nightModeSwitch();
+                return false;
+            case R.id.nav_show_reviews:
+                Intent reviewActive = new Intent(this, ShowReview.class);
+                startActivity(reviewActive);
                 return false;
             case R.id.nav_favorite_shelters:
                 Intent favIntent = new Intent(this, FavoritesActivity.class);
