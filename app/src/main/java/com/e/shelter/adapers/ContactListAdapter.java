@@ -1,5 +1,6 @@
 package com.e.shelter.adapers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.e.shelter.AddNewContactActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
 import com.google.android.material.button.MaterialButton;
@@ -91,20 +93,16 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
         lastPosition = position;
 
         final String name = getItem(position).getName();
+        final String nameInEnglish = getItem(position).getNameInEnglish();
         final String phoneNumber = getItem(position).getPhoneNumber();
-        Log.i(TAG, "Contact name: " + name + ", Phone: " + phoneNumber);
-        holder.name.setText(name);
+        holder.name.setText((name + " | " + nameInEnglish));
         holder.phoneNumber.setText(phoneNumber);
 
         if (user_type.equals("simpleUser")) {
             holder.removeButton.setVisibility(View.INVISIBLE);
             holder.editButton.setVisibility(View.INVISIBLE);
         } else {
-            if (name.equals("משטרת ישראל | Israel Police") || name.equals("מגן דוד אדום | Magen David Adom")
-                    || name.equals("מכבי אש | Fire Department") || name.equals("פיקוד העורף | Home Front Command")) {
-                holder.removeButton.setVisibility(View.INVISIBLE);
-                holder.editButton.setVisibility(View.INVISIBLE);
-            }
+
         }
 
         holder.removeButton.setOnClickListener(new View.OnClickListener() {
@@ -118,34 +116,38 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + phoneNumber));
+                intent.setData(Uri.parse("tel:" + getItem(position).getPhoneNumber()));
                 mContext.startActivity(intent);
             }
         });
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                Intent intent = new Intent(mContext, AddNewContactActivity.class);
+                intent.putExtra("name", name);
+                intent.putExtra("nameInEnglish", nameInEnglish);
+                intent.putExtra("phoneNumber", phoneNumber);
+                Activity origin = (Activity)mContext;
+                origin.startActivityForResult(intent, 2);
             }
         });
-
 
         return convertView;
     }
 
-    public void removeSelectedContactFromContactsList(int position) {
+    private void removeSelectedContactFromContactsList(int position) {
         //TODO : FIX
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
-        Document shelterToRemove = new Document()
-                .append("shelter_name", getItem(position).getName())
-                .append("address", getItem(position).getPhoneNumber());
+        MongoCollection<Document> mongoCollection = database.getCollection("contactPage");
 
-        mongoCollection.updateOne(eq("name", getItem(position).getName()), Updates.pull("favorite_shelters", shelterToRemove));
+        //mongoCollection.updateOne(eq("name", getItem(position).getName()), Updates.pull("favorite_shelters", shelterToRemove));
+        mongoCollection.deleteOne(eq("name", getItem(position).getName()));
 
         cards.remove(position);
 
         Toast.makeText(mContext, "Removed from contacts list", Toast.LENGTH_LONG).show();
+
+        mongoClient.close();
     }
 }
