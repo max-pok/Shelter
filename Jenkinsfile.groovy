@@ -12,6 +12,7 @@ pipeline {
             steps {
                 // Prepare for next stages
                 sh 'chmod +x ./gradlew'
+sh 'chmod +x gradlew && ./gradlew --no-daemon --stacktrace clean :app:assembleDevDebug :app:assembleDevDebugAndroidTest'
             }
         }
         stage('Compile') {
@@ -24,7 +25,8 @@ pipeline {
             steps {
                 script {
                     //run a gradle test
-                    sh './gradlew clean test --no-daemon'
+                    sh './gradlew clean test --no-daemon
+sh './gradlew --no-daemon --debug :app:connectedDevDebugAndroidTest' '
                     junit '**/build/test-results/testDebugUnitTest/*.xml' //make the junit test results available in any case (success & failure)
                 }
             }
