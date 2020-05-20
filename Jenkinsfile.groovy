@@ -44,12 +44,6 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis') {
-            step([$class: 'LintPublisher', pattern: 'app/build/results/lint-results*.xml'])
-        }
-
-
-
     }
     post {
         success {
