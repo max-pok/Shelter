@@ -47,7 +47,7 @@ pipeline {
         stage('Static Code Analysis') {
             steps {
                 recordIssues(
-                        tool: pyLint(pattern: '**/build/reports/lint-results.xml'),
+                        tool: pyLint(pattern: '**/pylint.out'),
                         unstableTotalAll: 100,
                 )
             }
