@@ -46,16 +46,16 @@ pipeline {
 
         stage('Static Code Analysis') {
             steps {
-                script {
-                    sh './gradlew lint'
-                }
+                recordIssues(
+                        tool: pyLint(pattern: '**/build/reports/lint-results.xml'),
+                        unstableTotalAll: 100,
+                )
             }
         }
 
     }
     post {
         success {
-            step([$class: 'LintPublisher'])
             //echo 'BUILD SUCCESSFUL - NO EMAIL WILL BE SENT'
         }
 
