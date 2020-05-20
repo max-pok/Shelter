@@ -68,8 +68,8 @@ public class ChangePassActivity extends AppCompatActivity {
                                             dialog.cancel();
                                         }
                                     });
-                            AlertDialog Message = builder.create();
-                            Message.show();
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
                         }
                     }
                     else {
@@ -80,8 +80,8 @@ public class ChangePassActivity extends AppCompatActivity {
                                         dialog.cancel();
                                     }
                                 });
-                        AlertDialog Message = builder.create();
-                        Message.show();
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
                     }
                 }
                 else {
@@ -92,8 +92,8 @@ public class ChangePassActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             });
-                    AlertDialog Message = builder.create();
-                    Message.show();
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
 
                 }
 

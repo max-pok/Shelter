@@ -21,24 +21,24 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 public class EditShelterDetails extends AppCompatActivity {
-    public  EditText editText_name;
-    public  EditText editText_status;
-    public  EditText editText_address;
-    public  EditText editText_capacity;
-    public  Button update;
+    public EditText nameEditText;
+    public EditText statusEditText;
+    public EditText addressEditText;
+    public EditText capacityEditText;
+    public Button update;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_shelter_details);
-        editText_name =(EditText) findViewById(R.id.editText_name);
-        editText_status =(EditText) findViewById(R.id.editText_status);
-        editText_address =(EditText) findViewById(R.id.editText_address);
-        editText_capacity =(EditText) findViewById(R.id.editText_capacity);
-        editText_name.setText(getIntent().getStringExtra("name"));
-        editText_address.setText(getIntent().getStringExtra("address"));
-        editText_capacity.setText(getIntent().getStringExtra("capacity"));
-        editText_status.setText(getIntent().getStringExtra("status"));
+        nameEditText = findViewById(R.id.editText_name);
+        statusEditText = findViewById(R.id.editText_status);
+        addressEditText = findViewById(R.id.editText_address);
+        capacityEditText = findViewById(R.id.editText_capacity);
+        nameEditText.setText(getIntent().getStringExtra("name"));
+        addressEditText.setText(getIntent().getStringExtra("address"));
+        capacityEditText.setText(getIntent().getStringExtra("capacity"));
+        statusEditText.setText(getIntent().getStringExtra("status"));
         //show_current_shelter_details();
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
@@ -63,7 +63,7 @@ public class EditShelterDetails extends AppCompatActivity {
                     }
                 });
         final AlertDialog goodMessage = builder2.create();
-        update= (Button)findViewById(R.id.button_update);
+        update= findViewById(R.id.button_update);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,16 +93,16 @@ public class EditShelterDetails extends AppCompatActivity {
                 MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
                 Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
                 Document updateDoc = new Document();
-                System.out.println(this.editText_name.getText());
-                System.out.println(this.editText_address.getText().toString());
-                System.out.println(this.editText_capacity.getText().toString());
-                System.out.println(this.editText_status.getText().toString());
-                updateDoc.put("name", this.editText_name.getText().toString());
+                System.out.println(this.nameEditText.getText());
+                System.out.println(this.addressEditText.getText().toString());
+                System.out.println(this.capacityEditText.getText().toString());
+                System.out.println(this.statusEditText.getText().toString());
+                updateDoc.put("name", this.nameEditText.getText().toString());
                 updateDoc.put("lat", lat);
                 updateDoc.put("lon", lon);
-                updateDoc.put("address", this.editText_address.getText().toString());
-                updateDoc.put("capacity", this.editText_capacity.getText().toString());
-                updateDoc.put("status", this.editText_status.getText().toString());
+                updateDoc.put("address", this.addressEditText.getText().toString());
+                updateDoc.put("capacity", this.capacityEditText.getText().toString());
+                updateDoc.put("status", this.statusEditText.getText().toString());
                 updateDoc.put("rating", myDoc.get("rating"));
                 updateDoc.put("rating_amount", myDoc.get("rating_amount"));
                 mongoCollection.replaceOne(and(eq("lon", lon), eq("lat", lat)), updateDoc);

@@ -10,7 +10,6 @@ import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

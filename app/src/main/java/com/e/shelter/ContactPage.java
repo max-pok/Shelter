@@ -91,9 +91,9 @@ public class ContactPage extends AppCompatActivity {
     public void retrieveContacts() {
         contactsArrayList = new ArrayList<>();
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("contactPage");
-        DBCursor cursor = shelter_db_collection.find();
+        DB db = mongoClient.getDB("SafeZone_DB");
+        DBCollection dbCollection = db.getCollection("contactPage");
+        DBCursor cursor = dbCollection.find();
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             contactsArrayList.add(new Contact(object.getString("name"),object.getString("nameInEnglish"), object.getString("phoneNumber")));

@@ -1,16 +1,11 @@
 package com.e.shelter;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.View;
 import android.widget.ListView;
 
-import com.e.shelter.adapers.ContactListAdapter;
 import com.e.shelter.adapers.ReviewListAdapter;
-import com.e.shelter.utilities.Contact;
 import com.e.shelter.utilities.Review;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;

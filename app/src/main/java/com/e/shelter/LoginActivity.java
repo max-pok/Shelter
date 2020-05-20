@@ -28,18 +28,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
+        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
         mongoLogger.setLevel(Level.SEVERE);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         //Login Button
-        Button LoginButton = (Button) findViewById(R.id.LoginButton);
+        Button LoginButton = findViewById(R.id.LoginButton);
         //Click on login button
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText emailInput = (EditText) findViewById(R.id.emailInput);
-                EditText passwordInput = (EditText) findViewById(R.id.passowrdInput);
+                EditText emailInput = findViewById(R.id.emailInput);
+                EditText passwordInput = findViewById(R.id.passowrdInput);
                 email = emailInput.getText().toString();
                 password = passwordInput.getText().toString();
                 //Error message
@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         //Signup button
-        Button SignupButton = (Button) findViewById(R.id.SignUpButton);
+        Button SignupButton = findViewById(R.id.SignUpButton);
         SignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//Click to Sign up button
@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
         });*/
 
         //temporary
-        Button button_update = (Button) findViewById(R.id.button_update);
+        Button button_update = findViewById(R.id.button_update);
         button_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,11 +138,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public  void setEmail(String email){
-        this.email = email;
+        LoginActivity.email = email;
     }
 
     public void setPassword(String password){
-        this.password=password;
+        LoginActivity.password =password;
     }
 
     public void ShowSignupPage() {
@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
         //New Thread that connect to DB and find the use.
         LoginThread loginThread= new LoginThread(email,password);
         loginThread.start();
-        t.sleep(1000);//wait to answer from the login thread.
+        Thread.sleep(1000);//wait to answer from the login thread.
         //Get True if the user exist else False.
          flag= loginThread.getFlag();
         System.out.println(flag);
