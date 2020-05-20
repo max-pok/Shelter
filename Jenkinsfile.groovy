@@ -48,7 +48,8 @@ pipeline {
             steps {
                 script {
                     sh './gradlew lint'
-                    recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'lint-result.xml')
+                    recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'app/build/reports/lint-results.xml', unHealthy: '')
+//                  checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'publicapi/frontend/tslint-result.xml', unHealthy: ''
                 }
             }
         }

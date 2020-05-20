@@ -32,7 +32,6 @@ android {
         abortOnError false
         ignoreWarnings true //false
     }
-
 }
 
 
