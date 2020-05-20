@@ -46,8 +46,10 @@ pipeline {
 
         stage('Static Code Analysis') {
             steps {
-                sh './gradlew lint'
-                recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'app/build/reports/lint-result.xml')
+                script {
+                    sh './gradlew checkstyle'
+                    recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'app/build/reports/checkstyle/checkstyle.xml')
+                }
             }
         }
 
