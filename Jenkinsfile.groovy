@@ -46,15 +46,17 @@ pipeline {
 
         stage('Static Code Analysis') {
             steps {
-                sh './gradlew lint'
-                junit '**/build/reports/lint-results*.xml'
+                script {
+                    sh './gradlew lint'
+                }
             }
         }
 
     }
     post {
         success {
-            echo 'BUILD SUCCESSFUL - NO EMAIL WILL BE SENT'
+            step([$class: 'LintPublisher'])
+            //echo 'BUILD SUCCESSFUL - NO EMAIL WILL BE SENT'
         }
 
         failure { //Send an email to to all teammates about broken build
@@ -64,20 +66,20 @@ pipeline {
                     to: 'maxim.p9@gmail.com'
             )
 
-            emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
-                    body: '$DEFAULT_CONTENT',
-                    replyTo: 'adirat@ac.sce.ac.il',
-                    to: 'adirat@ac.sce.ac.il')
-
-            emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
-                    body: '$DEFAULT_CONTENT',
-                    replyTo: 'saritdi@ac.sce.ac.il',
-                    to: 'saritdi@ac.sce.ac.il')
-
-            emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
-                    body: '$DEFAULT_CONTENT',
-                    replyTo: 'hadarba1@ac.sce.ac.il',
-                    to: 'hadarba1@ac.sce.ac.il')
+//            emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
+//                    body: '$DEFAULT_CONTENT',
+//                    replyTo: 'adirat@ac.sce.ac.il',
+//                    to: 'adirat@ac.sce.ac.il')
+//
+//            emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
+//                    body: '$DEFAULT_CONTENT',
+//                    replyTo: 'saritdi@ac.sce.ac.il',
+//                    to: 'saritdi@ac.sce.ac.il')
+//
+//            emailext(subject: '$JOB_NAME - Build# $BUILD_NUMBER - $BUILD_STATUS',
+//                    body: '$DEFAULT_CONTENT',
+//                    replyTo: 'hadarba1@ac.sce.ac.il',
+//                    to: 'hadarba1@ac.sce.ac.il')
 
 
         }
