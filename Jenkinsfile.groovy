@@ -56,7 +56,7 @@ pipeline {
     }
     post {
         success {
-            //echo 'BUILD SUCCESSFUL - NO EMAIL WILL BE SENT'
+            echo 'BUILD SUCCESSFUL - NO EMAIL WILL BE SENT'
         }
 
         failure { //Send an email to to all teammates about broken build
