@@ -43,6 +43,20 @@ pipeline {
                 sh './gradlew assembleDebug'
             }
         }
+        stage('Static Code Analysis') {
+            steps {
+                script {
+                    try {
+                        sh './gradlew lint'
+                    } finally { //Make checkstyle results available
+                        checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/Build/reports/lint-results.xml', unHealthy: ''
+                    }
+                }
+            }
+        }
+
+
+
     }
     post {
         success {
