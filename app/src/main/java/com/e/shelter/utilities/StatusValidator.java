@@ -5,7 +5,7 @@ public class StatusValidator {
     public StatusValidator() {
     }
 
-    private static boolean isValidStatus(String status){
+    public static boolean isValidStatus(String status){
 
         if (status=="open" || status== "close"){
             return true;
