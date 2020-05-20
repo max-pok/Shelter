@@ -44,7 +44,7 @@ task checkstyle(type: Checkstyle) {
     exclude '**/gen/**'
 
     ignoreFailures true
-    showViolations false
+    showViolations true
 
     classpath = files()
 }

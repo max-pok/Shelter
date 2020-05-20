@@ -1,7 +1,5 @@
 package com.e.shelter.utilities;
 
-import com.google.android.material.button.MaterialButton;
-
 public class FavoriteCard {
     private String name;
     private String address;

@@ -1,16 +1,11 @@
 package com.e.shelter;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.e.shelter.adapers.ContactListAdapter;
 import com.e.shelter.utilities.Contact;
@@ -20,18 +15,12 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Updates;
+
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.bson.Document;
-
 import java.util.ArrayList;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public class ContactPage extends AppCompatActivity {
 
