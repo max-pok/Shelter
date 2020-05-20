@@ -43,7 +43,7 @@ pipeline {
                 sh './gradlew assembleDebug'
             }
         }
-        
+
         stage('Static Code Analysis') {
             step([$class: 'LintPublisher', pattern: 'app/build/results/lint-results*.xml'])
         }
