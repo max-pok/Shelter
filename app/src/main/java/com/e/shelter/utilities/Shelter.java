@@ -87,15 +87,16 @@ public class Shelter {
 
     @Override
     public String toString() {
-        return "Shelter{" +
-                "name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", lat='" + lat + '\'' +
-                ", lon='" + lon + '\'' +
-                ", status='" + status + '\'' +
-                ", capacity='" + capacity + '\'' +
-                ", rating='" + rating + '\'' +
-                ", rateCount='" + rateCount + '\'' +
-                '}';
+        return "Shelter{"
+                + "name='" + name + '\''
+                + ", address='" + address + '\''
+                + ", lat='" + lat + '\''
+                + ", lon='" + lon + '\''
+                + ", status='" + status + '\''
+                + ", capacity='" + capacity + '\''
+                + ", rating='" + rating + '\''
+                + ", rateCount='" + rateCount
+                + '\''
+                + '}';
     }
 }

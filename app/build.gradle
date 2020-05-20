@@ -43,8 +43,8 @@ task checkstyle(type: Checkstyle) {
     include '**/*.java'
     exclude '**/gen/**'
 
-    ignoreFailures false
-    showViolations true
+    ignoreFailures true
+    showViolations false
 
     classpath = files()
 }
@@ -106,8 +106,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
-
-    implementation 'com.puppycrawl.tools:checkstyle:8.17'
 }
 
 //preBuild.dependsOn('checkstyle')
