@@ -46,10 +46,10 @@ pipeline {
 
         stage('Static Code Analysis') {
             steps {
-                recordIssues(
-                        tool: pyLint(pattern: '**/pylint.out'),
-                        unstableTotalAll: 100,
-                )
+                script {
+                    sh './gradlew lint'
+                    recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'lint-result.xml')
+                }
             }
         }
 
