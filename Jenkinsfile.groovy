@@ -44,9 +44,12 @@ pipeline {
             }
         }
 
-
-        step([$class: 'LintPublisher', pattern: 'app/build/results/lint-results*.xml'])
-
+        stage('Static Code Analysis') {
+            steps {
+                sh './gradlew lint'
+                junit '**/build/reports/lint-results*.xml'
+            }
+        }
 
     }
     post {
