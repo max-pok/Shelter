@@ -82,8 +82,8 @@ Severity: EASY
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sourceforge.net/config_naming.html -->
-        <module name="ConstantName" />
-        <module name="LocalFinalVariableName" />
+<!--        <module name="ConstantName" />-->
+<!--        <module name="LocalFinalVariableName" />-->
         <module name="LocalVariableName" />
         <module name="MemberName" />
         <module name="MethodName">
@@ -113,7 +113,7 @@ Severity: EASY
             <property name="severity" value="ignore" />
         </module>
         <module name="MethodLength" />
-        <module name="ParameterNumber" />
+<!--        <module name="ParameterNumber" />-->
 
 
         <!-- Checks for whitespace                               -->

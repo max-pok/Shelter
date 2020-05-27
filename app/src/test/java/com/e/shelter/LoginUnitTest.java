@@ -1,8 +1,8 @@
 package com.e.shelter;
 
 
-import com.e.shelter.utilities.EmailValidator;
-import com.e.shelter.utilities.PasswordValidator;
+import com.e.shelter.validation.EmailValidator;
+import com.e.shelter.validation.PasswordValidator;
 
 import org.junit.Test;
 

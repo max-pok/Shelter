@@ -23,7 +23,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".MapViewActivity">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,13 +31,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignupActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".MapViewActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ContactPage" />
         <activity android:name=".ShowReview" />
         <activity android:name=".ChangePassActivity" />
         <activity android:name=".EditShelterDetails" />
-        <activity android:name=".UpdateContactActivity" />
         <activity android:name=".AddNewContactActivity" />
 
         <uses-library

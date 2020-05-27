@@ -55,9 +55,9 @@ public class ShowReview extends AppCompatActivity {
 
     public void retrieveReviews() {
                 MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-                DB shelter_db = mongoClient.getDB("SafeZone_DB");
-                DBCollection shelter_db_collection = shelter_db.getCollection("UserReviews");
-                DBCursor cursor = shelter_db_collection.find();
+                DB db = mongoClient.getDB("SafeZone_DB");
+                DBCollection dbCollection = db.getCollection("UserReviews");
+                DBCursor cursor = dbCollection.find();
                 while (cursor.hasNext()) {
                     BasicDBObject object = (BasicDBObject) cursor.next();
                     reviewArrayList.add(new Review(object.getString("shelter_name"), object.getString("user_name"),object.getString("user_email"),object.getString("review"),object.getString("stars")));

@@ -1,8 +1,10 @@
 package com.e.shelter;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
@@ -112,14 +116,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView capacityTxt;
     private TextView ratingTxt;
     private TextView ratingCountTxt;
-    private OnInfoWindowElemTouchListener infoButtonListener;
-    private MaterialButton edit_btn;
-    private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
-    private String userEmail = "adir123";
+    private String userEmail = "maxim.p9@gmail.com";
     private String userName = "Max";
     private String userLastName = "Pok";
-    private String userType = "admin";
+    private String userType = "simpleUser";
     private MaterialButton saveShelterButton;
     private MaterialButton editShelterButton;
     private MaterialButton rateShelterButton;
@@ -137,6 +138,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        checkPermission(Manifest.permission.SEND_SMS, 1);
+        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, 2);
+        checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, 3);
+        checkPermission(Manifest.permission.INTERNET, 4);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
@@ -248,6 +254,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Rating Dialog Window
         createRatingDialog();
+
     }
 
     /**
@@ -310,11 +317,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.getUiSettings().setZoomControlsEnabled(true);
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
         this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
-
-
-
-
-
 
         // Navigation toolbar
         this.googleMap.getUiSettings().setMapToolbarEnabled(true);
@@ -545,9 +547,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public void add_shelters_into_map() {
         //connect to DB
         sheltersList = new ArrayList<>();
-        final MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        final DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
+        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
         DBCursor cursor = shelter_db_collection.find();
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
@@ -581,7 +583,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
                     MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
                     MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-                    MongoCollection<Document> shelter_db_collection = database.getCollection("Shelters");
+                    MongoCollection<Document> collection = database.getCollection("Shelters");
                     System.out.println("connected to DB " + obj.length());
                     for (int i = 0; i < obj.length(); i++) {
                         try {
@@ -594,7 +596,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                                     .append("status", "open")
                                     .append("capacity", "1.25 square meters per person")
                                     .append("rating", 0.0);
-                            shelter_db_collection.insertOne(document);
+                            collection.insertOne(document);
                         } catch (IOException e) {
                             System.out.println("Error. Trying to find the address again.");
                             i--;
@@ -663,8 +665,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         try {
             JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "addresses.json"));
             MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            DB shelter_db = mongoClient.getDB("SafeZone_DB");
-            DBCollection shelter_db_collection = shelter_db.getCollection("Addresses");
+            DB db = mongoClient.getDB("SafeZone_DB");
+            DBCollection collection = db.getCollection("Addresses");
             for (int i = 0; i < obj.length(); i++) {
                 JSONObject value = (JSONObject) obj.get(i);
                 BasicDBObject document = new BasicDBObject();
@@ -672,7 +674,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 document.put("StreetName", value.get("streetName"));
                 document.put("lat", value.get("lat"));
                 document.put("lon", value.get("lon"));
-                shelter_db_collection.insert(document);
+                collection.insert(document);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -755,11 +757,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      */
     public void addSheltersToFireBaseDataBase() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
-        DBCursor cursor = shelter_db_collection.find();
+        DB db = mongoClient.getDB("SafeZone_DB");
+        DBCollection dbCollection = db.getCollection("Shelters");
+        DBCursor cursor = dbCollection.find();
         database = FirebaseFirestore.getInstance();
-        CollectionReference Shelters = database.collection("Shelters");
+        CollectionReference collectionReference = database.collection("Shelters");
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
             Shelter shelter = new Shelter(object.getString("name"),
@@ -770,7 +772,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("capacity"),
                     object.getString("rating"),
                     object.getString("rating_amount"));
-            Shelters.add(shelter);
+            collectionReference.add(shelter);
         }
     }
 
@@ -794,7 +796,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return address;
     }
 
-
     public void addSelectedShelterToFavorites() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
@@ -815,6 +816,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         Snackbar snackbar = Snackbar.make(bottomSheet, "Saved to favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
         //Toast.makeText(MapViewActivity.this, "Saved to favorites", Toast.LENGTH_LONG).show();
+    }
+
+    public void addSelectedShelterToFireBaseFavorites() {
+        Document newShelter = new Document()
+                .append("shelter_name", selectedMarker.getTitle())
+                .append("address", selectedMarker.getSnippet())
+                .append("lat", selectedMarker.getPosition().latitude)
+                .append("lon", selectedMarker.getPosition().longitude);
     }
 
     public void removeSelectedShelterFromFavorites() {
@@ -839,6 +848,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void addShelterToMapFromFireBase() {
+
     }
 
     @Override
@@ -883,14 +893,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
             averageRating = totalRating / amount;
-            DecimalFormat REAL_FORMATTER = new DecimalFormat("#.#");
+            DecimalFormat decimalFormat = new DecimalFormat("#.#");
             MongoCollection<Document> mongoCollection2 = database.getCollection("Shelters");
-            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating", REAL_FORMATTER.format(averageRating)));
+            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating", decimalFormat.format(averageRating)));
             mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating_amount", String.valueOf(amount)));
             mongoClient.close();
 
             //update marker window dialog
-            selectedShelter.setRating(REAL_FORMATTER.format(averageRating));
+            selectedShelter.setRating(decimalFormat.format(averageRating));
             selectedShelter.setRateCount(String.valueOf(amount));
             onMarkerClick(selectedMarker);
         }
@@ -903,6 +913,53 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         mongoCollection.updateMany(eq("rating","0"), Updates.set("rating", String.valueOf(0)));
         mongoCollection.updateMany(eq("rating","0"), Updates.set("rating_amount", String.valueOf(0)));
         mongoClient.close();
+    }
+
+    // Function to check and request permission.
+    public void checkPermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(MapViewActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(MapViewActivity.this, new String[] { permission }, requestCode);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            // Checking whether user granted the permission or not.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Showing the toast message
+                Toast.makeText(MapViewActivity.this, "SEND SMS Permission Granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MapViewActivity.this, "SEND SMS Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (requestCode == 2) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MapViewActivity.this, "LOCATION Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(MapViewActivity.this, "LOCATION Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (requestCode == 3) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MapViewActivity.this, "LOCATION Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(MapViewActivity.this, "LOCATION Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (requestCode == 4) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MapViewActivity.this, "INTERNET Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(MapViewActivity.this, "INTERNET Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
 
