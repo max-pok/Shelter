@@ -20,6 +20,6 @@ public class SignupIntegrationTest {
 
     @Test
     public void SignupViewCheck(){
-        Espresso.onView(withId(R.id.SignupButton2)).check(matches(isClickable()));
+        Espresso.onView(withId(R.id.updateButton2)).check(matches(isClickable()));
     }
 }

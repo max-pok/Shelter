@@ -10,6 +10,15 @@
                 android:targetPackage="com.e.shelter"
                 android:targetClass="com.e.shelter.ChangePassActivity" />
         </Preference>
+        <Preference
+            android:key="editUserDitails"
+            android:title="Edit User Details"
+            android:summary="">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="com.e.shelter"
+                android:targetClass="com.e.shelter.EditUserActivity" />
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="About">

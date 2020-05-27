@@ -93,10 +93,7 @@ public class EditShelterDetails extends AppCompatActivity {
                 MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
                 Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
                 Document updateDoc = new Document();
-                System.out.println(this.nameEditText.getText());
-                System.out.println(this.addressEditText.getText().toString());
-                System.out.println(this.capacityEditText.getText().toString());
-                System.out.println(this.statusEditText.getText().toString());
+
                 updateDoc.put("name", this.nameEditText.getText().toString());
                 updateDoc.put("lat", lat);
                 updateDoc.put("lon", lon);

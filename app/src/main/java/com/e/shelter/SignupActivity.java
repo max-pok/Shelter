@@ -43,7 +43,7 @@ public class SignupActivity extends AppCompatActivity {
                 });
         final AlertDialog goodMessage = builder2.create();
         //sign up button
-        Button SignupButton = (Button) findViewById(R.id.SignupButton2);
+        Button SignupButton = (Button) findViewById(R.id.updateButton2);
         SignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

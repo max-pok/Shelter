@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.e.shelter.LoginActivity.email;
 import static com.mongodb.client.model.Filters.eq;
 
 public class FavoritesActivity extends AppCompatActivity {
@@ -61,7 +62,7 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
     public void createFavoriteCardList() {
-        String userEmail = getIntent().getStringExtra("userEmail");
+        String userEmail = email;
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
         MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");

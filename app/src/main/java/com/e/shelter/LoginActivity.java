@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
     public void ShowContactPage() {
         startActivity(new Intent(getBaseContext(), ContactPage.class));
     }
@@ -137,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         return password;
     }
 
-    public  void setEmail(String email){
+    public static   void setEmail(String email){
         LoginActivity.email = email;
     }
 

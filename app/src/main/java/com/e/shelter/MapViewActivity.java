@@ -86,6 +86,7 @@ import java.util.Locale;
 
 import java.util.Objects;
 
+import static com.e.shelter.LoginActivity.email;
 import static com.mongodb.client.model.Filters.eq;
 
 
@@ -116,7 +117,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private MaterialButton edit_btn;
     private MaterialButton favorite_btn;
     private List<String> suggestions = new ArrayList<>();
-    private String userEmail = "adir123";
+    private String userEmail = email;
     private String userName = "Max";
     private String userLastName = "Pok";
     private String userType = "admin";
@@ -228,7 +229,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         TextView header_email = header.findViewById(R.id.email_header);
         //userEmail = getIntent().getStringExtra("email");
         //userEmail = "maxim.p9@gmail.com";
-        if (userEmail != null) header_email.setText(userEmail);
+        if (userEmail != null) header_email.setText(email);
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -495,7 +496,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
         MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
-        Document myDoc = mongoCollection.find(eq("user_email", userEmail)).first();
+        Document myDoc = mongoCollection.find(eq("user_email", email)).first();
         assert myDoc != null;
         List<Document> favList = (List<Document>) myDoc.get("favorite_shelters");
         for (int i = 0; i < favList.size(); i++) {
