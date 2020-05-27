@@ -1,4 +1,4 @@
-package com.e.shelter.utilities;
+package com.e.shelter.validation;
 
 public class StatusValidator {
 

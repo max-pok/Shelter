@@ -1,7 +1,6 @@
 package com.e.shelter;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -10,8 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
+import com.e.shelter.utilities.Global;
 import com.e.shelter.utilities.User;
 import com.e.shelter.validation.EmailValidator;
 import com.e.shelter.validation.PasswordValidator;
@@ -21,12 +20,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignupActivity extends Global implements View.OnClickListener {
     
     public static String email;
     public static String password;
@@ -34,8 +31,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public static String lastName;
     public static String phone;
     public static String address;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseFirestore firebaseFirestore;
 
     private TextInputEditText firstNameTextInputEditText;
     private TextInputEditText lastNameTextInputEditText;
@@ -51,9 +46,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
 
         firstNameTextInputEditText = findViewById(R.id.register_first_name);
         lastNameTextInputEditText = findViewById(R.id.register_last_name);
@@ -101,7 +93,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                                 });
                     } else {
                         Log.d("Register", "createUserWithEmailAndPassword: onComplete: ERROR!!! ");
-
                     }
                 }
             });

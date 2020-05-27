@@ -1,4 +1,4 @@
-package com.e.shelter;
+package com.e.shelter.map;
 
 import android.Manifest;
 import android.content.Context;
@@ -32,6 +32,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import com.e.shelter.ContactPage;
+import com.e.shelter.EditShelterDetails;
+import com.e.shelter.FavoritesActivity;
+import com.e.shelter.R;
+import com.e.shelter.settings.SettingsActivity;
+import com.e.shelter.ShowReview;
 import com.e.shelter.utilities.Shelter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -120,7 +126,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private String userEmail = "maxim.p9@gmail.com";
     private String userName = "Max";
     private String userLastName = "Pok";
-    private String userType = "simpleUser";
+    private String userType = "user";
     private MaterialButton saveShelterButton;
     private MaterialButton editShelterButton;
     private MaterialButton rateShelterButton;

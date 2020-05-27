@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapViewActivity"
+    tools:context=".map.MapViewActivity"
     tools:openDrawer="start">
 
 
@@ -21,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context=".MapViewActivity">
+        tools:context=".map.MapViewActivity">
 
-        <com.e.shelter.MapWrapperLayout
+        <com.e.shelter.map.MapWrapperLayout
             android:id="@+id/map_relative_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -32,9 +32,9 @@
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.e.shelter.MapViewActivity" />
+                tools:context="com.e.shelter.map.MapViewActivity" />
 
-        </com.e.shelter.MapWrapperLayout>
+        </com.e.shelter.map.MapWrapperLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card"
