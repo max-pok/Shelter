@@ -21,6 +21,9 @@ public class Shelter {
         this.rateCount = rateCount;
     }
 
+    public Shelter() {
+    }
+
     public void setName(String name) {
         this.name = name;
     }

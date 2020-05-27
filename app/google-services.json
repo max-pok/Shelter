@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "422417141192-j0tidoqj4fo90h436pp2plq6jn1mv4lm.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.e.shelter",
-            "certificate_hash": "d5d452d85ac2f98e45c0e484b267d66ff3ccdb23"
-          }
-        },
-        {
           "client_id": "422417141192-44a5h8k79oggdjn3ittj3a2kn0gjenrh.apps.googleusercontent.com",
           "client_type": 3
         }

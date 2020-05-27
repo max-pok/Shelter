@@ -57,7 +57,7 @@ public class LoginActivity extends Global implements View.OnClickListener {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                                //intent.putExtra("email", email);
+                                intent.putExtra("uid", firebaseAuth.getUid());
                                 startActivity(intent);
                             } else {
                                 Exception e = task.getException();

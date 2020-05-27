@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.e.shelter.utilities.FavoriteCard;
+import com.e.shelter.utilities.FavoriteShelter;
 import com.e.shelter.utilities.Global;
 import com.e.shelter.utilities.User;
 import com.e.shelter.validation.EmailValidator;
@@ -22,6 +24,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+
+import java.util.ArrayList;
 
 public class SignupActivity extends Global implements View.OnClickListener {
     
@@ -72,10 +76,10 @@ public class SignupActivity extends Global implements View.OnClickListener {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) { //There is no user with the same email address
-                        final FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
+                        FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
                         User newUser = new User(firstName + " " + lastName, phone,"user");
 
-                        UserProfileChangeRequest update = new UserProfileChangeRequest.Builder()
+                        final UserProfileChangeRequest update = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(firstName + " " + lastName)
                                 .build();
                         mAuthCurrentUser.updateProfile(update);
@@ -84,15 +88,28 @@ public class SignupActivity extends Global implements View.OnClickListener {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) { //No error on firebase side.
-                                            Toast.makeText(SignupActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
+                                            updateUI();
                                             finish();
                                         } else
-                                            mAuthCurrentUser.delete();
+                                            Log.d("Register", "db.collection: onComplete: ERROR!!! ");
+                                    }
+                                });
+
+                        FavoriteShelter favoriteShelter = new FavoriteShelter(mAuthCurrentUser.getEmail(), new ArrayList<FavoriteCard>());
+                        firebaseFirestore.collection("FavoriteShelters").document(mAuthCurrentUser.getUid()).set(favoriteShelter)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) { //No error on firebase side.
+                                            updateUI();
+                                            finish();
+                                        } else
                                             Log.d("Register", "db.collection: onComplete: ERROR!!! ");
                                     }
                                 });
                     } else {
                         Log.d("Register", "createUserWithEmailAndPassword: onComplete: ERROR!!! ");
+                        Toast.makeText(SignupActivity.this, "Email already exist", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -101,9 +118,16 @@ public class SignupActivity extends Global implements View.OnClickListener {
             View view = this.getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager)getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
+                assert imm != null;
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
+    }
+
+    private void updateUI() {
+        Toast.makeText(SignupActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
+        firebaseAuth.signOut();
+        finish();
     }
 
     @Override

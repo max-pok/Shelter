@@ -38,6 +38,7 @@ import com.e.shelter.FavoritesActivity;
 import com.e.shelter.R;
 import com.e.shelter.settings.SettingsActivity;
 import com.e.shelter.ShowReview;
+import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.Shelter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -67,7 +68,11 @@ import com.google.android.material.navigation.NavigationView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mongodb.BasicDBObject;
@@ -94,6 +99,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -114,7 +120,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
-    private FirebaseFirestore database;
+    private FirebaseFirestore database = FirebaseFirestore.getInstance();
     private View infowindow;
     private TextView infoTitle;
     private TextView infoSnippet;
@@ -127,6 +133,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private String userName = "Max";
     private String userLastName = "Pok";
     private String userType = "user";
+    private String uid;
     private MaterialButton saveShelterButton;
     private MaterialButton editShelterButton;
     private MaterialButton rateShelterButton;
@@ -241,6 +248,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //userEmail = getIntent().getStringExtra("email");
         //userEmail = "maxim.p9@gmail.com";
         if (userEmail != null) header_email.setText(userEmail);
+        uid = getIntent().getStringExtra("uid");
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -327,9 +335,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         // Navigation toolbar
         this.googleMap.getUiSettings().setMapToolbarEnabled(true);
         this.googleMap.setOnMapClickListener(this);
+        this.googleMap.setOnMarkerClickListener(this);
 
         // Add shelters to google map
-        add_shelters_into_map();
+        //add_shelters_into_map();
+
+        addSheltersIntoGoogleMap();
 
         // Get favorite shelters from DB
         retrieveFavoriteShelters();
@@ -355,7 +366,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
         if (requestCode == 3) {
             Log.i("TAG", "From Edit Screen");
-            add_shelters_into_map();
+            addSheltersIntoGoogleMap();
             onMarkerClick(selectedMarker);
         }
     }
@@ -497,18 +508,27 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public boolean checkIfShelterInFavorite(String shelterName) {
         return favoriteShelters.contains(shelterName);
     }
+    
 
     public void retrieveFavoriteShelters() {
         favoriteShelters = new ArrayList<>();
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
-        Document myDoc = mongoCollection.find(eq("user_email", userEmail)).first();
-        assert myDoc != null;
-        List<Document> favList = (List<Document>) myDoc.get("favorite_shelters");
-        for (int i = 0; i < favList.size(); i++) {
-            favoriteShelters.add(Objects.requireNonNull(favList.get(i).get("shelter_name")).toString());
-        }
+        database.collection("FavoriteShelters").document(uid).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            if (documentSnapshot.exists()) {
+                                @SuppressWarnings("unchecked")
+                                ArrayList<Map> favShelters = (ArrayList<Map>) documentSnapshot.get("favoriteShelters");
+                                for (int i = 0 ; i < favShelters.size(); i ++) {
+                                    favoriteShelters.add(favShelters.get(i).get("name").toString());
+                                }
+                            }
+                        }
+                    }
+                });
+
     }
 
     /**
@@ -548,33 +568,29 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     * Adding the shelters location from mongoDB into the map.
+     * Adding the shelters location from Firebase into the map.
      */
-    public void add_shelters_into_map() {
-        //connect to DB
+    public void addSheltersIntoGoogleMap() {
         sheltersList = new ArrayList<>();
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("Shelters");
-        DBCursor cursor = shelter_db_collection.find();
-        while (cursor.hasNext()) {
-            BasicDBObject object = (BasicDBObject) cursor.next();
-            LatLng latLng = new LatLng(Double.parseDouble(object.getString("lat")), Double.parseDouble(object.getString("lon")));
-            MarkerOptions markerOptions = new MarkerOptions();
-            //Save the information about the shelter
-            markerOptions.position(latLng).snippet(object.getString("address")).title(object.getString("name"));
-            Shelter shelter = new Shelter(object.getString("name"), object.getString("address"),
-                    object.getString("lat"), object.getString("lon"),
-                    object.getString("status"), object.getString("capacity"),
-                    object.getString("rating"), object.getString("rating_amount"));
+        database.collection("Shelters").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Shelter shelter = document.toObject(Shelter.class);
+                        sheltersList.add(shelter);
+                        System.out.println(shelter);
+                        LatLng latLng = new LatLng(Double.parseDouble(shelter.getLat()), Double.parseDouble(shelter.getLon()));
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(latLng).snippet(shelter.getAddress()).title(shelter.getName());
+                        googleMap.addMarker(markerOptions);
+                    }
 
-            sheltersList.add(shelter);
-            //Add marker
-            googleMap.addMarker(markerOptions);
-
-            googleMap.setOnMarkerClickListener(this);
-        }
-        mongoClient.close();
+                } else {
+                    Log.d("TAG", "Error getting documents: ", task.getException());
+                }
+            }
+        });
     }
 
     /**
@@ -802,59 +818,27 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return address;
     }
 
+
     public void addSelectedShelterToFavorites() {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
-        Document newShelter = new Document()
-                .append("shelter_name", selectedMarker.getTitle())
-                .append("address", selectedMarker.getSnippet())
-                .append("lat", selectedMarker.getPosition().latitude)
-                .append("lon", selectedMarker.getPosition().longitude);
+        FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
+                selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
 
-        //adding shelter to DB
-        mongoCollection.updateOne(eq("user_email", userEmail), Updates.addToSet("favorite_shelters", newShelter));
-        mongoClient.close();
-
-        //adding shelter to array list
         favoriteShelters.add(selectedMarker.getTitle());
 
+        database.collection("FavoriteShelters").document(uid).update("favoriteShelters", FieldValue.arrayUnion(favoriteCard));
         Snackbar snackbar = Snackbar.make(bottomSheet, "Saved to favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
-        //Toast.makeText(MapViewActivity.this, "Saved to favorites", Toast.LENGTH_LONG).show();
-    }
-
-    public void addSelectedShelterToFireBaseFavorites() {
-        Document newShelter = new Document()
-                .append("shelter_name", selectedMarker.getTitle())
-                .append("address", selectedMarker.getSnippet())
-                .append("lat", selectedMarker.getPosition().latitude)
-                .append("lon", selectedMarker.getPosition().longitude);
     }
 
     public void removeSelectedShelterFromFavorites() {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
-        Document shelterToRemove = new Document()
-                .append("shelter_name", selectedMarker.getTitle())
-                .append("address", selectedMarker.getSnippet())
-                .append("lat", selectedMarker.getPosition().latitude)
-                .append("lon", selectedMarker.getPosition().longitude);
+        FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
+                selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
 
-        //removing shelter from DB
-        mongoCollection.updateOne(eq("user_email", userEmail), Updates.pull("favorite_shelters", shelterToRemove));
-
-        //removing shelter from array list
         favoriteShelters.remove(selectedMarker.getTitle());
 
+        database.collection("FavoriteShelters").document(uid).update("favoriteShelters", FieldValue.arrayRemove(favoriteCard));
         Snackbar snackbar = Snackbar.make(bottomSheet, "Removed from favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
-        //Toast.makeText(MapViewActivity.this, "Removed from favorites", Toast.LENGTH_LONG).show();
-    }
-
-    public void addShelterToMapFromFireBase() {
-
     }
 
     @Override
