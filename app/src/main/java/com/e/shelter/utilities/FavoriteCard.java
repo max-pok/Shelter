@@ -6,6 +6,9 @@ public class FavoriteCard {
     private double latitude;
     private double longitude;
 
+    public FavoriteCard() {
+    }
+
     public FavoriteCard(String name, String address, double latitude, double longitude) {
         this.name = name;
         this.address = address;

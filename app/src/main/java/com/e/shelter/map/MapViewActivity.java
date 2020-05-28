@@ -39,6 +39,7 @@ import com.e.shelter.R;
 import com.e.shelter.settings.SettingsActivity;
 import com.e.shelter.ShowReview;
 import com.e.shelter.utilities.FavoriteCard;
+import com.e.shelter.utilities.Review;
 import com.e.shelter.utilities.Shelter;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -93,14 +94,18 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -121,7 +126,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private FirebaseFirestore database = FirebaseFirestore.getInstance();
-    private View infowindow;
     private TextView infoTitle;
     private TextView infoSnippet;
     private TextView statusTxt;
@@ -338,8 +342,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.setOnMarkerClickListener(this);
 
         // Add shelters to google map
-        //add_shelters_into_map();
-
         addSheltersIntoGoogleMap();
 
         // Get favorite shelters from DB
@@ -477,7 +479,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         });
 
-        if (userType.equals("simpleUser")) {
+        if (userType.equals("user")) {
             editShelterButton.setVisibility(View.INVISIBLE);
         }
     }
@@ -508,7 +510,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public boolean checkIfShelterInFavorite(String shelterName) {
         return favoriteShelters.contains(shelterName);
     }
-    
 
     public void retrieveFavoriteShelters() {
         favoriteShelters = new ArrayList<>();
@@ -579,7 +580,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Shelter shelter = document.toObject(Shelter.class);
                         sheltersList.add(shelter);
-                        System.out.println(shelter);
                         LatLng latLng = new LatLng(Double.parseDouble(shelter.getLat()), Double.parseDouble(shelter.getLon()));
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(latLng).snippet(shelter.getAddress()).title(shelter.getName());
@@ -593,44 +593,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
-    /**
-     * Adding the shelters information from the local shelters.json file to mongoDB.
-     * Use this function only to add the file information into your local db.
-     */
-    public void addSheltersToMongodb() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "shelters.json"));
-                    MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-                    MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-                    MongoCollection<Document> collection = database.getCollection("Shelters");
-                    System.out.println("connected to DB " + obj.length());
-                    for (int i = 0; i < obj.length(); i++) {
-                        try {
-                            JSONObject value = (JSONObject) obj.get(i);
-                            String address = findSheltersAddresses(Double.parseDouble(value.get("lat").toString()), Double.parseDouble(value.get("lon").toString()));
-                            Document document = new Document("name", value.get("name"))
-                                    .append("lat", value.get("lat"))
-                                    .append("lon", value.get("lon"))
-                                    .append("address", address)
-                                    .append("status", "open")
-                                    .append("capacity", "1.25 square meters per person")
-                                    .append("rating", 0.0);
-                            collection.insertOne(document);
-                        } catch (IOException e) {
-                            System.out.println("Error. Trying to find the address again.");
-                            i--;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
 
     /**
      * This function loads the json file from asset folder into a string.
@@ -643,7 +605,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
@@ -729,7 +691,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 return false;
             case R.id.nav_favorite_shelters:
                 Intent favIntent = new Intent(this, FavoritesActivity.class);
-                favIntent.putExtra("userEmail", userEmail);
+                favIntent.putExtra("uid", uid);
                 startActivityForResult(favIntent, 2);
                 return false;
             case R.id.nav_logout:
@@ -772,7 +734,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 });
     }
 
-
     /**
      * Adds the shelters from mongoDB to firebase DB.
      * TODO: Use only once.
@@ -791,9 +752,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     object.getString("lat"),
                     object.getString("lon"),
                     object.getString("status"),
-                    object.getString("capacity"),
-                    object.getString("rating"),
-                    object.getString("rating_amount"));
+                    ThreadLocalRandom.current().nextInt(50, 76) + " square meter",
+                    "0",
+                    "0");
             collectionReference.add(shelter);
         }
     }
@@ -814,10 +775,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
 
         String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-        System.out.println("address = " + address);
         return address;
     }
-
 
     public void addSelectedShelterToFavorites() {
         FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
@@ -857,52 +816,86 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             Toast.makeText(MapViewActivity.this, "Please write a feedback", Toast.LENGTH_LONG).show();
             appRatingDialog.show();
         } else {
+//            //add review for selected shelter
+//            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
+//            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
+//            MongoCollection<Document> mongoCollection = database.getCollection("UserReviews");
+//            Document newReview = new Document()
+//                    .append("shelter_name", selectedMarker.getTitle())
+//                    .append("user_email", userEmail)
+//                    .append("user_name", userName + " " + userLastName)
+//                    .append("review", s)
+//                    .append("stars", String.valueOf(i));
+//            mongoCollection.insertOne(newReview);
+//
+//            //update shelter total rating
+//            int amount = 0;
+//            double averageRating, totalRating = 0;
+//            DB reviews_db = mongoClient.getDB("SafeZone_DB");
+//            DBCollection shelter_db_collection = reviews_db.getCollection("UserReviews");
+//            DBCursor cursor = shelter_db_collection.find();
+//            while (cursor.hasNext()) {
+//                BasicDBObject object = (BasicDBObject) cursor.next();
+//                if (object.get("shelter_name").equals(selectedMarker.getTitle())) {
+//                    amount++;
+//                    totalRating += Double.parseDouble(object.get("stars").toString());
+//                }
+//            }
+//            averageRating = totalRating / amount;
+//            DecimalFormat decimalFormat = new DecimalFormat("#.#");
+//            MongoCollection<Document> mongoCollection2 = database.getCollection("Shelters");
+//            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating", decimalFormat.format(averageRating)));
+//            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating_amount", String.valueOf(amount)));
+//            mongoClient.close();
+//
+//            //update marker window dialog
+//            selectedShelter.setRating(decimalFormat.format(averageRating));
+//            selectedShelter.setRateCount(String.valueOf(amount));
+//            onMarkerClick(selectedMarker);
+
+            Date currentTime = Calendar.getInstance().getTime();
+            Review newReview = new Review(selectedShelter.getName(), userName + " " + userLastName, userEmail, s, String.valueOf(i), currentTime.toString());
+
             //add review for selected shelter
-            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-            MongoCollection<Document> mongoCollection = database.getCollection("UserReviews");
-            Document newReview = new Document()
-                    .append("shelter_name", selectedMarker.getTitle())
-                    .append("user_email", userEmail)
-                    .append("user_name", userName + " " + userLastName)
-                    .append("review", s)
-                    .append("stars", String.valueOf(i));
-            mongoCollection.insertOne(newReview);
+            database.collection("UserReviews").add(newReview);
 
             //update shelter total rating
-            int amount = 0;
-            double averageRating, totalRating = 0;
-            DB reviews_db = mongoClient.getDB("SafeZone_DB");
-            DBCollection shelter_db_collection = reviews_db.getCollection("UserReviews");
-            DBCursor cursor = shelter_db_collection.find();
-            while (cursor.hasNext()) {
-                BasicDBObject object = (BasicDBObject) cursor.next();
-                if (object.get("shelter_name").equals(selectedMarker.getTitle())) {
-                    amount++;
-                    totalRating += Double.parseDouble(object.get("stars").toString());
+            database.collection("UserReviews").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        int amount = 0;
+                        double averageRating, totalRating = 0;
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.get("shelterName").toString().equals(selectedMarker.getTitle())) {
+                                amount++;
+                                totalRating += Double.parseDouble(document.get("star").toString());
+                            }
+                        }
+                        averageRating = totalRating / amount;
+                        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+                        Task<QuerySnapshot> task1 = database.collection("Shelters").get();
+                        if (task1.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task1.getResult()) {
+                                if (document.get("name").toString().equals(selectedMarker.getTitle())) {
+                                    database.collection("Shelters").document(document.getId()).update("rating", decimalFormat.format(averageRating));
+                                    database.collection("Shelters").document(document.getId()).update("rateCount", String.valueOf(amount));
+
+                                    //update marker window dialog
+                                    selectedShelter.setRating(decimalFormat.format(averageRating));
+                                    selectedShelter.setRateCount(String.valueOf(amount));
+                                    onMarkerClick(selectedMarker);
+
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        Log.d("Show Review Class", "Error getting documents: ", task.getException());
+                    }
                 }
-            }
-            averageRating = totalRating / amount;
-            DecimalFormat decimalFormat = new DecimalFormat("#.#");
-            MongoCollection<Document> mongoCollection2 = database.getCollection("Shelters");
-            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating", decimalFormat.format(averageRating)));
-            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating_amount", String.valueOf(amount)));
-            mongoClient.close();
-
-            //update marker window dialog
-            selectedShelter.setRating(decimalFormat.format(averageRating));
-            selectedShelter.setRateCount(String.valueOf(amount));
-            onMarkerClick(selectedMarker);
+            });
         }
-    }
-
-    public void insertRatingCount() {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-        mongoCollection.updateMany(eq("rating","0"), Updates.set("rating", String.valueOf(0)));
-        mongoCollection.updateMany(eq("rating","0"), Updates.set("rating_amount", String.valueOf(0)));
-        mongoClient.close();
     }
 
     // Function to check and request permission.

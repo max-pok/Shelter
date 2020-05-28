@@ -7,13 +7,26 @@ public class Review {
     private String userEmail;
     private String review;
     private String star;
+    private String time;
 
-    public Review(String shelterName, String userName, String userEmail, String review, String star){
+    public Review() {
+    }
+
+    public Review(String shelterName, String userName, String userEmail, String review, String star, String time){
         this.review=review;
         this.shelterName=shelterName;
         this.userName=userName;
         this.userEmail=userEmail;
         this.star=star;
+        this.time=time;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getStar() {

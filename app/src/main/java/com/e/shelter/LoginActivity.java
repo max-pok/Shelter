@@ -20,11 +20,14 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 
+import java.util.Objects;
+
 public class LoginActivity extends Global implements View.OnClickListener {
     public static String email;
     public static String password;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
+    private Boolean skipLogin = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +49,8 @@ public class LoginActivity extends Global implements View.OnClickListener {
     }
 
     public void signIn() {
-        email = emailInput.getText().toString();
-        password = passwordInput.getText().toString();
-        if (EmailValidator.isValidEmailTextInputEditText(email, emailInput)
-                & PasswordValidator.isValidEmailTextInputEditText(password, passwordInput)) {
-
-            firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+        if (skipLogin) {
+            firebaseAuth.signInWithEmailAndPassword("maxim.p9@gmail.com", "123456")
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -67,10 +66,32 @@ public class LoginActivity extends Global implements View.OnClickListener {
                         }
                     });
         } else {
-            View view = this.getCurrentFocus();
-            if (view != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            email = Objects.requireNonNull(emailInput.getText()).toString();
+            password = Objects.requireNonNull(passwordInput.getText()).toString();
+            if (EmailValidator.isValidEmailTextInputEditText(email, emailInput)
+                    & PasswordValidator.isValidEmailTextInputEditText(password, passwordInput)) {
+
+                firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+                                    intent.putExtra("uid", firebaseAuth.getUid());
+                                    startActivity(intent);
+                                } else {
+                                    Exception e = task.getException();
+                                    Log.d("Log In", "onFailure: " + e.getMessage());
+                                    Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+            } else {
+                if (this.getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
+                    assert imm != null;
+                    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+                }
             }
         }
     }
@@ -90,9 +111,5 @@ public class LoginActivity extends Global implements View.OnClickListener {
 
     public String getEmail(){
         return email;
-    }
-
-    public  void setEmail(String email){
-        LoginActivity.email = email;
     }
 }
