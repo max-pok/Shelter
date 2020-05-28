@@ -17,10 +17,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.e.shelter.utilities.Global;
-import com.google.firebase.auth.ExportedUserRecord;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.ListUsersPage;
+
+import static com.e.shelter.utilities.User.Emails;
 
 public class GlobalMessage extends Global {
     Button sendBtn;
@@ -50,18 +50,22 @@ public class GlobalMessage extends Global {
     }
 
         protected void sendEmail() throws FirebaseAuthException {
-            String ToMails="";
 
-            ListUsersPage page = firebaseAuth.listUsers(null);
-            for (ExportedUserRecord user : page.iterateAll()) {
-                System.out.println("User: " + user.getUid());
-            }
 
             subject =subjectTxt.getText().toString();
             message =txtMessage.getText().toString();
             Log.i("Send email", "");
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            while (i < Emails.size() - 1) {
+                sb.append(Emails.get(i));
+                sb.append(",");
+                i++;
+            }
+            sb.append(Emails.get(i));
+            String res = sb.toString();
 
-            String[] TO = ToMails.split(",");
+            String[] TO = res.split(",");
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
