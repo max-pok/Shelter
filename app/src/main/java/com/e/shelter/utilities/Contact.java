@@ -1,15 +1,21 @@
 package com.e.shelter.utilities;
 
-public class Contact {
+import java.io.Serializable;
 
+public class Contact implements Serializable {
     private String name;
-    private String phoneNumber;
     private String nameInEnglish;
+    private String phoneNumber;
+
+    public Contact() {
+    }
+
+
 
     public Contact(String name, String nameInEnglish, String phoneNumber) {
         this.name = name;
-        this.phoneNumber = phoneNumber;
         this.nameInEnglish = nameInEnglish;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getName() {

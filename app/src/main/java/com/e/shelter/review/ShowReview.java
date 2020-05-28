@@ -1,17 +1,16 @@
-package com.e.shelter;
+package com.e.shelter.review;
 
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.widget.ListView;
 
+import com.e.shelter.MainActivity;
+import com.e.shelter.R;
 import com.e.shelter.adapers.ReviewListAdapter;
-import com.e.shelter.utilities.FavoriteCard;
-import com.e.shelter.utilities.Global;
 import com.e.shelter.utilities.Review;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -20,7 +19,7 @@ import androidx.appcompat.app.ActionBar;
 
 import java.util.ArrayList;
 
-public class ShowReview extends Global {
+public class ShowReview extends MainActivity {
 
     private ListView reviewListView;
     private ArrayList<Review> reviewArrayList = new ArrayList<>();

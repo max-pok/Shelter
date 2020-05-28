@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:background="@color/grey_3"
-    tools:context=".AddNewContactActivity">
+    tools:context=".contactus.AddNewContactActivity">
 
     <TextView
         android:layout_width="wrap_content"

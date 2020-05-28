@@ -1,23 +1,18 @@
-package com.e.shelter;
+package com.e.shelter.contactus;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.e.shelter.MainActivity;
+import com.e.shelter.R;
+import com.e.shelter.utilities.Contact;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 
-import org.bson.Document;
-
-import static com.mongodb.client.model.Filters.eq;
-
-public class AddNewContactActivity extends AppCompatActivity {
+public class AddNewContactActivity extends MainActivity {
 
     private TextInputEditText hebrewInput;
     private TextInputEditText englishInput;
@@ -40,7 +35,7 @@ public class AddNewContactActivity extends AppCompatActivity {
         addButton = findViewById(R.id.add_new_contact_button);
 
 
-        if (getIntent().hasExtra("name")) { //Edit contact
+        if (getIntent().hasExtra("nameInEnglish")) { //Edit contact
             addButton.setText("Change");
             hebrewInput.setText(getIntent().getStringExtra("name"));
             englishInput.setText(getIntent().getStringExtra("nameInEnglish"));
@@ -58,7 +53,7 @@ public class AddNewContactActivity extends AppCompatActivity {
                         phoneNumber.setError("Please fill out this field");
                     }
                     if (!hebrewInput.getText().toString().isEmpty() && !englishInput.getText().toString().isEmpty() && !phoneNumber.getText().toString().isEmpty()) {
-                        editContact(getIntent().getStringExtra("name"), hebrewInput.getText().toString(), englishInput.getText().toString(), phoneNumber.getText().toString());
+                        editContact(getIntent().getStringExtra("nameInEnglish"), hebrewInput.getText().toString(), englishInput.getText().toString(), phoneNumber.getText().toString());
                     }
                 }
             });
@@ -91,37 +86,22 @@ public class AddNewContactActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
     }
 
     public void addContact(String hebrewInput, String englishInput, String phoneNumber) {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("contactPage");
-        Document newContact = new Document()
-                .append("name", hebrewInput)
-                .append("nameInEnglish", englishInput)
-                .append("phoneNumber", phoneNumber);
-
-        mongoCollection.insertOne(newContact);
-        mongoClient.close();
+        Contact contact = new Contact(hebrewInput, englishInput, phoneNumber);
+        firebaseFirestore.collection("ContactUsInformation").document(englishInput).set(contact);
         Toast.makeText(AddNewContactActivity.this, "Contact Added", Toast.LENGTH_LONG).show();
         setResult(2);
         finish();
     }
 
     public void editContact(String oldName, String hebrewInput, String englishInput, String phoneNumber) {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("contactPage");
-        Document contact = new Document()
-                .append("name", hebrewInput)
-                .append("nameInEnglish", englishInput)
-                .append("phoneNumber", phoneNumber);
-
-        mongoCollection.replaceOne(eq("name", oldName), contact);
-        mongoClient.close();
+        firebaseFirestore.collection("ContactUsInformation").document(englishInput).set(new Contact(hebrewInput,englishInput, phoneNumber));
+        firebaseFirestore.collection("ContactUsInformation").document(oldName).delete();
         Toast.makeText(AddNewContactActivity.this, "Contact Updated", Toast.LENGTH_LONG).show();
-        setResult(1);
+        setResult(2);
         finish();
     }
 }

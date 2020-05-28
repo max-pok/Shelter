@@ -16,6 +16,10 @@ import android.widget.Toast;
 import com.e.shelter.R;
 import com.e.shelter.utilities.FavoriteCard;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -113,17 +117,12 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
     }
 
     public void removeSelectedShelterFromFavorites(int position) {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("FavoriteShelters");
-        Document shelterToRemove = new Document()
-                .append("shelter_name", getItem(position).getName())
-                .append("address", getItem(position).getAddress())
-                .append("lat", getItem(position).getLatitude())
-                .append("lon", getItem(position).getLongitude());
+        FavoriteCard shelterToRemove = new FavoriteCard(getItem(position).getName(),
+                getItem(position).getAddress(),
+                getItem(position).getLatitude(),
+                getItem(position).getLongitude());
 
-        //removing shelter from DB
-        mongoCollection.updateOne(eq("user_email", mUserEmail), Updates.pull("favorite_shelters", shelterToRemove));
+        FirebaseFirestore.getInstance().collection("FavoriteShelters").document(FirebaseAuth.getInstance().getUid()).update("favoriteShelters", FieldValue.arrayRemove(shelterToRemove));
 
         cards.remove(position);
 

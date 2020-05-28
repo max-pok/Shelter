@@ -1,22 +1,32 @@
 package com.e.shelter.utilities;
 
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
+import android.content.Intent;
+import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.e.shelter.map.MapViewActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public abstract class Global extends AppCompatActivity {
-    protected FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    protected FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    protected FirebaseAuth firebaseAuth;
+    protected FirebaseFirestore firebaseFirestore;
 
-    protected void hideSoftKeyboard() {
-        if (this.getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            assert imm != null;
-            imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            Intent intent = new Intent(Global.this, MapViewActivity.class);
+            intent.putExtra("uid", firebaseUser.getUid());
+            intent.putExtra("full_name", firebaseUser.getDisplayName());
+            intent.putExtra("email", firebaseUser.getEmail());
+            startActivity(intent);
         }
     }
 }

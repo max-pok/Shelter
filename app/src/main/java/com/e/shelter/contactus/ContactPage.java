@@ -1,4 +1,4 @@
-package com.e.shelter;
+package com.e.shelter.contactus;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,22 +7,31 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.e.shelter.MainActivity;
+import com.e.shelter.R;
 import com.e.shelter.adapers.ContactListAdapter;
 import com.e.shelter.utilities.Contact;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class ContactPage extends AppCompatActivity {
+public class ContactPage extends MainActivity {
 
     private ListView contactsListView;
     private FloatingActionButton addButton;
@@ -53,11 +62,7 @@ public class ContactPage extends AppCompatActivity {
                 startActivityForResult(intent, 2);
             }
         });
-
-        adapter = new ContactListAdapter(this, R.layout.content_contacts, contactsArrayList, getIntent().getStringExtra("userType"));
-        contactsListView.setAdapter(adapter);
     }
-
 
 
     @Override
@@ -75,30 +80,43 @@ public class ContactPage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 2) {
-            Log.i("TAG", "From Add Contact Screen");
+            Log.i("TAG", "From Add/Edit Contact Screen");
             retrieveContacts();
-            adapter = new ContactListAdapter(this, R.layout.content_contacts, contactsArrayList, getIntent().getStringExtra("userType"));
-            contactsListView.setAdapter(adapter);
-        }
-        if (requestCode == 1) {
-            Log.i("TAG", "From Edit Contact Screen");
-            retrieveContacts();
-            adapter = new ContactListAdapter(this, R.layout.content_contacts, contactsArrayList, getIntent().getStringExtra("userType"));
-            contactsListView.setAdapter(adapter);
         }
     }
 
     public void retrieveContacts() {
         contactsArrayList = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("ContactUsInformation").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Contact contact = document.toObject(Contact.class);
+                                contactsArrayList.add(contact);
+                            }
+                        } else {
+                            Log.d("Show Review Class", "Error getting documents: ", task.getException());
+                        }
+                        ContactListAdapter adapter = new ContactListAdapter(ContactPage.this, R.layout.content_contacts,
+                                contactsArrayList, getIntent().getStringExtra("permission"));
+                        contactsListView.setAdapter(adapter);
+                    }
+                });
+    }
+
+    public void addContactsToFireBase() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB db = mongoClient.getDB("SafeZone_DB");
         DBCollection dbCollection = db.getCollection("contactPage");
         DBCursor cursor = dbCollection.find();
+        CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("ContactUsInformation");
         while (cursor.hasNext()) {
             BasicDBObject object = (BasicDBObject) cursor.next();
-            contactsArrayList.add(new Contact(object.getString("name"),object.getString("nameInEnglish"), object.getString("phoneNumber")));
+            Contact contact = new Contact(object.getString("name"), object.getString("nameInEnglish"), object.getString("phoneNumber"));
+            collectionReference.document(contact.getNameInEnglish()).set(contact);
         }
-        mongoClient.close();
     }
 
 
