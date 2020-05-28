@@ -6,18 +6,18 @@ public class Review {
     private String userName;
     private String userEmail;
     private String review;
-    private String star;
+    private String stars;
     private String time;
 
     public Review() {
     }
 
-    public Review(String shelterName, String userName, String userEmail, String review, String star, String time){
+    public Review(String shelterName, String userName, String userEmail, String review, String stars, String time){
         this.review=review;
         this.shelterName=shelterName;
         this.userName=userName;
         this.userEmail=userEmail;
-        this.star=star;
+        this.stars = stars;
         this.time=time;
     }
 
@@ -29,12 +29,12 @@ public class Review {
         this.time = time;
     }
 
-    public String getStar() {
-        return star;
+    public String getStars() {
+        return stars;
     }
 
-    public void setStar(String star) {
-        this.star = star;
+    public void setStars(String stars) {
+        this.stars = stars;
     }
 
     public String getShelterName() {

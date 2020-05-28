@@ -2,7 +2,9 @@ package com.e.shelter;
 
 import androidx.annotation.NonNull;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -55,8 +58,11 @@ public class LoginActivity extends Global implements View.OnClickListener {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                 Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                                intent.putExtra("uid", firebaseAuth.getUid());
+                                intent.putExtra("uid", firebaseUser.getUid());
+                                intent.putExtra("full_name", firebaseUser.getDisplayName());
+                                intent.putExtra("email", firebaseUser.getEmail());
                                 startActivity(intent);
                             } else {
                                 Exception e = task.getException();
@@ -76,8 +82,13 @@ public class LoginActivity extends Global implements View.OnClickListener {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
                                     Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                                    intent.putExtra("uid", firebaseAuth.getUid());
+                                    intent.putExtra("uid", firebaseUser.getUid());
+                                    intent.putExtra("full_name", firebaseUser.getDisplayName());
+                                    intent.putExtra("email", firebaseUser.getEmail());
+
                                     startActivity(intent);
                                 } else {
                                     Exception e = task.getException();
@@ -87,11 +98,7 @@ public class LoginActivity extends Global implements View.OnClickListener {
                             }
                         });
             } else {
-                if (this.getCurrentFocus() != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
-                    assert imm != null;
-                    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-                }
+                hideSoftKeyboard();
             }
         }
     }
@@ -107,9 +114,5 @@ public class LoginActivity extends Global implements View.OnClickListener {
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);
         }
-    }
-
-    public String getEmail(){
-        return email;
     }
 }

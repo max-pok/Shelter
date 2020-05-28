@@ -112,7 +112,7 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
         MongoCollection<Document> mongoCollection = database.getCollection("UserReviews");
-        Bson filter = and(eq("shelter_name", getItem(position).getShelterName()),eq("user_email",getItem(position).getUserEmail()),eq("user_name", getItem(position).getUserName()),eq("review",getItem(position).getReview()),eq("stars",getItem(position).getStar()));
+        Bson filter = and(eq("shelter_name", getItem(position).getShelterName()),eq("user_email",getItem(position).getUserEmail()),eq("user_name", getItem(position).getUserName()),eq("review",getItem(position).getReview()),eq("stars",getItem(position).getStars()));
         mongoCollection.deleteOne(filter);
         cards.remove(position);
         Toast.makeText(mContext, "Removed from review list", Toast.LENGTH_LONG).show();
