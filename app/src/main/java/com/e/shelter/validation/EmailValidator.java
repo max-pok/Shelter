@@ -1,6 +1,6 @@
-package com.e.shelter.utilities;
+package com.e.shelter.validation;
 
-import android.text.Editable;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.regex.Pattern;
 
@@ -26,5 +26,15 @@ public class EmailValidator {
         return email != null && EMAIL_PATTERN.matcher(email).matches();
     }
 
-
+    public static boolean isValidEmailTextInputEditText(String email, TextInputEditText textInputEditText) {
+        if (email.isEmpty()) {
+            textInputEditText.setError("Please fill out this field");
+            return false;
+        }
+        if (!isValidEmail(email)) {
+            textInputEditText.setError("Invalid email address");
+            return false;
+        }
+        return true;
+    }
 }

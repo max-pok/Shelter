@@ -2,20 +2,25 @@ package com.e.shelter;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.e.shelter.adapers.ReviewListAdapter;
+import com.e.shelter.utilities.FavoriteCard;
+import com.e.shelter.utilities.Global;
 import com.e.shelter.utilities.Review;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 
-public class ShowReview extends AppCompatActivity {
+public class ShowReview extends Global {
 
     private ListView reviewListView;
     private ArrayList<Review> reviewArrayList = new ArrayList<>();
@@ -25,8 +30,6 @@ public class ShowReview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_review_activity);
 
-        retrieveReviews();
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Reviews</font>"));
@@ -34,12 +37,8 @@ public class ShowReview extends AppCompatActivity {
         }
 
         reviewListView = findViewById(R.id.review_list_view);
-
-
-        ReviewListAdapter adapter = new ReviewListAdapter(this, R.layout.content_reviews, reviewArrayList);
-        reviewListView.setAdapter(adapter);
+        retrieveUserReviews();
     }
-
 
 
     @Override
@@ -53,15 +52,27 @@ public class ShowReview extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public void retrieveReviews() {
-                MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-                DB shelter_db = mongoClient.getDB("SafeZone_DB");
-                DBCollection shelter_db_collection = shelter_db.getCollection("UserReviews");
-                DBCursor cursor = shelter_db_collection.find();
-                while (cursor.hasNext()) {
-                    BasicDBObject object = (BasicDBObject) cursor.next();
-                    reviewArrayList.add(new Review(object.getString("shelter_name"), object.getString("user_name"),object.getString("user_email"),object.getString("review"),object.getString("stars")));
-                }
-            }
+
+    public void retrieveUserReviews() {
+        firebaseFirestore.collection("UserReviews").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Review review = document.toObject(Review.class);
+                                reviewArrayList.add(review);
+                            }
+                        } else {
+                            Log.d("Show Review Class", "Error getting documents: ", task.getException());
+                        }
+                        ReviewListAdapter adapter = new ReviewListAdapter(getBaseContext(), R.layout.content_reviews, reviewArrayList);
+                        reviewListView.setAdapter(adapter);
+                    }
+                });
+    }
 }
+
+
+
 

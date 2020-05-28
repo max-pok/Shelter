@@ -1,141 +1,118 @@
 package com.e.shelter;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
+import com.e.shelter.map.MapViewActivity;
+import com.e.shelter.utilities.Global;
+import com.e.shelter.validation.EmailValidator;
+import com.e.shelter.validation.PasswordValidator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 
-
-
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Global implements View.OnClickListener {
     public static String email;
     public static String password;
-    public static boolean[] checkuser;
+    private TextInputEditText emailInput;
+    private TextInputEditText passwordInput;
+    private Boolean skipLogin = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Logger mongoLogger = Logger.getLogger("org.mongodb.driver");
-        mongoLogger.setLevel(Level.SEVERE);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        emailInput = findViewById(R.id.emailInput);
+        passwordInput = findViewById(R.id.passInput);
+
         //Login Button
-        Button LoginButton = findViewById(R.id.LoginButton);
-        //Click on login button
-        LoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText emailInput = findViewById(R.id.emailInput);
-                EditText passwordInput = findViewById(R.id.passowrdInput);
-                email = emailInput.getText().toString();
-                password = passwordInput.getText().toString();
-                //Error message
-                builder.setMessage("Wrong Email/Password, Try Again!")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog errorMessage = builder.create();
-                // Good message
-                builder2.setMessage("Login successful\n!")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog goodMessage = builder2.create();
-                // Check if the user exist
-                try {
-                    checkuser=CheckLogin(email,password);
-                    if (checkuser[0] == true ){
-                        if(checkuser[1]== true){ // This is Admin
-                            System.out.println("this is admin\n");
-                            Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
-                            myIntent.putExtra("email", email); //Optional parameters
-                            startActivity(myIntent);
-                            finish();
-                        }
-                        else{ //This is simple user
-                            System.out.println("this is simple user\n");
-                            Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
-                            myIntent.putExtra("email", email); //Optional parameters
-                            startActivity(myIntent);
-                            finish();
-                            startActivity(new Intent(getBaseContext(), MapViewActivity.class));
+        MaterialButton LoginButton = findViewById(R.id.LoginButton);
+        LoginButton.setOnClickListener(this);
 
+        MaterialButton register = findViewById(R.id.signUpButton);
+        register.setOnClickListener(this);
+    }
+
+    public void signIn() {
+        if (skipLogin) {
+            firebaseAuth.signInWithEmailAndPassword("maxim.p9@gmail.com", "123456")
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+                                intent.putExtra("uid", firebaseAuth.getUid());
+                                startActivity(intent);
+                            } else {
+                                Exception e = task.getException();
+                                Log.d("Log In", "onFailure: " + e.getMessage());
+                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                    else{
-                        errorMessage.show();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    });
+        } else {
+            email = Objects.requireNonNull(emailInput.getText()).toString();
+            password = Objects.requireNonNull(passwordInput.getText()).toString();
+            if (EmailValidator.isValidEmailTextInputEditText(email, emailInput)
+                    & PasswordValidator.isValidEmailTextInputEditText(password, passwordInput)) {
+
+                firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+                                    intent.putExtra("uid", firebaseAuth.getUid());
+                                    startActivity(intent);
+                                } else {
+                                    Exception e = task.getException();
+                                    Log.d("Log In", "onFailure: " + e.getMessage());
+                                    Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+            } else {
+                if (this.getCurrentFocus() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
+                    assert imm != null;
+                    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
                 }
-
-            }
-        });
-        //Signup button
-        Button SignupButton = findViewById(R.id.SignUpButton);
-        SignupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {//Click to Sign up button
-                ShowSignupPage();
             }
 
-        });
-       /* Button contactButton = (Button) findViewById(R.id.contact_button);
-        contactButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShowContactPage();
-            }
-
-        });*/
-
-        //temporary
-        Button button_update = findViewById(R.id.button_update);
-        button_update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShowUpdateContact();
-            }
-
-        });
-
-
+        }
     }
 
-    public void ShowContactPage() {
-        startActivity(new Intent(getBaseContext(), ContactPage.class));
-    }
-
-    //temporary
-    public void ShowUpdateContact() {
-        startActivity(new Intent(getBaseContext(),UpdateContactActivity.class));
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i) {
+            case R.id.LoginButton:
+                signIn();
+                break;
+            case  R.id.signUpButton:
+                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(intent);
+        }
     }
 
     public String getEmail(){
         return email;
-    }
-
-    public  String getPassword(){
-        return password;
     }
 
     public static   void setEmail(String email){
@@ -150,38 +127,6 @@ public class LoginActivity extends AppCompatActivity {
         //Going to sign up page
         Intent i = new Intent(this, SignupActivity.class);
         startActivity(i);
-    }
-
-    //Connecting to MongoDB in new thread and find if the user exist , return True or False
-    public boolean[] CheckLogin(final String email, final String password) throws InterruptedException {
-         boolean[] flag= new boolean[2];
-
-        Thread t = Thread.currentThread();// The main thread
-        //New Thread that connect to DB and find the use.
-        LoginThread loginThread= new LoginThread(email,password);
-        loginThread.start();
-        Thread.sleep(1000);//wait to answer from the login thread.
-        //Get True if the user exist else False.
-         flag= loginThread.getFlag();
-        System.out.println(flag);
-        return flag;
-    }
-
-    /**
-     * Creates users collection and inserts admin user.
-     * Use this function only to add the users collection into your mongoDB.
-     * TODO: delete function and admin user before deployment.
-     */
-    public void create_user_db() {
-        BasicDBObject document = new BasicDBObject();
-        document.put("email", "admin@admin.com");
-        document.put("password", "admin");
-        document.put("user_type", "admin");
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection users_collection = shelter_db.createCollection("users",new BasicDBObject());
-        users_collection.insert(document);
-        mongoClient.close();
     }
 
 

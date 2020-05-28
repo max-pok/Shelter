@@ -1,4 +1,4 @@
-package com.e.shelter;
+package com.e.shelter.map;
 
 
 import android.content.Context;

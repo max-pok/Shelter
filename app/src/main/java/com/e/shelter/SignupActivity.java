@@ -1,96 +1,141 @@
 package com.e.shelter;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-public class SignupActivity extends AppCompatActivity {
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.e.shelter.utilities.FavoriteCard;
+import com.e.shelter.utilities.FavoriteShelter;
+import com.e.shelter.utilities.Global;
+import com.e.shelter.utilities.User;
+import com.e.shelter.validation.EmailValidator;
+import com.e.shelter.validation.PasswordValidator;
+import com.e.shelter.validation.TextInputValidator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+
+import java.util.ArrayList;
+
+public class SignupActivity extends Global implements View.OnClickListener {
+    
     public static String email;
     public static String password;
     public static String firstName;
     public static String lastName;
     public static String phone;
     public static String address;
-    public boolean flag;
+
+    private TextInputEditText firstNameTextInputEditText;
+    private TextInputEditText lastNameTextInputEditText;
+    private TextInputEditText passwordTextInputEditText;
+    private TextInputEditText emailTextInputEditText;
+    private TextInputEditText phoneTextInputEditText;
+    private MaterialButton signUpMaterialButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-        builder.setMessage("This email exists, Choose another one!")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog errorMessage = builder.create();
-        // Good message
-        builder2.setMessage("The registration was successful!")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        ShowLoginPage();
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        firstNameTextInputEditText = findViewById(R.id.register_first_name);
+        lastNameTextInputEditText = findViewById(R.id.register_last_name);
+        passwordTextInputEditText = findViewById(R.id.register_password1);
+        firstNameTextInputEditText = findViewById(R.id.register_first_name);
+        emailTextInputEditText = findViewById(R.id.register_email);
+        phoneTextInputEditText = findViewById(R.id.register_phone);
+        signUpMaterialButton = findViewById(R.id.finalSignUpButton);
+        signUpMaterialButton.setOnClickListener(this);
+
+
+    }
+    public void signUp() {
+        firstName = firstNameTextInputEditText.getText().toString();
+        lastName = lastNameTextInputEditText.getText().toString();
+        phone = phoneTextInputEditText.getText().toString();
+        email = emailTextInputEditText.getText().toString();
+        password = passwordTextInputEditText.getText().toString();
+        if (EmailValidator.isValidEmailTextInputEditText(email, emailTextInputEditText) & PasswordValidator.isValidEmailTextInputEditText(password, passwordTextInputEditText)
+                & TextInputValidator.isValidEditText(firstName, firstNameTextInputEditText) & TextInputValidator.isValidEditText(lastName, lastNameTextInputEditText)
+                & TextInputValidator.isValidEditText(phone, phoneTextInputEditText)) {
+
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) { //There is no user with the same email address
+                        FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
+                        User newUser = new User(firstName + " " + lastName, phone,"user");
+
+                        final UserProfileChangeRequest update = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(firstName + " " + lastName)
+                                .build();
+                        mAuthCurrentUser.updateProfile(update);
+                        firebaseFirestore.collection("Users").document(mAuthCurrentUser.getUid()).set(newUser)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) { //No error on firebase side.
+                                            updateUI();
+                                            finish();
+                                        } else
+                                            Log.d("Register", "db.collection: onComplete: ERROR!!! ");
+                                    }
+                                });
+
+                        FavoriteShelter favoriteShelter = new FavoriteShelter(mAuthCurrentUser.getEmail(), new ArrayList<FavoriteCard>());
+                        firebaseFirestore.collection("FavoriteShelters").document(mAuthCurrentUser.getUid()).set(favoriteShelter)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) { //No error on firebase side.
+                                            updateUI();
+                                            finish();
+                                        } else
+                                            Log.d("Register", "db.collection: onComplete: ERROR!!! ");
+                                    }
+                                });
+                    } else {
+                        Log.d("Register", "createUserWithEmailAndPassword: onComplete: ERROR!!! ");
+                        Toast.makeText(SignupActivity.this, "Email already exist", Toast.LENGTH_LONG).show();
                     }
-                });
-        final AlertDialog goodMessage = builder2.create();
-        //sign up button
-        Button SignupButton = (Button) findViewById(R.id.updateButton2);
-        SignupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    //Check if the new user is added to the system or not.
-                    if(addUser()==true){
-                        goodMessage.show();
-                    }
-                    else{
-                        errorMessage.show();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
                 }
+            });
+
+        } else {
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
+                assert imm != null;
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-
-        });
-    }
-    public boolean addUser() throws InterruptedException {
-        boolean flag;
-        //get strings from sign up text boxes
-        EditText firstnameInput = (EditText)findViewById(R.id.fnameInput);
-        EditText lastnameInput = (EditText)findViewById(R.id.lnameInput);
-        EditText passwordInput = (EditText)findViewById(R.id.passInput);
-        EditText emailInput = (EditText)findViewById(R.id.emailInput);
-        EditText phoneInput = (EditText)findViewById(R.id.phoneInput);
-        EditText addressInput = (EditText)findViewById(R.id.addressInput);
-        firstName= firstnameInput.getText().toString();
-        lastName= lastnameInput.getText().toString();
-        password= passwordInput.getText().toString();
-        phone= phoneInput.getText().toString();
-        email = emailInput.getText().toString();
-        address = addressInput.getText().toString();
-        //start new thread to add a new user.
-        SignupThread signupThread= new SignupThread(email,password,firstName,lastName,phone,address);
-        signupThread.start();
-        Thread t = Thread.currentThread();// The main thread
-        t.sleep(1500);
-        // flag that show if the registration was successful or not.
-        flag= signupThread.getFlag();
-        return flag;
+        }
     }
 
-    public void ShowLoginPage() {
-        //Going to login page
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
+    private void updateUI() {
+        Toast.makeText(SignupActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
+        firebaseAuth.signOut();
+        finish();
     }
 
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        if (i == R.id.finalSignUpButton) {
+            signUp();
+        }
+    }
 }
