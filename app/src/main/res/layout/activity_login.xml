@@ -9,11 +9,11 @@
     android:orientation="vertical"
     tools:context=".LoginActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Safe Zone"
-        android:textSize="25pt" />
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="230dp"
+        android:layout_height="202dp"
+        app:srcCompat="@drawable/safezone_unshadow" />
 
     <TextView
         android:layout_width="wrap_content"

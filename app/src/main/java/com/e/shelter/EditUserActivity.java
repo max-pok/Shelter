@@ -9,29 +9,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.e.shelter.adapers.FavoriteListAdapter;
-import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.Global;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Updates;
-import com.google.firebase.*;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
-import org.bson.Document;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static com.e.shelter.LoginActivity.email;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
 
 public class EditUserActivity  extends Global {
 
@@ -90,9 +73,6 @@ public class EditUserActivity  extends Global {
             System.out.println("Error: "+ e);
 
         }
-
-
-
 
         }
 

@@ -35,6 +35,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.e.shelter.ContactPage;
 import com.e.shelter.EditShelterDetails;
 import com.e.shelter.FavoritesActivity;
+import com.e.shelter.GlobalMessage;
 import com.e.shelter.R;
 import com.e.shelter.settings.SettingsActivity;
 import com.e.shelter.ShowReview;
@@ -689,6 +690,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             case R.id.nav_show_reviews:
                 Intent reviewActive = new Intent(this, ShowReview.class);
                 startActivity(reviewActive);
+                return false;
+            case R.id.nav_global_message:
+                Intent globalMessageActive = new Intent(this, GlobalMessage.class);
+                startActivity(globalMessageActive);
                 return false;
             case R.id.nav_favorite_shelters:
                 Intent favIntent = new Intent(this, FavoritesActivity.class);

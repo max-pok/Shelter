@@ -7,12 +7,12 @@
     android:background="@color/grey_3"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".EditUserActivity" >
+    tools:context=".GlobalMessage" >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Details"
+        android:text="Global Message"
         android:textSize="20pt" />
 
     <TextView
@@ -27,65 +27,36 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="Name">
+        android:hint="Subject">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameEdit"
+            android:id="@+id/subject_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
+
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="Phone Number">
+        android:hint="Message">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/phoneEdit"
+            android:id="@+id/messageText"
             android:layout_width="match_parent"
-            android:inputType="phone"
-            android:layout_height="wrap_content" />
+            android:layout_height="215dp"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
-        android:hint="Email">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/emailEdit"
-            android:layout_width="match_parent"
-            android:inputType="text"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
-        android:hint="Password"/>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/updateButton"
+        android:id="@+id/sendSmsButton"
         android:layout_width="362dp"
         android:layout_height="65dp"
         android:background="#FFFFFF"
-        android:text="update" />
+        android:text="Send" />
 
 </LinearLayout>
