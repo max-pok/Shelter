@@ -46,5 +46,6 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyC3SrcUtXXXXXXXXXXXXXXXXXXXXXX
     </string>
+    <string name="first_name">First Name</string>
 
 </resources>

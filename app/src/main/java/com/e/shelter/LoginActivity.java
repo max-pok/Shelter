@@ -28,7 +28,7 @@ public class LoginActivity extends Global implements View.OnClickListener {
     public static String password;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
-    private Boolean skipLogin = true;
+    private Boolean skipLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

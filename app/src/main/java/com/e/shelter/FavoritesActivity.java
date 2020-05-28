@@ -8,26 +8,15 @@ import com.e.shelter.utilities.Global;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.widget.ListView;
-
-import org.bson.Document;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import static com.e.shelter.LoginActivity.email;
-import static com.mongodb.client.model.Filters.eq;
 
 public class FavoritesActivity extends Global {
 

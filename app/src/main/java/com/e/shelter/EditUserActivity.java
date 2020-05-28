@@ -1,51 +1,56 @@
 package com.e.shelter;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mongodb.MongoClient;
+import com.e.shelter.adapers.FavoriteListAdapter;
+import com.e.shelter.utilities.FavoriteCard;
+import com.e.shelter.utilities.Global;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Updates;
+import com.google.firebase.*;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.e.shelter.LoginActivity.email;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-public class EditUserActivity  extends AppCompatActivity {
+public class EditUserActivity  extends Global {
 
-    private EditText FnameEditText;
-    private EditText LnameEditText;
+    private EditText nameEditText;
     private EditText addressEditText;
     private EditText emailEditText;
     private EditText phoneEditText;
-    private MongoClient mongoClient;
-    private MongoDatabase database;
-
     public Button update;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
-        FnameEditText = findViewById(R.id.fnameInput);
-        LnameEditText = findViewById(R.id.lnameInput);
-        addressEditText = findViewById(R.id.addressInput);
-        emailEditText = findViewById(R.id.emailInput);
-        phoneEditText = findViewById(R.id.phoneInput);
+        nameEditText = findViewById(R.id.nameEdit);
+        emailEditText = findViewById(R.id.emailEdit);
+        phoneEditText = findViewById(R.id.phoneEdit);
         InitEditText();
         //update Button
-        update = findViewById(R.id.updateButton2);
+        update = findViewById(R.id.updateButton);
         //Click on update button
         update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,82 +64,60 @@ public class EditUserActivity  extends AppCompatActivity {
             }
         });
     }
-        public void MongoConnect () {
-            mongoClient = new MongoClient("10.0.2.2", 27017);
-            database = mongoClient.getDatabase("SafeZone_DB");
+
+
+        public void InitEditText () {
+        try {
+            firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                if (documentSnapshot.exists()) {
+                                    nameEditText.setText(documentSnapshot.get("name").toString());
+                                    phoneEditText.setText(documentSnapshot.get("phoneNumber").toString());
+                                    emailEditText.setText(firebaseAuth.getCurrentUser().getEmail());
+
+                                }
+                            }
+
+                        }
+                    });
+        }
+        catch(Exception e){
+
+            System.out.println("Error: "+ e);
 
         }
 
-        public void InitEditText () {
-            //Connect to MongoDB
-            try {
-                MongoConnect();
-                MongoCollection<Document> usersCollection = database.getCollection("users");
-                MongoCollection<Document> simpleUsersCollection = database.getCollection("simpleUsers");
-                //Find if the email exist in users collection according to email
-                Document myDoc = simpleUsersCollection.find(eq("email", email)).first();
-                FnameEditText.setText(myDoc.get("firstName").toString());
-                LnameEditText.setText(myDoc.get("lastName").toString());
-                addressEditText.setText(myDoc.get("address").toString());
-                emailEditText.setText(myDoc.get("email").toString());
-                phoneEditText.setText(myDoc.get("phone").toString());
 
-            } catch (Exception e) {
-                System.out.println("Error: " + e);
 
-            }
 
         }
 
         public Boolean EditUser() {
-            String fname, lname, phone, address;
-            fname = FnameEditText.getText().toString();
-            lname = LnameEditText.getText().toString();
-            phone = phoneEditText.getText().toString();
-            address = addressEditText.getText().toString();
             try {
-                MongoCollection<Document> usersCollection = database.getCollection("users");
-                MongoCollection<Document> simpleUsersCollection = database.getCollection("simpleUsers");
-                MongoCollection<Document> favoriteCollection = database.getCollection("FavoriteShelters");
-                Document myDoc = usersCollection.find(eq("email", email)).first();
-                Document updateDoc = new Document();
-                updateDoc.put("email", emailEditText.getText().toString());
-                updateDoc.put("firstName", fname);
-                updateDoc.put("lastName", lname);
-                updateDoc.put("phone", phone);
-                updateDoc.put("address", address);
-                simpleUsersCollection.replaceOne(eq("email", email), updateDoc);
-
-                Document updateDoc2 = new Document();
-                updateDoc2.put("email", emailEditText.getText().toString());
-                updateDoc2.put("password", myDoc.get("password").toString());
-                updateDoc2.put("user_type", myDoc.get("user_type").toString());
-                usersCollection.replaceOne(eq("email", email), updateDoc2);
-
-                Document myDoc2 = favoriteCollection.find(eq("user_email", email)).first();
-                List<Document> favList = (List<Document>) myDoc2.get("favorite_shelters");
-                Document updateDoc3 = new Document();
-                updateDoc3.put("user_email",emailEditText.getText().toString());
-                updateDoc3.put("favorite_shelters",myDoc2.get("favorite_shelters"));
-                favoriteCollection.replaceOne(eq("user_email", email), updateDoc3);
-
-                for(int i=0;i<favList.size();i++){
-                    favoriteCollection.updateOne(eq("user_email", email), Updates.addToSet("favorite_shelters", favList.get(i)));
-                }
-                LoginActivity.setEmail(emailEditText.getText().toString());
-                TextView header_email = findViewById(R.id.email_header);
-                header_email.setText(email);
+                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update("name", nameEditText.getText().toString());
+                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update("phoneNumber", phoneEditText.getText().toString());
+                firebaseAuth.getCurrentUser().updateEmail(emailEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("", "User email address updated.");
+                        } else {
+                            Log.d("Error: ", "update Failed.");
+                        }
+                    }
+                });
+                firebaseFirestore.collection("FavoriteShelters").document(firebaseAuth.getUid()).update("email", emailEditText.getText().toString());
             }
             catch (Exception e){
-                System.out.println("error : "+ e);
-                mongoClient.close();
-                return false;
+                System.out.println("Error: "+e);
 
             }
-            mongoClient.close();
+
             return true;
-
-
         }
 
 }
