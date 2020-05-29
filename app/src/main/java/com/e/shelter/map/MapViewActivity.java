@@ -361,9 +361,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         }
         if (requestCode == 3) {
-            Log.i("TAG", "From Edit Screen");
-            addSheltersIntoGoogleMap();
-            onMarkerClick(selectedMarker);
+            Log.i("MapViewActivity", "From edit screen - finished");
+            updateSelectedShelter();
         }
     }
 
@@ -377,11 +376,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (searchLocationMarker != null && searchLocationMarker.getTitle().equals(marker.getTitle()))
-            return false;
+        //if selected marker is a search location marker - do nothing
+        if (searchLocationMarker != null && searchLocationMarker.getTitle().equals(marker.getTitle())) return false;
+
+        //opens bottom dialog sheet when shelter marker is selected
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         selectedMarker = marker;
 
+        //finds selected shelter & shelter uid from shelter list
         for (Map.Entry<String, Shelter> shelter: sheltersList.entrySet()) {
             if (shelter != null && shelter.getValue().getName().equals(selectedMarker.getTitle())) {
                 selectedShelter = shelter.getValue();
@@ -389,6 +391,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 break;
             }
         }
+        //dialog init
         infoTitle.setText(selectedMarker.getTitle());
         infoSnippet.setText(selectedMarker.getSnippet());
         ratingCountTxt.setText(("(" + selectedShelter.getRateCount() + ")"));
@@ -399,7 +402,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             statusTxt.setTextColor(getResources().getColor(R.color.quantum_googgreen));
         } else statusTxt.setTextColor(getResources().getColor(R.color.quantum_googred));
         statusTxt.setText(selectedShelter.getStatus());
-
         if (checkIfShelterInFavorite(marker.getTitle())) {
             saveShelterButton.setText("SAVED");
             saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
@@ -411,13 +413,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void createBottomSheetDialog() {
+        //init
         bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         saveShelterButton = findViewById(R.id.info_window_save_button);
         editShelterButton = findViewById(R.id.info_window_edit_button);
         rateShelterButton = findViewById(R.id.info_window_rate_button);
-
         infoTitle = findViewById(R.id.info_window_title);
         infoSnippet = findViewById(R.id.info_window_address);
         ratingTxt = findViewById(R.id.info_window_rating);
@@ -447,15 +449,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
-                if (i != null) {
-                    i.putExtra("name", selectedMarker.getTitle());
-                    i.putExtra("address", selectedMarker.getSnippet());
-                    i.putExtra("status", selectedShelter.getStatus());
-                    i.putExtra("capacity", selectedShelter.getCapacity());
-                    i.putExtra("lon", selectedShelter.getLon());
-                    i.putExtra("lat", selectedShelter.getLat());
-                    startActivityForResult(i, 3);
-                }
+                i.putExtra("name", selectedMarker.getTitle());
+                i.putExtra("address", selectedMarker.getSnippet());
+                i.putExtra("status", selectedShelter.getStatus());
+                i.putExtra("capacity", selectedShelter.getCapacity());
+                startActivityForResult(i, 3);
             }
         });
         //Rate Button Function
@@ -465,6 +463,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 appRatingDialog.show();
             }
         });
+
+        //bottom sheet onSlide animation
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -582,14 +582,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                         markerOptions.position(latLng).snippet(shelter.getAddress()).title(shelter.getName());
                         googleMap.addMarker(markerOptions);
                     }
-
                 } else {
                     Log.d("TAG", "Error getting documents: ", task.getException());
                 }
             }
         });
     }
-
 
     /**
      * This function loads the json file from asset folder into a string.
@@ -612,7 +610,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
-     *
      * @param address - input received from search bar.
      */
     public void searchAddress(String address) {
@@ -640,7 +637,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Starts specific function/intent from the navigation bar based on the item selected.
-     *
      * @param item - selected item from side navigation bar.
      * @return true to keep item selected, false otherwise.
      */
@@ -741,7 +737,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Find shelters addresses.
-     *
      * @param latitude  - shelter latitude
      * @param longitude - shelter longitude
      * @return address
@@ -758,14 +753,20 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return address;
     }
 
-
+    /**
+     * Adds selected shelter to favorite array list & database.
+     * This function only used from bottom information dialog & only when the save button text equals to 'SAVE'.
+     */
     public void addSelectedShelterToFavorites() {
         FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
                 selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
 
+        //add shelter name to favorite list
         favoriteShelters.add(selectedMarker.getTitle());
 
+        //add shelter to database
         database.collection("FavoriteShelters").document(uid).update("favoriteShelters", FieldValue.arrayUnion(favoriteCard));
+
         Snackbar snackbar = Snackbar.make(bottomSheet, "Saved to favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
     }
@@ -775,9 +776,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
                 selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
 
+        //remove shelter name from favorite list
         favoriteShelters.remove(selectedMarker.getTitle());
 
+        //remove shelter from databse
         database.collection("FavoriteShelters").document(uid).update("favoriteShelters", FieldValue.arrayRemove(favoriteCard));
+
         Snackbar snackbar = Snackbar.make(bottomSheet, "Removed from favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
     }
@@ -885,6 +889,21 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+    public void updateSelectedShelter() {
+        FirebaseFirestore.getInstance().collection("Shelters").document(selectedShelterUID)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    selectedShelter = task.getResult().toObject(Shelter.class);
+                    sheltersList.replace(selectedShelterUID, selectedShelter);
+                    selectedMarker.setTitle(selectedShelter.getName());
+                    selectedMarker.setSnippet(selectedShelter.getAddress());
+                    onMarkerClick(selectedMarker);
+                }
+            }
+        });
+    }
 
 }
 

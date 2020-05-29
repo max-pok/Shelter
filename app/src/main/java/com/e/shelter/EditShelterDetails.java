@@ -49,10 +49,10 @@ public class EditShelterDetails extends MainActivity {
     }
 
     public void update_details() {
-        if (!TextInputValidator.isValidEditText(nameEditText.getText().toString(), nameEditText)
-                & !TextInputValidator.isValidEditText(addressEditText.getText().toString(), addressEditText)
-                & !TextInputValidator.isValidEditText(capacityEditText.getText().toString(), capacityEditText)
-                & !TextInputValidator.isValidEditText(statusEditText.getText().toString(), statusEditText)) {
+        if (TextInputValidator.isValidShelterName(nameEditText.getText().toString(), oldShelterName, nameEditText)
+                & TextInputValidator.isValidEditText(addressEditText.getText().toString(), addressEditText)
+                & TextInputValidator.isValidEditText(capacityEditText.getText().toString(), capacityEditText)
+                & TextInputValidator.isValidEditText(statusEditText.getText().toString(), statusEditText)) {
 
             firebaseFirestore.collection("Shelters").whereEqualTo("name", oldShelterName)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -65,7 +65,7 @@ public class EditShelterDetails extends MainActivity {
                             map.put("address", addressEditText.getText().toString());
                             map.put("status", statusEditText.getText().toString());
                             map.put("capacity", capacityEditText.getText().toString());
-                            firebaseFirestore.document(document.getId()).set(map, SetOptions.merge());
+                            firebaseFirestore.collection("Shelters").document(document.getId()).set(map, SetOptions.merge());
                             setResult(3);
                             finish();
                         }

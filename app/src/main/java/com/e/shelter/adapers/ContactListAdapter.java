@@ -11,11 +11,22 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.e.shelter.contactus.AddNewContactActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ContactListAdapter extends ArrayAdapter<Contact> {
 
@@ -126,8 +137,21 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
     }
 
     private void removeSelectedContactFromContactsList(int position) {
-
+        FirebaseFirestore.getInstance().collection("ContactUsInformation")
+                .whereEqualTo("nameInEnglish", getItem(position).getNameInEnglish())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        FirebaseFirestore.getInstance().collection("ContactUsInformation")
+                                .document(document.getId()).delete();
+                        break;
+                    }
+                }
+                Toast.makeText(mContext, "Removed from contacts list", Toast.LENGTH_LONG).show();
+            }
+        });
         cards.remove(position);
-        Toast.makeText(mContext, "Removed from contacts list", Toast.LENGTH_LONG).show();
     }
 }
