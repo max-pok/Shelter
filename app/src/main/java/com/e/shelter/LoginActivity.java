@@ -50,7 +50,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
         MaterialButton register = findViewById(R.id.signUpButton);
         register.setOnClickListener(this);
-
+/*
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
@@ -58,7 +58,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
             intent.putExtra("full_name", firebaseUser.getDisplayName());
             intent.putExtra("email", firebaseUser.getEmail());
             startActivity(intent);
-        }
+        }*/
     }
 
     public void signIn() {

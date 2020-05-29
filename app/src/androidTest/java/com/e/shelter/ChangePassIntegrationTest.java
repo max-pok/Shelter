@@ -5,8 +5,6 @@ import androidx.test.rule.ActivityTestRule;
 
 import androidx.test.espresso.*;
 
-import com.e.shelter.settings.ChangePassActivity;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

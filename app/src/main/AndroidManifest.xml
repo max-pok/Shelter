@@ -38,7 +38,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".contactus.ContactPage" />
         <activity android:name=".review.ShowReview" />
-        <activity android:name=".settings.ChangePassActivity" />
+        <activity android:name=".ChangePassActivity"/>
         <activity android:name=".EditShelterDetails" />
         <activity android:name=".contactus.AddNewContactActivity" />
 
