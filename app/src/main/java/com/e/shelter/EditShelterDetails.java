@@ -49,25 +49,32 @@ public class EditShelterDetails extends MainActivity {
     }
 
     public void update_details() {
-        if (TextInputValidator.isValidShelterName(nameEditText.getText().toString(), oldShelterName, nameEditText)
+        if (TextInputValidator.isValidEditText(nameEditText.getText().toString(), nameEditText)
                 & TextInputValidator.isValidEditText(addressEditText.getText().toString(), addressEditText)
                 & TextInputValidator.isValidEditText(capacityEditText.getText().toString(), capacityEditText)
                 & TextInputValidator.isValidEditText(statusEditText.getText().toString(), statusEditText)) {
 
-            firebaseFirestore.collection("Shelters").whereEqualTo("name", oldShelterName)
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            firebaseFirestore.collection("Shelters").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<Object, String> map = new HashMap<>();
-                            map.put("name", nameEditText.getText().toString());
-                            map.put("address", addressEditText.getText().toString());
-                            map.put("status", statusEditText.getText().toString());
-                            map.put("capacity", capacityEditText.getText().toString());
-                            firebaseFirestore.collection("Shelters").document(document.getId()).set(map, SetOptions.merge());
-                            setResult(3);
-                            finish();
+                            if (document.get("name").toString().equals(nameEditText.getText().toString()) && !oldShelterName.equals(nameEditText.getText().toString())) {
+                                nameEditText.setError("Shelter name already exist");
+                                return;
+                            }
+                        }
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.get("name").toString().equals(oldShelterName)) {
+                                Map<Object, String> map = new HashMap<>();
+                                map.put("name", nameEditText.getText().toString());
+                                map.put("address", addressEditText.getText().toString());
+                                map.put("status", statusEditText.getText().toString());
+                                map.put("capacity", capacityEditText.getText().toString());
+                                firebaseFirestore.collection("Shelters").document(document.getId()).set(map, SetOptions.merge());
+                                setResult(3);
+                                finish();
+                            }
                         }
                     }
                 }

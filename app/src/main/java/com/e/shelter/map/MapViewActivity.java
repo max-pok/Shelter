@@ -337,7 +337,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Add shelters to google map
         addSheltersIntoGoogleMap();
-
+        
         // Get favorite shelters from DB
         retrieveFavoriteShelters();
     }
