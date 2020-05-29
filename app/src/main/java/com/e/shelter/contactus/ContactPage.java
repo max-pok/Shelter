@@ -27,7 +27,6 @@ import com.mongodb.MongoClient;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
@@ -41,7 +40,7 @@ public class ContactPage extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.contacts_of_municipality);
+        setContentView(R.layout.activity_contacts_page);
 
         retrieveContacts();
 

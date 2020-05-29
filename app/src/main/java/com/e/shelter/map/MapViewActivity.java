@@ -32,6 +32,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import com.e.shelter.NewsActivity;
 import com.e.shelter.contactus.ContactPage;
 import com.e.shelter.EditShelterDetails;
 import com.e.shelter.FavoritesActivity;
@@ -663,6 +664,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 Intent favIntent = new Intent(this, FavoritesActivity.class);
                 favIntent.putExtra("uid", uid);
                 startActivityForResult(favIntent, 2);
+                break;
+
+            case R.id.nav_news:
+                Intent news = new Intent(this, NewsActivity.class);
+                startActivity(news);
                 break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();

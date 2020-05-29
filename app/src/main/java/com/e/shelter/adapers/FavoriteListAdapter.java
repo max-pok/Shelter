@@ -33,7 +33,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
 
-    private static final String TAG = "CustomListAdapter";
+    private static final String TAG = "FavoriteListAdapter";
 
     private Context mContext;
     private int mResource;
@@ -89,7 +89,7 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
 //        Animation animation = AnimationUtils.loadAnimation(mContext,
 //                (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
 //        result.startAnimation(animation);
-        lastPosition = position;
+//        lastPosition = position;
 
         String name = getItem(position).getName();
         String address = getItem(position).getAddress();
