@@ -32,13 +32,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
-import com.e.shelter.ContactPage;
+import com.e.shelter.contactus.ContactPage;
 import com.e.shelter.EditShelterDetails;
 import com.e.shelter.FavoritesActivity;
 import com.e.shelter.GlobalMessage;
+import com.e.shelter.LoginActivity;
 import com.e.shelter.R;
 import com.e.shelter.settings.SettingsActivity;
-import com.e.shelter.ShowReview;
+import com.e.shelter.review.ShowReview;
 import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.Review;
 import com.e.shelter.utilities.Shelter;
@@ -69,6 +70,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -82,16 +84,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Updates;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
-
-import org.bson.Document;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +95,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -109,8 +104,6 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.e.shelter.LoginActivity.email;
-import static com.mongodb.client.model.Filters.eq;
-
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
         GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RatingDialogListener {
@@ -135,10 +128,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView ratingTxt;
     private TextView ratingCountTxt;
     private List<String> suggestions = new ArrayList<>();
-    private String userEmail = email;
-    private String userName = "Max";
-    private String userLastName = "Pok";
-    private String userType = "user";
+
+    private String userEmail;
+    private String userFullName;
+    private String permission = "admin";
     private String uid;
     private MaterialButton saveShelterButton;
     private MaterialButton editShelterButton;
@@ -147,8 +140,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private List<String> favoriteShelters;
     private LinearLayout bottomSheet;
     private BottomSheetBehavior bottomSheetBehavior;
-    private List<Shelter> sheltersList;
+    private HashMap<String, Shelter> sheltersList;
     private Shelter selectedShelter;
+    private String selectedShelterUID;
     private AppRatingDialog appRatingDialog;
     private AppCompatRatingBar ratingBarInfoDialog;
 
@@ -206,7 +200,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onButtonClicked(int buttonCode) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (selectedMarker != null && selectedMarker.isInfoWindowShown()) selectedMarker.hideInfoWindow();
+                if (selectedMarker != null && selectedMarker.isInfoWindowShown())
+                    selectedMarker.hideInfoWindow();
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
                     searchBar.disableSearch();
                     toggle.syncState();
@@ -251,10 +246,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         //Header
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
-        //userEmail = getIntent().getStringExtra("email");
-        //userEmail = "maxim.p9@gmail.com";
-        if (userEmail != null) header_email.setText(email);
+
+        userEmail = getIntent().getStringExtra("email");
+        userFullName = getIntent().getStringExtra("full_name");
         uid = getIntent().getStringExtra("uid");
+        //permission = getIntent().getStringExtra("permission");
+        if (userEmail != null) header_email.setText(userEmail);
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -345,7 +342,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Add shelters to google map
         addSheltersIntoGoogleMap();
-
+        
         // Get favorite shelters from DB
         retrieveFavoriteShelters();
     }
@@ -369,9 +366,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         }
         if (requestCode == 3) {
-            Log.i("TAG", "From Edit Screen");
-            addSheltersIntoGoogleMap();
-            onMarkerClick(selectedMarker);
+            Log.i("MapViewActivity", "From edit screen - finished");
+            updateSelectedShelter();
         }
     }
 
@@ -379,21 +375,28 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public void onMapClick(LatLng latLng) {
         selectedMarker = null;
         selectedShelter = null;
+        selectedShelterUID = null;
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        //if selected marker is a search location marker - do nothing
         if (searchLocationMarker != null && searchLocationMarker.getTitle().equals(marker.getTitle())) return false;
+
+        //opens bottom dialog sheet when shelter marker is selected
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         selectedMarker = marker;
 
-        for (Shelter shelter : sheltersList) {
-            if (shelter != null && shelter.getName().equals(selectedMarker.getTitle())) {
-                selectedShelter = shelter;
+        //finds selected shelter & shelter uid from shelter list
+        for (Map.Entry<String, Shelter> shelter: sheltersList.entrySet()) {
+            if (shelter != null && shelter.getValue().getName().equals(selectedMarker.getTitle())) {
+                selectedShelter = shelter.getValue();
+                selectedShelterUID = shelter.getKey();
                 break;
             }
         }
+        //dialog init
         infoTitle.setText(selectedMarker.getTitle());
         infoSnippet.setText(selectedMarker.getSnippet());
         ratingCountTxt.setText(("(" + selectedShelter.getRateCount() + ")"));
@@ -404,7 +407,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             statusTxt.setTextColor(getResources().getColor(R.color.quantum_googgreen));
         } else statusTxt.setTextColor(getResources().getColor(R.color.quantum_googred));
         statusTxt.setText(selectedShelter.getStatus());
-
         if (checkIfShelterInFavorite(marker.getTitle())) {
             saveShelterButton.setText("SAVED");
             saveShelterButton.setIconResource(R.drawable.savedbookmark_icon_white);
@@ -416,13 +418,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     public void createBottomSheetDialog() {
+        //init
         bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         saveShelterButton = findViewById(R.id.info_window_save_button);
         editShelterButton = findViewById(R.id.info_window_edit_button);
         rateShelterButton = findViewById(R.id.info_window_rate_button);
-
         infoTitle = findViewById(R.id.info_window_title);
         infoSnippet = findViewById(R.id.info_window_address);
         ratingTxt = findViewById(R.id.info_window_rating);
@@ -452,15 +454,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MapViewActivity.this, EditShelterDetails.class);
-                if (i != null) {
-                    i.putExtra("name", selectedMarker.getTitle());
-                    i.putExtra("address", selectedMarker.getSnippet());
-                    i.putExtra("status", selectedShelter.getStatus());
-                    i.putExtra("capacity", selectedShelter.getCapacity());
-                    i.putExtra("lon", selectedShelter.getLon());
-                    i.putExtra("lat", selectedShelter.getLat());
-                    startActivityForResult(i, 3);
-                }
+                i.putExtra("name", selectedMarker.getTitle());
+                i.putExtra("address", selectedMarker.getSnippet());
+                i.putExtra("status", selectedShelter.getStatus());
+                i.putExtra("capacity", selectedShelter.getCapacity());
+                startActivityForResult(i, 3);
             }
         });
         //Rate Button Function
@@ -470,6 +468,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 appRatingDialog.show();
             }
         });
+
+        //bottom sheet onSlide animation
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -481,7 +481,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         });
 
-        if (userType.equals("user")) {
+        if (permission.equals("user")) {
             editShelterButton.setVisibility(View.INVISIBLE);
         }
     }
@@ -524,7 +524,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                             if (documentSnapshot.exists()) {
                                 @SuppressWarnings("unchecked")
                                 ArrayList<Map> favShelters = (ArrayList<Map>) documentSnapshot.get("favoriteShelters");
-                                for (int i = 0 ; i < favShelters.size(); i ++) {
+                                for (int i = 0; i < favShelters.size(); i++) {
                                     favoriteShelters.add(favShelters.get(i).get("name").toString());
                                 }
                             }
@@ -574,27 +574,25 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Adding the shelters location from Firebase into the map.
      */
     public void addSheltersIntoGoogleMap() {
-        sheltersList = new ArrayList<>();
+        sheltersList = new HashMap<>();
         database.collection("Shelters").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Shelter shelter = document.toObject(Shelter.class);
-                        sheltersList.add(shelter);
+                        sheltersList.put(document.getId(), shelter);
                         LatLng latLng = new LatLng(Double.parseDouble(shelter.getLat()), Double.parseDouble(shelter.getLon()));
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(latLng).snippet(shelter.getAddress()).title(shelter.getName());
                         googleMap.addMarker(markerOptions);
                     }
-
                 } else {
                     Log.d("TAG", "Error getting documents: ", task.getException());
                 }
             }
         });
     }
-
 
     /**
      * This function loads the json file from asset folder into a string.
@@ -617,7 +615,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     /**
      * Search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
-     *
      * @param address - input received from search bar.
      */
     public void searchAddress(String address) {
@@ -644,30 +641,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     * Adding the shelters information from the local shelters.json file to mongoDB.
-     * Use this function only to add the file information into your local db.
-     */
-    public void addAddressesToMongodb() {
-        try {
-            JSONArray obj = new JSONArray(loadJSONFromAsset(getApplicationContext(), "addresses.json"));
-            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-            DB db = mongoClient.getDB("SafeZone_DB");
-            DBCollection collection = db.getCollection("Addresses");
-            for (int i = 0; i < obj.length(); i++) {
-                JSONObject value = (JSONObject) obj.get(i);
-                BasicDBObject document = new BasicDBObject();
-                document.put("HouseNumber", value.get("HouseNuber"));
-                document.put("StreetName", value.get("streetName"));
-                document.put("lat", value.get("lat"));
-                document.put("lon", value.get("lon"));
-                collection.insert(document);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Starts specific function/intent from the navigation bar based on the item selected.
      * @param item - selected item from side navigation bar.
      * @return true to keep item selected, false otherwise.
@@ -677,30 +650,38 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         switch (item.getItemId()) {
             case R.id.nav_info:
                 Intent contactsIntent = new Intent(this, ContactPage.class);
-                contactsIntent.putExtra("userType", userType);
+                contactsIntent.putExtra("permission", permission);
                 startActivity(contactsIntent);
-                return false;
+                break;
             case R.id.nav_settings:
                 Intent settingsActive = new Intent(this, SettingsActivity.class);
                 startActivity(settingsActive);
-                return false;
+                break;
             case R.id.nav_night_mode_switch:
                 nightModeSwitch();
-                return false;
+                break;
             case R.id.nav_show_reviews:
                 Intent reviewActive = new Intent(this, ShowReview.class);
                 startActivity(reviewActive);
                 return false;
             case R.id.nav_global_message:
                 Intent globalMessageActive = new Intent(this, GlobalMessage.class);
-                startActivity(globalMessageActive);
+                //startActivity(globalMessageActive);
+                startActivityForResult(globalMessageActive, 2);
+
                 return false;
+
             case R.id.nav_favorite_shelters:
                 Intent favIntent = new Intent(this, FavoritesActivity.class);
                 favIntent.putExtra("uid", uid);
                 startActivityForResult(favIntent, 2);
-                return false;
+                break;
             case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MapViewActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 break;
         }
         return false;
@@ -765,9 +746,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+
     /**
      * Find shelters addresses.
-     *
      * @param latitude  - shelter latitude
      * @param longitude - shelter longitude
      * @return address
@@ -784,37 +765,51 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         return address;
     }
 
+    /**
+     * Adds selected shelter to favorite array list & database.
+     * This function only used from bottom information dialog & only when the save button text equals to 'SAVE'.
+     */
     public void addSelectedShelterToFavorites() {
         FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
                 selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
 
+        //add shelter name to favorite list
         favoriteShelters.add(selectedMarker.getTitle());
 
+        //add shelter to database
         database.collection("FavoriteShelters").document(uid).update("favoriteShelters", FieldValue.arrayUnion(favoriteCard));
+
         Snackbar snackbar = Snackbar.make(bottomSheet, "Saved to favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
     }
+
 
     public void removeSelectedShelterFromFavorites() {
         FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
                 selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
 
+        //remove shelter name from favorite list
         favoriteShelters.remove(selectedMarker.getTitle());
 
+        //remove shelter from databse
         database.collection("FavoriteShelters").document(uid).update("favoriteShelters", FieldValue.arrayRemove(favoriteCard));
+
         Snackbar snackbar = Snackbar.make(bottomSheet, "Removed from favorites", Snackbar.LENGTH_LONG);
         snackbar.show();
     }
+
 
     @Override
     public void onNegativeButtonClicked() {
         // Do Nothing
     }
 
+
     @Override
     public void onNeutralButtonClicked() {
         // Do Nothing
     }
+
 
     @Override
     public void onPositiveButtonClicked(int i, String s) {
@@ -822,93 +817,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             Toast.makeText(MapViewActivity.this, "Please write a feedback", Toast.LENGTH_LONG).show();
             appRatingDialog.show();
         } else {
-//            //add review for selected shelter
-//            MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-//            MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-//            MongoCollection<Document> mongoCollection = database.getCollection("UserReviews");
-//            Document newReview = new Document()
-//                    .append("shelter_name", selectedMarker.getTitle())
-//                    .append("user_email", userEmail)
-//                    .append("user_name", userName + " " + userLastName)
-//                    .append("review", s)
-//                    .append("stars", String.valueOf(i));
-//            mongoCollection.insertOne(newReview);
-//
-//            //update shelter total rating
-//            int amount = 0;
-//            double averageRating, totalRating = 0;
-//            DB reviews_db = mongoClient.getDB("SafeZone_DB");
-//            DBCollection shelter_db_collection = reviews_db.getCollection("UserReviews");
-//            DBCursor cursor = shelter_db_collection.find();
-//            while (cursor.hasNext()) {
-//                BasicDBObject object = (BasicDBObject) cursor.next();
-//                if (object.get("shelter_name").equals(selectedMarker.getTitle())) {
-//                    amount++;
-//                    totalRating += Double.parseDouble(object.get("stars").toString());
-//                }
-//            }
-//            averageRating = totalRating / amount;
-//            DecimalFormat decimalFormat = new DecimalFormat("#.#");
-//            MongoCollection<Document> mongoCollection2 = database.getCollection("Shelters");
-//            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating", decimalFormat.format(averageRating)));
-//            mongoCollection2.updateOne(eq("name", selectedMarker.getTitle()), Updates.set("rating_amount", String.valueOf(amount)));
-//            mongoClient.close();
-//
-//            //update marker window dialog
-//            selectedShelter.setRating(decimalFormat.format(averageRating));
-//            selectedShelter.setRateCount(String.valueOf(amount));
-//            onMarkerClick(selectedMarker);
-
-            Date currentTime = Calendar.getInstance().getTime();
-            Review newReview = new Review(selectedShelter.getName(), userName + " " + userLastName, userEmail, s, String.valueOf(i), currentTime.toString());
-
-            //add review for selected shelter
-            database.collection("UserReviews").add(newReview);
-
-            //update shelter total rating
-            database.collection("UserReviews").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        int amount = 0;
-                        double averageRating, totalRating = 0;
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.get("shelterName").toString().equals(selectedMarker.getTitle())) {
-                                amount++;
-                                totalRating += Double.parseDouble(document.get("star").toString());
-                            }
-                        }
-                        averageRating = totalRating / amount;
-                        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-                        Task<QuerySnapshot> task1 = database.collection("Shelters").get();
-                        if (task1.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task1.getResult()) {
-                                if (document.get("name").toString().equals(selectedMarker.getTitle())) {
-                                    database.collection("Shelters").document(document.getId()).update("rating", decimalFormat.format(averageRating));
-                                    database.collection("Shelters").document(document.getId()).update("rateCount", String.valueOf(amount));
-
-                                    //update marker window dialog
-                                    selectedShelter.setRating(decimalFormat.format(averageRating));
-                                    selectedShelter.setRateCount(String.valueOf(amount));
-                                    onMarkerClick(selectedMarker);
-
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        Log.d("Show Review Class", "Error getting documents: ", task.getException());
-                    }
-                }
-            });
+            addReview(i, s);
         }
     }
+
 
     // Function to check and request permission.
     public void checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MapViewActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             // Requesting the permission
-            ActivityCompat.requestPermissions(MapViewActivity.this, new String[] { permission }, requestCode);
+            ActivityCompat.requestPermissions(MapViewActivity.this, new String[]{permission}, requestCode);
         }
     }
 
@@ -923,32 +841,81 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             } else {
                 Toast.makeText(MapViewActivity.this, "SEND SMS Permission Denied", Toast.LENGTH_SHORT).show();
             }
-        }
-        else if (requestCode == 2) {
+        } else if (requestCode == 2) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MapViewActivity.this, "LOCATION Permission Granted", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(MapViewActivity.this, "LOCATION Permission Denied", Toast.LENGTH_SHORT).show();
             }
-        }
-        else if (requestCode == 3) {
+        } else if (requestCode == 3) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MapViewActivity.this, "LOCATION Permission Granted", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(MapViewActivity.this, "LOCATION Permission Denied", Toast.LENGTH_SHORT).show();
             }
-        }
-        else if (requestCode == 4) {
+        } else if (requestCode == 4) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MapViewActivity.this, "INTERNET Permission Granted", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(MapViewActivity.this, "INTERNET Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+
+    public void addReview(int stars, String review) {
+        Date currentTime = Calendar.getInstance().getTime();
+        Review newReview = new Review(selectedShelter.getName(), userFullName, userEmail, review, String.valueOf(stars), currentTime.toString());
+
+        //add review for selected shelter
+        database.collection("UserReviews").add(newReview);
+
+        //update shelter total rating
+        database.collection("UserReviews").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    int amount = 0;
+                    double averageRating, totalRating = 0;
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (document.get("shelterName").toString().equals(selectedMarker.getTitle())) {
+                            amount++;
+                            totalRating += Double.parseDouble(document.get("stars").toString());
+                        }
+                    }
+
+                    averageRating = totalRating / amount;
+                    DecimalFormat decimalFormat = new DecimalFormat("#.#");
+                    database.collection("Shelters").document(selectedShelterUID).update("rating", decimalFormat.format(averageRating));
+                    database.collection("Shelters").document(selectedShelterUID).update("rateCount", String.valueOf(amount));
+
+                    //update marker window dialog
+                    selectedShelter.setRating(decimalFormat.format(averageRating));
+                    selectedShelter.setRateCount(String.valueOf(amount));
+                    onMarkerClick(selectedMarker);
+                } else {
+                    Log.d("Show Review", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void updateSelectedShelter() {
+        FirebaseFirestore.getInstance().collection("Shelters").document(selectedShelterUID)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    selectedShelter = task.getResult().toObject(Shelter.class);
+                    sheltersList.replace(selectedShelterUID, selectedShelter);
+                    selectedMarker.setTitle(selectedShelter.getName());
+                    selectedMarker.setSnippet(selectedShelter.getAddress());
+                    onMarkerClick(selectedMarker);
+                }
+            }
+        });
+    }
+
 }
 

@@ -9,9 +9,16 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.e.shelter.R;
 import com.e.shelter.utilities.Review;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -107,13 +114,8 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
         return convertView;
     }
 
-    public void removeSelectedReviewFromReviewList(int position) {
-        //TODO : FIX
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("UserReviews");
-        Bson filter = and(eq("shelter_name", getItem(position).getShelterName()),eq("user_email",getItem(position).getUserEmail()),eq("user_name", getItem(position).getUserName()),eq("review",getItem(position).getReview()),eq("stars",getItem(position).getStar()));
-        mongoCollection.deleteOne(filter);
+    public void removeSelectedReviewFromReviewList(final int position) {
+
         cards.remove(position);
         Toast.makeText(mContext, "Removed from review list", Toast.LENGTH_LONG).show();
     }

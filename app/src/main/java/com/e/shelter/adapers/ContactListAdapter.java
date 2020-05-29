@@ -11,19 +11,22 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.e.shelter.AddNewContactActivity;
+import androidx.annotation.NonNull;
+
+import com.e.shelter.contactus.AddNewContactActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
-import org.bson.Document;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
-
-import static com.mongodb.client.model.Filters.eq;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ContactListAdapter extends ArrayAdapter<Contact> {
 
@@ -34,7 +37,7 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
     private int lastPosition = -1;
     private ContactListAdapter adapter;
     private ArrayList<Contact> cards;
-    private String user_type;
+    private String permission;
 
 
     /**
@@ -54,13 +57,13 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
      * @param resource
      * @param objects
      */
-    public ContactListAdapter(Context context, int resource, ArrayList<Contact> objects, String userType) {
+    public ContactListAdapter(Context context, int resource, ArrayList<Contact> objects, String permission) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
         adapter = this;
         cards = objects;
-        user_type = userType;
+        this.permission = permission;
     }
 
     @Override
@@ -94,11 +97,12 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
         holder.name.setText((name + " | " + nameInEnglish));
         holder.phoneNumber.setText(phoneNumber);
 
-        if (user_type.equals("simpleUser")) {
+        if (permission.equals("user")) {
             holder.removeButton.setVisibility(View.INVISIBLE);
             holder.editButton.setVisibility(View.INVISIBLE);
         } else {
-
+            holder.removeButton.setVisibility(View.VISIBLE);
+            holder.editButton.setVisibility(View.VISIBLE);
         }
 
         holder.removeButton.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +117,7 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + getItem(position).getPhoneNumber()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                 mContext.startActivity(intent);
             }
         });
@@ -132,18 +137,21 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
     }
 
     private void removeSelectedContactFromContactsList(int position) {
-        //TODO : FIX
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-        MongoCollection<Document> mongoCollection = database.getCollection("contactPage");
-
-        //mongoCollection.updateOne(eq("name", getItem(position).getName()), Updates.pull("favorite_shelters", shelterToRemove));
-        mongoCollection.deleteOne(eq("name", getItem(position).getName()));
-
+        FirebaseFirestore.getInstance().collection("ContactUsInformation")
+                .whereEqualTo("nameInEnglish", getItem(position).getNameInEnglish())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        FirebaseFirestore.getInstance().collection("ContactUsInformation")
+                                .document(document.getId()).delete();
+                        break;
+                    }
+                }
+                Toast.makeText(mContext, "Removed from contacts list", Toast.LENGTH_LONG).show();
+            }
+        });
         cards.remove(position);
-
-        Toast.makeText(mContext, "Removed from contacts list", Toast.LENGTH_LONG).show();
-
-        mongoClient.close();
     }
 }

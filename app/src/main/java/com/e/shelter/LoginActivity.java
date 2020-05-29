@@ -1,17 +1,15 @@
 package com.e.shelter;
 
 import androidx.annotation.NonNull;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.e.shelter.map.MapViewActivity;
-import com.e.shelter.utilities.Global;
 import com.e.shelter.validation.EmailValidator;
 import com.e.shelter.validation.PasswordValidator;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,16 +17,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
-import com.mongodb.BasicDBObject;
+
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-public class LoginActivity extends Global implements View.OnClickListener {
+public class LoginActivity extends MainActivity implements View.OnClickListener {
     public static String email;
     public static String password;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
+
     private Boolean skipLogin = false;
+    private ProgressBar loadingProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class LoginActivity extends Global implements View.OnClickListener {
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passInput);
+        loadingProgressBar = findViewById(R.id.login_loading_spinner);
+        loadingProgressBar.setVisibility(View.INVISIBLE);
 
         //Login Button
         MaterialButton LoginButton = findViewById(R.id.LoginButton);
@@ -47,21 +50,34 @@ public class LoginActivity extends Global implements View.OnClickListener {
 
         MaterialButton register = findViewById(R.id.signUpButton);
         register.setOnClickListener(this);
+
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+            intent.putExtra("uid", firebaseUser.getUid());
+            intent.putExtra("full_name", firebaseUser.getDisplayName());
+            intent.putExtra("email", firebaseUser.getEmail());
+            startActivity(intent);
+        }
     }
 
     public void signIn() {
         if (skipLogin) {
-            firebaseAuth.signInWithEmailAndPassword("maxim.p9@gmail.com", "123456")
+            firebaseAuth.signInWithEmailAndPassword("adirat@ac.sce.il", "123456")
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                 Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                                intent.putExtra("uid", firebaseAuth.getUid());
+                                intent.putExtra("uid", firebaseUser.getUid());
+                                intent.putExtra("full_name", firebaseUser.getDisplayName());
+                                intent.putExtra("email", firebaseUser.getEmail());
                                 startActivity(intent);
                             } else {
-                                Exception e = task.getException();
-                                Log.d("Log In", "onFailure: " + e.getMessage());
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                Log.d("Log In", "onFailure: " + task.getException().getMessage());
                                 Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -77,10 +93,15 @@ public class LoginActivity extends Global implements View.OnClickListener {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                     Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                                    intent.putExtra("uid", firebaseAuth.getUid());
+                                    intent.putExtra("uid", firebaseUser.getUid());
+                                    intent.putExtra("full_name", firebaseUser.getDisplayName());
+                                    intent.putExtra("email", firebaseUser.getEmail());
                                     startActivity(intent);
+                                    loadingProgressBar.setVisibility(View.INVISIBLE);
                                 } else {
+                                    loadingProgressBar.setVisibility(View.INVISIBLE);
                                     Exception e = task.getException();
                                     Log.d("Log In", "onFailure: " + e.getMessage());
                                     Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
@@ -88,11 +109,7 @@ public class LoginActivity extends Global implements View.OnClickListener {
                             }
                         });
             } else {
-                if (this.getCurrentFocus() != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
-                    assert imm != null;
-                    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-                }
+                hideSoftKeyboard();
             }
 
         }
@@ -103,31 +120,13 @@ public class LoginActivity extends Global implements View.OnClickListener {
         int i = v.getId();
         switch (i) {
             case R.id.LoginButton:
+                loadingProgressBar.setVisibility(View.VISIBLE);
                 signIn();
                 break;
             case  R.id.signUpButton:
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
         }
     }
-
-    public String getEmail(){
-        return email;
-    }
-
-    public static   void setEmail(String email){
-        LoginActivity.email = email;
-    }
-
-    public void setPassword(String password){
-        LoginActivity.password =password;
-    }
-
-    public void ShowSignupPage() {
-        //Going to sign up page
-        Intent i = new Intent(this, SignupActivity.class);
-        startActivity(i);
-    }
-
 
 }

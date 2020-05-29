@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 
 import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.FavoriteShelter;
-import com.e.shelter.utilities.Global;
 import com.e.shelter.utilities.User;
 import com.e.shelter.validation.EmailValidator;
 import com.e.shelter.validation.PasswordValidator;
@@ -29,8 +28,8 @@ import java.util.ArrayList;
 
 import static com.e.shelter.utilities.User.Emails;
 
-public class SignupActivity extends Global implements View.OnClickListener {
-    
+public class SignUpActivity extends MainActivity implements View.OnClickListener {
+
     public static String email;
     public static String password;
     public static String firstName;
@@ -61,8 +60,6 @@ public class SignupActivity extends Global implements View.OnClickListener {
         phoneTextInputEditText = findViewById(R.id.register_phone);
         signUpMaterialButton = findViewById(R.id.finalSignUpButton);
         signUpMaterialButton.setOnClickListener(this);
-
-
     }
     public void signUp() {
         firstName = firstNameTextInputEditText.getText().toString();
@@ -113,7 +110,7 @@ public class SignupActivity extends Global implements View.OnClickListener {
                                 });
                     } else {
                         Log.d("Register", "createUserWithEmailAndPassword: onComplete: ERROR!!! ");
-                        Toast.makeText(SignupActivity.this, "Email already exist", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SignUpActivity.this, "Email already exist", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -130,7 +127,7 @@ public class SignupActivity extends Global implements View.OnClickListener {
     }
 
     private void updateUI() {
-        Toast.makeText(SignupActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
+        Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
         firebaseAuth.signOut();
         finish();
     }

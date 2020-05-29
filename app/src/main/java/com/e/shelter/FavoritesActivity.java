@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.e.shelter.adapers.FavoriteListAdapter;
 import com.e.shelter.utilities.FavoriteCard;
-import com.e.shelter.utilities.Global;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -14,11 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 import java.util.Map;
 
 
-public class FavoritesActivity extends Global {
+public class FavoritesActivity extends MainActivity {
 
     private ArrayList<FavoriteCard> list = new ArrayList<>();
     private ListView shelterCardListView;
