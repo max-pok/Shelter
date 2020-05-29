@@ -1,130 +1,82 @@
 package com.e.shelter;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 
-import com.e.shelter.map.MapViewActivity;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.e.shelter.validation.TextInputValidator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
-import org.bson.Document;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
-public class EditShelterDetails extends AppCompatActivity {
-    public EditText nameEditText;
-    public EditText statusEditText;
-    public EditText addressEditText;
-    public EditText capacityEditText;
-    public Button update;
-
+public class EditShelterDetails extends MainActivity {
+    public TextInputEditText nameEditText;
+    public TextInputEditText statusEditText;
+    public TextInputEditText addressEditText;
+    public TextInputEditText capacityEditText;
+    public MaterialButton update;
+    public String oldShelterName;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_shelter_details);
-        nameEditText = findViewById(R.id.editText_name);
-        statusEditText = findViewById(R.id.editText_status);
-        addressEditText = findViewById(R.id.editText_address);
-        capacityEditText = findViewById(R.id.editText_capacity);
+
+        nameEditText = findViewById(R.id.shelter_name_text_input_edit_shelter);
+        statusEditText = findViewById(R.id.shelter_status_text_input_edit_shelter);
+        addressEditText = findViewById(R.id.shelter_address_text_input_edit_shelter);
+        capacityEditText = findViewById(R.id.shelter_capacity_text_input_edit_shelter);
         nameEditText.setText(getIntent().getStringExtra("name"));
         addressEditText.setText(getIntent().getStringExtra("address"));
         capacityEditText.setText(getIntent().getStringExtra("capacity"));
         statusEditText.setText(getIntent().getStringExtra("status"));
-        //show_current_shelter_details();
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-        builder.setMessage("Worng details")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        Intent myIntent = new Intent(getBaseContext(), MapViewActivity.class);
-                        startActivity(myIntent);
+        oldShelterName = getIntent().getStringExtra("name");
 
-                    }
-                });
-        final AlertDialog errorMessage = builder.create();
-        // Good message
-        builder2.setMessage("The update was successful!")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-
-                    }
-                });
-        final AlertDialog goodMessage = builder2.create();
-        update= findViewById(R.id.button_update);
+        update= findViewById(R.id.updateShelterInfoButton);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(update_details()){
-                    setResult(3);
-                    finish();
-                }
-                else{
-                    errorMessage.show();
-                }
-
+                update_details();
             }
-
         });
-
-
     }
-    public void show_current_shelter_details(){
 
-    }
-    public boolean update_details(){
-            try {
-                MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-                String lon = getIntent().getStringExtra("lon");
-                String lat = getIntent().getStringExtra("lat");
-                MongoDatabase database = mongoClient.getDatabase("SafeZone_DB");
-                MongoCollection<Document> mongoCollection = database.getCollection("Shelters");
-                Document myDoc = mongoCollection.find(and(eq("lat", lat), eq("lon", lon))).first();
-                Document updateDoc = new Document();
-                System.out.println(this.nameEditText.getText());
-                System.out.println(this.addressEditText.getText().toString());
-                System.out.println(this.capacityEditText.getText().toString());
-                System.out.println(this.statusEditText.getText().toString());
-                updateDoc.put("name", this.nameEditText.getText().toString());
-                updateDoc.put("lat", lat);
-                updateDoc.put("lon", lon);
-                updateDoc.put("address", this.addressEditText.getText().toString());
-                updateDoc.put("capacity", this.capacityEditText.getText().toString());
-                updateDoc.put("status", this.statusEditText.getText().toString());
-                updateDoc.put("rating", myDoc.get("rating"));
-                updateDoc.put("rating_amount", myDoc.get("rating_amount"));
-                mongoCollection.replaceOne(and(eq("lon", lon), eq("lat", lat)), updateDoc);
-                mongoClient.close();
-            }
-            catch (Exception e){
+    public void update_details() {
+        if (!TextInputValidator.isValidEditText(nameEditText.getText().toString(), nameEditText)
+                & !TextInputValidator.isValidEditText(addressEditText.getText().toString(), addressEditText)
+                & !TextInputValidator.isValidEditText(capacityEditText.getText().toString(), capacityEditText)
+                & !TextInputValidator.isValidEditText(statusEditText.getText().toString(), statusEditText)) {
 
-                Log.e("Error " + e, "" + e);
-                return false;
-
-            }
-            return true;
-
-
+            firebaseFirestore.collection("Shelters").whereEqualTo("name", oldShelterName)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<Object, String> map = new HashMap<>();
+                            map.put("name", nameEditText.getText().toString());
+                            map.put("address", addressEditText.getText().toString());
+                            map.put("status", statusEditText.getText().toString());
+                            map.put("capacity", capacityEditText.getText().toString());
+                            firebaseFirestore.document(document.getId()).set(map, SetOptions.merge());
+                            setResult(3);
+                            finish();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
-
-
 }

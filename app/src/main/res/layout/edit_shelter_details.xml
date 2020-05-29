@@ -1,122 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@color/grey_3"
     tools:context=".EditShelterDetails">
 
     <TextView
-        android:id="@+id/textView17"
-        android:layout_width="258dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="45dp"
-        android:text="@string/edit_shelter_details"
-        android:textColor="#673AB7"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shelter Edit"
+        android:textSize="12pt"/>
 
     <TextView
-        android:id="@+id/name_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="43dp"
-        android:text="@string/name"
-        android:textColor="#0E0606"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editText_name"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_gravity="center_horizontal"
+        android:text="" />
 
-    <TextView
-        android:id="@+id/status_"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="178dp"
-        android:text="@string/status"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/name_"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:hint="Name">
 
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:id="@+id/shelter_name_text_input_edit_shelter"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="7dp"
-        android:text="@string/address"
-        android:textAllCaps="false"
-        android:textColor="#0C0707"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editText_address"
-        app:layout_constraintEnd_toStartOf="@+id/editText_address" />
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:hint="Status">
 
-    <TextView
-        android:id="@+id/capacity_"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:id="@+id/shelter_status_text_input_edit_shelter"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:text="@string/capacity"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/editText_address"
-        app:layout_constraintTop_toBottomOf="@+id/editText_address" />
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:hint="Address">
 
-    <EditText
-        android:id="@+id/editText_name"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:id="@+id/shelter_address_text_input_edit_shelter"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="18dp"
-        android:layout_marginBottom="13dp"
-        android:ems="10"
-        android:hint="name"
-        android:inputType="textPersonName"
-        android:text="text"
-        app:layout_constraintBottom_toTopOf="@+id/status_"
-        app:layout_constraintStart_toEndOf="@+id/status_" />
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:hint="Capacity">
 
-    <EditText
-        android:id="@+id/editText_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editText_name"
-        app:layout_constraintTop_toBottomOf="@+id/editText_name"
-        tools:text="text" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:id="@+id/shelter_capacity_text_input_edit_shelter"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/editText_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editText_status"
-        app:layout_constraintTop_toBottomOf="@+id/editText_status"
-        tools:text="text" />
-
-    <EditText
-        android:id="@+id/editText_capacity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/capacity_"
-        app:layout_constraintStart_toEndOf="@+id/capacity_"
-        tools:text="text" />
-
-    <Button
-        android:id="@+id/button_update"
-        android:layout_width="107dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="46dp"
-        android:layout_marginTop="25dp"
-        android:text="@string/update"
-        app:layout_constraintStart_toStartOf="@+id/editText_capacity"
-        app:layout_constraintTop_toBottomOf="@+id/editText_capacity" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/updateShelterInfoButton"
+        android:layout_width="362dp"
+        android:layout_height="65dp"
+        android:background="#FFFFFF"
+        android:text="Update" />
+</LinearLayout>

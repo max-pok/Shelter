@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.e.shelter.MainActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
+import com.e.shelter.validation.TextInputValidator;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -61,6 +62,7 @@ public class AddNewContactActivity extends MainActivity {
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //TextInputValidator.isValidEditText(hebrewInput.getText().toString(), hebrewInput)
                     if (hebrewInput.getText().toString().isEmpty()) {
                         hebrewInput.setError("Please fill out this field");
                     }

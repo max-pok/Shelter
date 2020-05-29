@@ -15,16 +15,7 @@ import com.e.shelter.contactus.AddNewContactActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
 import com.google.android.material.button.MaterialButton;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
-import org.bson.Document;
-
 import java.util.ArrayList;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.in;
 
 public class ContactListAdapter extends ArrayAdapter<Contact> {
 
