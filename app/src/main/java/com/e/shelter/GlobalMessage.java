@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 
 import static com.e.shelter.utilities.User.Emails;
 
-public class GlobalMessage extends Global {
+public class GlobalMessage extends MainActivity {
     Button sendBtn;
     EditText txtMessage;
     EditText subjectTxt;

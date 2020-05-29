@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 
-public class EditUserActivity  extends Global {
+public class EditUserActivity  extends MainActivity {
 
     private EditText nameEditText;
     private EditText addressEditText;
