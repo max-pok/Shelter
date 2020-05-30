@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="194dp"
                 android:contentDescription="hello"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/googleg_standard_color_18" />
 
             <LinearLayout

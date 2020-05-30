@@ -1,6 +1,5 @@
 package com.e.shelter;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,8 +10,9 @@ import androidx.appcompat.app.ActionBar;
 
 import com.e.shelter.adapers.NewsListAdapter;
 import com.e.shelter.utilities.News;
-import com.google.gson.JsonObject;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +28,9 @@ public class NewsActivity extends MainActivity {
     private ListView newsListView;
     private ArrayList<News> newsArrayList = new ArrayList<>();
     private NewsListAdapter adapter;
-    String url = "https://newsapi.org/v2/top-headlines?country=il&apiKey=aba21d0a39774bd2bd4fda9a3885db8e";
+    private String url = "https://newsapi.org/v2/top-headlines?country=il&apiKey=aba21d0a39774bd2bd4fda9a3885db8e";
+    private FloatingActionButton refreshButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,7 @@ public class NewsActivity extends MainActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Contacts</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Top Headlines</font>"));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -46,15 +48,27 @@ public class NewsActivity extends MainActivity {
     }
 
     private void getLatestNews(JSONObject value) {
-        
-        //adapter = new NewsListAdapter(NewsActivity.this, R.layout.content_news, newsArrayList);
-        //newsListView.setAdapter(adapter);
+        try {
+            JSONArray articles = value.getJSONArray("articles");
+            for (int i = 0 ; i < articles.length() ; i++) {
+                JSONObject object = (JSONObject) articles.get(i);
+                JSONObject source = object.getJSONObject("source");
+                News news = new News(object.getString("title"), object.getString("description"), object.getString("publishedAt"),
+                        object.getString("urlToImage"), object.getString("url"), source.getString("name"));
+                newsArrayList.add(news);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        adapter = new NewsListAdapter(NewsActivity.this, R.layout.content_news, newsArrayList);
+        newsListView.setAdapter(adapter);
     }
 
     protected class JSONParser extends AsyncTask<Void, Void, JSONObject> {
         @Override
         protected JSONObject doInBackground(Void... params) {
-            String str="https://newsapi.org/v2/top-headlines?country=il&apiKey=aba21d0a39774bd2bd4fda9a3885db8e";
+            String str = "https://newsapi.org/v2/top-headlines?country=il&apiKey=aba21d0a39774bd2bd4fda9a3885db8e";
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
             try {
@@ -70,14 +84,12 @@ public class NewsActivity extends MainActivity {
 
                 return new JSONObject(stringBuffer.toString());
             }
-            catch(Exception ex) {
-                Log.e("App", "yourDataTask", ex);
+            catch (Exception e) {
+                Log.e("App", "yourDataTask", e);
                 return null;
             }
-            finally
-            {
-                if(bufferedReader != null)
-                {
+            finally {
+                if (bufferedReader != null) {
                     try {
                         bufferedReader.close();
                     } catch (IOException e) {
@@ -89,7 +101,7 @@ public class NewsActivity extends MainActivity {
 
         @Override
         protected void onPostExecute(JSONObject response) {
-            if(response != null) {
+            if (response != null) {
                 getLatestNews(response);
             }
         }

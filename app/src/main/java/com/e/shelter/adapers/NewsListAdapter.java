@@ -71,6 +71,7 @@ public class NewsListAdapter extends ArrayAdapter<News> {
             holder.description = convertView.findViewById(R.id.news_description);
             holder.shareButton = convertView.findViewById(R.id.news_share_button);
             holder.showMoreButton = convertView.findViewById(R.id.news_show_more_button);
+            holder.newsImageView = convertView.findViewById(R.id.news_image);
             result = convertView;
             convertView.setTag(holder);
         } else {
@@ -86,9 +87,25 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         holder.title.setText(getItem(position).getTitle());
         holder.date.setText(getItem(position).getDate());
         holder.description.setText(getItem(position).getDescription());
+        holder.shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        });
+        holder.showMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        });
         try {
-            Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(getItem(position).getUrlToImage()).getContent());
-            holder.newsImageView.setImageBitmap(bitmap);
+            if (!getItem(position).getUrlToImage().equals("null")) {
+                Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(getItem(position).getUrlToImage()).getContent());
+                holder.newsImageView.setImageBitmap(bitmap);
+            } else {
+                holder.newsImageView.setImageDrawable(mContext.getDrawable(R.drawable.googleg_standard_color_18));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
