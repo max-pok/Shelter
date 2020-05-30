@@ -1,10 +1,13 @@
 package com.e.shelter;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.ActionBar;
 
@@ -23,13 +26,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-public class NewsActivity extends MainActivity {
+public class NewsActivity extends MainActivity implements View.OnClickListener {
 
     private ListView newsListView;
     private ArrayList<News> newsArrayList = new ArrayList<>();
     private NewsListAdapter adapter;
     private String url = "https://newsapi.org/v2/top-headlines?country=il&apiKey=aba21d0a39774bd2bd4fda9a3885db8e";
     private FloatingActionButton refreshButton;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -43,7 +47,11 @@ public class NewsActivity extends MainActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        progressBar = findViewById(R.id.news_loading_spinner);
+        progressBar.setVisibility(View.VISIBLE);
         newsListView = findViewById(R.id.news_list_view);
+        refreshButton = findViewById(R.id.refresh_news_button);
+        refreshButton.setOnClickListener(this);
         new JSONParser().execute();
     }
 
@@ -61,8 +69,39 @@ public class NewsActivity extends MainActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        progressBar.setVisibility(View.INVISIBLE);
         adapter = new NewsListAdapter(NewsActivity.this, R.layout.content_news, newsArrayList);
         newsListView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        switch (i) {
+            case R.id.refresh_news_button:
+                onRestart();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Intent i = new Intent(NewsActivity.this, NewsActivity.class);
+        startActivity(i);
+        finish();
+
     }
 
     protected class JSONParser extends AsyncTask<Void, Void, JSONObject> {

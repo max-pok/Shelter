@@ -4,7 +4,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.regex.Pattern;
 
-public class EmailValidator {
+public final class EmailValidator {
+
+    private EmailValidator() {
+    }
 
     /**
      * Email validation pattern.

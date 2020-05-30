@@ -27,7 +27,6 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import java.util.ArrayList;
 
 public class SignUpActivity extends MainActivity implements View.OnClickListener {
-    
     public static String email;
     public static String password;
     public static String firstName;

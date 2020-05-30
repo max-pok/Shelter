@@ -9,27 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.e.shelter.R;
 import com.e.shelter.utilities.Review;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
 
 public class ReviewListAdapter extends ArrayAdapter<Review> {
 
@@ -56,6 +40,7 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
 
     /**
      * Default constructor for the PersonListAdapter
+     *
      * @param context
      * @param resource
      * @param objects

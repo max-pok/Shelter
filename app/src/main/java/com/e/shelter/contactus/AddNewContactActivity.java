@@ -10,7 +10,6 @@ import android.widget.Toast;
 import com.e.shelter.MainActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
-import com.e.shelter.validation.TextInputValidator;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -79,7 +78,8 @@ public class AddNewContactActivity extends MainActivity {
                     }
                     if (phoneNumber.getText().toString().isEmpty()) {
                         phoneNumber.setError("Please fill out this field");
-                    } if (!hebrewInput.getText().toString().isEmpty() && !englishInput.getText().toString().isEmpty() && !phoneNumber.getText().toString().isEmpty()) {
+                    }
+                    if (!hebrewInput.getText().toString().isEmpty() && !englishInput.getText().toString().isEmpty() && !phoneNumber.getText().toString().isEmpty()) {
                         addContact(hebrewInput.getText().toString(), englishInput.getText().toString(), phoneNumber.getText().toString());
                     }
                 }

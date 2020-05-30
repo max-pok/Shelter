@@ -242,12 +242,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Header
         View header = navigationView.getHeaderView(0);
-        TextView header_email = header.findViewById(R.id.email_header);
+        TextView emailHeaderTextView = header.findViewById(R.id.email_header);
         userEmail = getIntent().getStringExtra("email");
         userFullName = getIntent().getStringExtra("full_name");
         uid = getIntent().getStringExtra("uid");
         //permission = getIntent().getStringExtra("permission");
-        if (userEmail != null) header_email.setText(userEmail);
+        if (userEmail != null) emailHeaderTextView.setText(userEmail);
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -338,7 +338,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Add shelters to google map
         addSheltersIntoGoogleMap();
-        
         // Get favorite shelters from DB
         retrieveFavoriteShelters();
     }

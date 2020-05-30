@@ -1,9 +1,14 @@
 package com.e.shelter.adapers;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +19,15 @@ import android.widget.TextView;
 import com.e.shelter.R;
 import com.e.shelter.utilities.News;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class NewsListAdapter extends ArrayAdapter<News> {
-    private static final String TAG = "FavoriteListAdapter";
+    private static final String TAG = "NewsListAdapter";
 
     private Context mContext;
     private int mResource;
@@ -90,13 +93,13 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         holder.shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                share(position, holder);
             }
         });
         holder.showMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                showMore(position);
             }
         });
         try {
@@ -111,5 +114,39 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         }
 
         return convertView;
+    }
+
+    private void showMore(final int position) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(mContext);
+        builder.setTitle("");
+        builder.setMessage("Open in browser?");
+        builder.setCancelable(true);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String url = getItem(position).getUrl();
+                if (!url.startsWith("http://") && !url.startsWith("https://"))
+                    url = "https://" + url;
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                mContext.startActivity(browserIntent);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void share(int position, ViewHolder holder) {
+        //get image from image view
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, getItem(position).getTitle() + "\n" + getItem(position).getUrl());
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        mContext.startActivity(intent);
+
     }
 }
