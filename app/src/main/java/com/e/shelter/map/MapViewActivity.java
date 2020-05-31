@@ -464,6 +464,18 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             }
         });
 
+        MaterialButton shareButton = findViewById(R.id.info_window_share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "https://www.google.com/maps/?q=" + selectedShelter.getLat()+ "," + selectedShelter.getLon();
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT,  uri);
+                startActivity(Intent.createChooser(sharingIntent, "Share in..."));
+            }
+        });
+
         //bottom sheet onSlide animation
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override

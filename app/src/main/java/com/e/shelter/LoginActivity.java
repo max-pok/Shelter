@@ -39,7 +39,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passInput);
-        loadingProgressBar = findViewById(R.id.login_loading_spinner);
+        loadingProgressBar = findViewById(R.id.news_loading_spinner);
         loadingProgressBar.setVisibility(View.INVISIBLE);
 
         //Login Button

@@ -4,14 +4,14 @@
     android:layout_height="match_parent">
 
     <ProgressBar
-        android:id="@+id/login_loading_spinner"
+        android:id="@+id/news_loading_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminateTintMode="src_atop"
         android:visibility="invisible"
         android:indeterminateTint="@color/quantum_googblue"
         android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:layout_centerVertical="true"/>
 
     <ListView
         android:id="@+id/news_list_view"
