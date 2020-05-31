@@ -7,8 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,23 +15,15 @@ import com.e.shelter.R;
 import com.e.shelter.utilities.FavoriteCard;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Updates;
-
-import org.bson.Document;
 
 import java.util.ArrayList;
 
-import static com.mongodb.client.model.Filters.eq;
 
 public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
 
-    private static final String TAG = "CustomListAdapter";
+    private static final String TAG = "FavoriteListAdapter";
 
     private Context mContext;
     private int mResource;
@@ -54,6 +44,7 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
 
     /**
      * Default constructor for the PersonListAdapter
+     *
      * @param context
      * @param resource
      * @param objects
@@ -89,7 +80,7 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
 //        Animation animation = AnimationUtils.loadAnimation(mContext,
 //                (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
 //        result.startAnimation(animation);
-        lastPosition = position;
+//        lastPosition = position;
 
         String name = getItem(position).getName();
         String address = getItem(position).getAddress();
@@ -107,7 +98,7 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
             @Override
             public void onClick(View v) {
                 Uri navigationIntentUri = Uri.parse("google.navigation:q=" + getItem(position).getAddress());//creating intent with latlng
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, navigationIntentUri).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);;
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, navigationIntentUri).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 mContext.startActivity(mapIntent);
             }

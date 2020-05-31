@@ -3,7 +3,9 @@ package com.e.shelter.validation;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class TextInputValidator {
+public final class TextInputValidator {
+
+    private TextInputValidator() {}
 
     public static boolean isValidEditText(String string, TextInputEditText textInputEditText) {
         if (string.isEmpty()) {

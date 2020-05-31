@@ -22,11 +22,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ContactListAdapter extends ArrayAdapter<Contact> {
 
@@ -53,6 +50,7 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
 
     /**
      * Default constructor for the PersonListAdapter
+     *
      * @param context
      * @param resource
      * @param objects
@@ -128,7 +126,7 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
                 intent.putExtra("name", name);
                 intent.putExtra("nameInEnglish", nameInEnglish);
                 intent.putExtra("phoneNumber", phoneNumber);
-                Activity origin = (Activity)mContext;
+                Activity origin = (Activity) mContext;
                 origin.startActivityForResult(intent, 2);
             }
         });

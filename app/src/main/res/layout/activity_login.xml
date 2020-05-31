@@ -87,7 +87,7 @@
         android:text="" />
 
     <ProgressBar
-        android:id="@+id/login_loading_spinner"
+        android:id="@+id/news_loading_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminateTintMode="src_atop"

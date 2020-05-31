@@ -26,10 +26,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.ArrayList;
 
-import static com.e.shelter.utilities.User.Emails;
-
 public class SignUpActivity extends MainActivity implements View.OnClickListener {
-
     public static String email;
     public static String password;
     public static String firstName;
@@ -75,10 +72,8 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) { //There is no user with the same email address
-                        Emails.add(email);
                         FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
                         User newUser = new User(firstName + " " + lastName, phone,"user");
-
 
                         final UserProfileChangeRequest update = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(firstName + " " + lastName)
@@ -112,7 +107,6 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                         Log.d("Register", "createUserWithEmailAndPassword: onComplete: ERROR!!! ");
                         Toast.makeText(SignUpActivity.this, "Email already exist", Toast.LENGTH_LONG).show();
                     }
-
                 }
             });
 

@@ -10,7 +10,6 @@
     android:background="@drawable/linearlayout_shadow"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,6 +22,7 @@
             android:layout_marginTop="5dp"
             android:background="@drawable/dark_background"
             app:cardBackgroundColor="@color/grey_20" />
+
 
         <TextView
             android:id="@+id/info_window_title"
@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="0dp">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -86,14 +87,14 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="58dp">
+                android:layout_height="50dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/info_window_save_button"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="25dp"
+                    android:layout_marginStart="0dp"
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="SAVE  "
@@ -109,7 +110,7 @@
                     android:id="@+id/info_window_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="28dp"
+                    android:layout_marginStart="0dp"
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="EDIT"
@@ -126,13 +127,29 @@
                     android:id="@+id/info_window_rate_button"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="28dp"
+                    android:layout_marginStart="0dp"
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="RATE"
                     android:textColor="@color/colorPrimary"
                     app:cornerRadius="@dimen/corner_radius_rounded"
                     app:icon="@drawable/rate_icon_white"
+                    app:iconTint="@color/colorPrimary"
+                    app:rippleColor="@color/grey_40"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="0dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/info_window_share_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="0dp"
+                    android:backgroundTint="@color/white"
+                    android:stateListAnimator="@null"
+                    android:text="SHARE"
+                    android:textColor="@color/colorPrimary"
+                    app:cornerRadius="@dimen/corner_radius_rounded"
+                    app:icon="@drawable/share_icon_black"
                     app:iconTint="@color/colorPrimary"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
@@ -149,12 +166,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="38dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -183,7 +199,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
+                    android:layout_height="38dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -212,7 +228,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="38dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
