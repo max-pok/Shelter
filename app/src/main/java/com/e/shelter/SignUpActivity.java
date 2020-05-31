@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.e.shelter.utilities.Emails;
 import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.FavoriteShelter;
 import com.e.shelter.utilities.User;
@@ -72,6 +73,7 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) { //There is no user with the same email address
+                        firebaseFirestore.collection("Emails").add(new Emails(email));
                         FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
                         User newUser = new User(firstName + " " + lastName, phone,"user");
 
