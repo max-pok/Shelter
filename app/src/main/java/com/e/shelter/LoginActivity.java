@@ -19,6 +19,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
@@ -50,9 +52,8 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
         MaterialButton register = findViewById(R.id.signUpButton);
         register.setOnClickListener(this);
-/*
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser != null) {
+    /*    if (firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
             intent.putExtra("uid", firebaseUser.getUid());
             intent.putExtra("full_name", firebaseUser.getDisplayName());
@@ -114,6 +115,21 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
         }
     }
+    public void checkIfBlocked(String email){
+        firebaseFirestore.collection("Emails").whereEqualTo("email", email).limit(1).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                if (!queryDocumentSnapshot.getBoolean("blocked")) {
+                                    signIn();
+                                } else Toast.makeText(LoginActivity.this, "Email is blocked", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
+    }
 
     @Override
     public void onClick(View v) {
@@ -121,7 +137,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         switch (i) {
             case R.id.LoginButton:
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                signIn();
+                checkIfBlocked(email);
                 break;
             case  R.id.signUpButton:
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);

@@ -73,7 +73,7 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) { //There is no user with the same email address
-                        firebaseFirestore.collection("Emails").add(new Emails(email));
+                        firebaseFirestore.collection("Emails").add(new Emails(email,false));
                         FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
                         User newUser = new User(firstName + " " + lastName, phone,"user");
 
@@ -88,7 +88,7 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                                         if (task.isSuccessful()) { //No error on firebase side.
                                             updateUI();
                                             finish();
-                                        } else
+                                        }
                                             Log.d("Register", "db.collection: onComplete: ERROR!!! ");
                                     }
                                 });
