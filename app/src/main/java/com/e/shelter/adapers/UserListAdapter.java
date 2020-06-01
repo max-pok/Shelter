@@ -11,31 +11,29 @@ import android.widget.Toast;
 
 import com.e.shelter.R;
 import com.e.shelter.utilities.Review;
+import com.e.shelter.utilities.User;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
-public class ReviewListAdapter extends ArrayAdapter<Review> {
-
+public class UserListAdapter extends ArrayAdapter<User> {
     private static final String TAG = "CustomListAdapter";
 
     private Context mContext;
     private int mResource;
     private int lastPosition = -1;
-    private ReviewListAdapter adapter;
-    private ArrayList<Review> cards;
+    private UserListAdapter adapter;
+    private ArrayList<User> cards;
 
     /**
      * Holds variables in a View
      */
-    static class ViewHolder {
-        TextView shlterName;
-        TextView userName;
+    private static class ViewHolder {
+        TextView Name;
+        TextView phone;
         TextView userEmail;
-        TextView review;
-        TextView star;
-
-        MaterialButton removeButton;
+        TextView permession;
+        MaterialButton blockedButton;
     }
 
     /**
@@ -45,10 +43,11 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
      * @param resource
      * @param objects
      */
-    public ReviewListAdapter(Context context, int resource, ArrayList<Review> objects) {
+    public UserListAdapter(Context context, int resource, ArrayList<User> objects) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
+
         adapter = this;
         cards = objects;
     }
@@ -56,20 +55,20 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
-        final ReviewListAdapter.ViewHolder holder;
+        final UserListAdapter.ViewHolder holder;
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
-            holder = new ReviewListAdapter.ViewHolder();
-            holder.shlterName = convertView.findViewById(R.id.reviewCardContactShelterN);
-            holder.userName = convertView.findViewById(R.id.reviewCardContactUserN);
-            holder.userEmail = convertView.findViewById(R.id.reviewCardContactUserE);
-            holder.review = convertView.findViewById(R.id.reviewCardContactReview);
-            holder.removeButton = convertView.findViewById(R.id.reviewCardRemoveButton);
+            holder = new UserListAdapter.ViewHolder();
+            holder.Name= convertView.findViewById(R.id.userCardName);
+            holder.permession = convertView.findViewById(R.id.userCardPermission);
+            holder.phone =convertView.findViewById(R.id.userCardPhone);
+            holder.userEmail = convertView.findViewById(R.id.userCardEmail);
+            holder.blockedButton = convertView.findViewById(R.id.userCardBlockedButton);
             result = convertView;
             convertView.setTag(holder);
         } else {
-            holder = (ReviewListAdapter.ViewHolder) convertView.getTag();
+            holder = (UserListAdapter.ViewHolder) convertView.getTag();
             result = convertView;
         }
 
@@ -78,20 +77,19 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
 //        result.startAnimation(animation);
         lastPosition = position;
 
-        final String shelterN = getItem(position).getShelterName();
-        final String userN = getItem(position).getUserName();
-        final String userE = getItem(position).getUserEmail();
-        final String Review = getItem(position).getReview();
-        Log.i(TAG, "Shelter name: " + shelterN + ", review: " + Review);
-        holder.shlterName.setText(shelterN);
-        holder.userName.setText(userN);
+        final String userPhone = getItem(position).getPhoneNumber();
+        final String userN = getItem(position).getName();
+        final String userE = getItem(position).getEmail();
+        final String userPermession = getItem(position).getPermission();
+        holder.Name.setText(userN);
+        holder.phone.setText(userPhone);
         holder.userEmail.setText(userE);
-        holder.review.setText(Review);
+        holder.permession.setText(userPermession);
 
-        holder.removeButton.setOnClickListener(new View.OnClickListener() {
+        holder.blockedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeSelectedReviewFromReviewList(position);
+                blockedSelectedUser(position);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -99,9 +97,14 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
         return convertView;
     }
 
-    public void removeSelectedReviewFromReviewList(final int position) {
-
+    public void blockedSelectedUser(final int position) {
+/*
         cards.remove(position);
-        Toast.makeText(mContext, "Removed from review list", Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, "Removed from review list", Toast.LENGTH_LONG).show();*/
     }
+
+
+
+
+
 }

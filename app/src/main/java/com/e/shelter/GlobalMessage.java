@@ -25,8 +25,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import static com.e.shelter.utilities.User.Emails;
-
 public class GlobalMessage extends MainActivity {
     Button sendBtn;
     EditText txtMessage;

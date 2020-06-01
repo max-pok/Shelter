@@ -14,17 +14,38 @@ public class User implements Serializable {
     private String name;
     private String phoneNumber;
     private String permission;
-    public static List<String> Emails = new ArrayList<String>();
+    private String email;
+    private Boolean blocked;
+
 
 
     public User() {
         //do not delete.
     }
 
-    public User(String name, String phoneNumber, String permission) {
+    public User(String name, String phoneNumber, String permission,String email,Boolean blocked) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.permission = permission;
+        this.email=email;
+        this.blocked=blocked;
+
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Boolean getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
     }
 
     public String getName() {

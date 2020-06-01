@@ -37,6 +37,8 @@
         <activity android:name=".GlobalMessage" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".map.MapViewActivity" />
+        <activity android:name=".ShowUsersActivity" />
+
 
         <activity android:name=".MainActivity" />
         <activity android:name=".contactus.ContactPage" />

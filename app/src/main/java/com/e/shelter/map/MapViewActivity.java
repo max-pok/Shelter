@@ -32,6 +32,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import com.e.shelter.ShowUsersActivity;
 import com.e.shelter.contactus.ContactPage;
 import com.e.shelter.EditShelterDetails;
 import com.e.shelter.FavoritesActivity;
@@ -660,6 +661,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             case R.id.nav_night_mode_switch:
                 nightModeSwitch();
                 break;
+            case R.id.nav_show_user:
+                Intent userActive = new Intent(this, ShowUsersActivity.class);
+                startActivity(userActive);                break;
             case R.id.nav_show_reviews:
                 Intent reviewActive = new Intent(this, ShowReview.class);
                 startActivity(reviewActive);
