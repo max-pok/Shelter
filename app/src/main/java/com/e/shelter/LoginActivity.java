@@ -115,14 +115,15 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
         }
     }
-    public void checkIfBlocked(final String email){
+    public void checkIfBlocked(final String email2){
         firebaseFirestore.collection("Users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
+                        if (task.isComplete()) {
                             for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                if (queryDocumentSnapshot.get("email")==email) {
+                                System.out.println(queryDocumentSnapshot.get("email").toString() + " : "+email2);
+                                if (queryDocumentSnapshot.get("email").toString().equals(email2)) {
                                     if(!queryDocumentSnapshot.getBoolean("blocked")) {
                                         signIn();
 
@@ -134,7 +135,14 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
 
                                 }
+
                             }
+                        }
+                        else{
+
+                            Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
+
+
                         }
                     }
                 });
@@ -146,7 +154,9 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         switch (i) {
             case R.id.LoginButton:
                 loadingProgressBar.setVisibility(View.VISIBLE);
+                email = Objects.requireNonNull(emailInput.getText()).toString();
                 checkIfBlocked(email);
+                //signIn();
                 break;
             case  R.id.signUpButton:
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
