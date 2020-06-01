@@ -9,10 +9,20 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.e.shelter.R;
 import com.e.shelter.utilities.Review;
 import com.e.shelter.utilities.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -71,7 +81,6 @@ public class UserListAdapter extends ArrayAdapter<User> {
             holder = (UserListAdapter.ViewHolder) convertView.getTag();
             result = convertView;
         }
-
 //        Animation animation = AnimationUtils.loadAnimation(mContext,
 //                (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
 //        result.startAnimation(animation);
@@ -85,19 +94,79 @@ public class UserListAdapter extends ArrayAdapter<User> {
         holder.phone.setText(userPhone);
         holder.userEmail.setText(userE);
         holder.permession.setText(userPermession);
+       // checkUserStatus(position,convertView,userE);
 
+
+        final View finalConvertView = convertView;
         holder.blockedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                blockedSelectedUser(position);
+                blockedSelectedUser(position, finalConvertView);
                 adapter.notifyDataSetChanged();
             }
         });
 
         return convertView;
     }
+    /*public void checkUserStatus(final int position, final View view, final String UserEmail){
+        FirebaseFirestore.getInstance().collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        User user = document.toObject(User.class);
+                        if( user.getEmail().equals(UserEmail)) {
+                            if(user.getBlocked().equals(false)){
+                                MaterialButton blockedBtn= view.findViewById(R.id.userCardBlockedButton);
+                                blockedBtn.setText("Block");
+                            }
+                            else{
+                                MaterialButton blockedBtn= view.findViewById(R.id.userCardBlockedButton);
+                                blockedBtn.setText("Unblock");
+                            }
 
-    public void blockedSelectedUser(final int position) {
+                        }
+                    }
+                }
+            }
+        });
+
+
+
+    }*/
+
+    public void blockedSelectedUser(final int position, final View convertView) {
+
+        FirebaseFirestore.getInstance().collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        User user = document.toObject(User.class);
+                        if( user.getEmail().equals(cards.get(position).getEmail())) {
+                            if(user.getBlocked().equals(false)){
+                                user.setBlocked(true); //Use the setter
+                                String id = document.getId();
+                                FirebaseFirestore.getInstance().collection("Users").document(id).set(user); //Set student object
+                                MaterialButton blockedBtn= convertView.findViewById(R.id.userCardBlockedButton);
+                                blockedBtn.setText("Unblock");
+                            }
+                            else{
+                                user.setBlocked(false); //Use the setter
+                                String id = document.getId();
+                                FirebaseFirestore.getInstance().collection("Users").document(id).set(user); //Set student object
+                                MaterialButton blockedBtn= convertView.findViewById(R.id.userCardBlockedButton);
+                                blockedBtn.setText("block");
+                            }
+
+                        }
+                    }
+                }
+            }
+        });
+
+
+
 /*
         cards.remove(position);
         Toast.makeText(mContext, "Removed from review list", Toast.LENGTH_LONG).show();*/
