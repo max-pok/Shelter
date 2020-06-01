@@ -62,7 +62,7 @@ public class GlobalMessage extends MainActivity {
         Log.i("Send email", "");
         int i = 0;
 
-        firebaseFirestore.collection("Emails").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 StringBuilder sb = new StringBuilder();

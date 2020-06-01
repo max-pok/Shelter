@@ -115,16 +115,25 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
 
         }
     }
-    public void checkIfBlocked(String email){
-        firebaseFirestore.collection("Emails").whereEqualTo("email", email).limit(1).get()
+    public void checkIfBlocked(final String email){
+        firebaseFirestore.collection("Users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                if (!queryDocumentSnapshot.getBoolean("blocked")) {
-                                    signIn();
-                                } else Toast.makeText(LoginActivity.this, "Email is blocked", Toast.LENGTH_LONG).show();
+                                if (queryDocumentSnapshot.get("email")==email) {
+                                    if(!queryDocumentSnapshot.getBoolean("blocked")) {
+                                        signIn();
+
+                                    }
+                                    else{
+                                        Toast.makeText(LoginActivity.this, "This user are blocked", Toast.LENGTH_LONG).show();
+
+                                    }
+
+
+                                }
                             }
                         }
                     }
