@@ -8,9 +8,7 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
-import com.e.shelter.adapers.ReviewListAdapter;
 import com.e.shelter.adapers.UserListAdapter;
-import com.e.shelter.utilities.Review;
 import com.e.shelter.utilities.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

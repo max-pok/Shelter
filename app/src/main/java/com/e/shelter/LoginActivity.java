@@ -46,20 +46,19 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         loadingProgressBar = findViewById(R.id.news_loading_spinner);
         loadingProgressBar.setVisibility(View.INVISIBLE);
 
-        //Login Button
         MaterialButton LoginButton = findViewById(R.id.LoginButton);
         LoginButton.setOnClickListener(this);
-
         MaterialButton register = findViewById(R.id.signUpButton);
         register.setOnClickListener(this);
+
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-    /*    if (firebaseUser != null) {
+        if (firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
             intent.putExtra("uid", firebaseUser.getUid());
             intent.putExtra("full_name", firebaseUser.getDisplayName());
             intent.putExtra("email", firebaseUser.getEmail());
             startActivity(intent);
-        }*/
+        }
     }
 
     public void signIn() {

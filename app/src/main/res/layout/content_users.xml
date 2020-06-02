@@ -29,34 +29,91 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-
-                <TextView
-                    android:id="@+id/userCardName"
-                    android:layout_width="wrap_content"
-                    android:text="Name: "
-                    android:layout_marginStart="10dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center" />
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Name:                  "
+                        android:textAlignment="center"
+                        android:textColor="@color/grey_100_" />
 
-                <TextView
-                    android:id="@+id/userCardEmail"
-                    android:text="Email: "
-                    android:layout_marginStart="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:id="@+id/userCardPhone"
-                    android:text="Phone Number: "
-                    android:layout_marginStart="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:id="@+id/userCardPermission"
-                    android:text="permission: "
-                    android:layout_marginStart="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/userCardName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Name: "
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Email:                   "
+                        android:textAlignment="center"
+                        android:textColor="@color/grey_100_" />
+
+                    <TextView
+                        android:id="@+id/userCardEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Email" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Phone number:  "
+                        android:textAlignment="center"
+                        android:textColor="@color/grey_100_" />
+
+                    <TextView
+                        android:id="@+id/userCardPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Phone Number: " />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="Permission:        "
+                        android:textAlignment="center"
+                        android:textColor="@color/grey_100_" />
+
+                    <TextView
+                        android:id="@+id/userCardPermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="permission: " />
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -64,18 +121,42 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/permission_toggle_content_users"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:checkedButton="@id/user_permission_button_content_users"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/user_permission_button_content_users"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="user" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/admin_permission_button_content_users"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="admin" />
+
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/userCardBlockedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:backgroundTint="@color/quantum_googred700"
-                    android:text="Block"
                     android:clickable="true"
-                    app:mt_borderlessRippleEnabled="true"
+                    android:text="Block"
                     app:icon="@drawable/ic_block_black"
+                    app:mt_borderlessRippleEnabled="true"
                     tools:ignore="MissingConstraints" />
 
 

@@ -3,13 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/user_list_view"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false"
-        android:divider="@null" />
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_gravity="center_horizontal">
 
+        <ListView
+            android:id="@+id/user_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="535dp"
+            android:clipToPadding="false"
+            android:divider="@null" />
 
+    </ScrollView>
 </RelativeLayout>
