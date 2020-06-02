@@ -26,26 +26,27 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditUserActivity" />
-        <activity android:name=".GlobalMessage" />
-        <activity android:name=".SignUpActivity" />
-        <activity android:name=".map.MapViewActivity" />
+        <activity android:name=".EditUserActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".GlobalMessage" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".SignUpActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".map.MapViewActivity" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ShowUsersActivity" />
 
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".contactus.ContactPage" />
         <activity android:name=".review.ShowReview" />
-        <activity android:name=".ChangePassActivity"/>
-        <activity android:name=".EditShelterDetails" />
-        <activity android:name=".contactus.AddNewContactActivity" />
+        <activity android:name=".ChangePassActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".EditShelterDetails" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".contactus.AddNewContactActivity" android:theme="@style/AppTheme.NoActionBar"/>
 
         <uses-library
             android:name="org.apache.http.legacy"

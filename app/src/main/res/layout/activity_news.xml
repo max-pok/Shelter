@@ -7,19 +7,33 @@
         android:id="@+id/news_loading_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTintMode="src_atop"
-        android:visibility="invisible"
-        android:indeterminateTint="@color/quantum_googblue"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:indeterminateTint="@color/quantum_googblue"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="invisible" />
 
-    <ListView
-        android:id="@+id/news_list_view"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false"
-        android:divider="@null" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/news_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:divider="@null"/>
+        </LinearLayout>
+
+    </ScrollView>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/refresh_news_button"

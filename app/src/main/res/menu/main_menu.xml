@@ -11,9 +11,7 @@
                     app:actionLayout="@layout/action_view_switch"
                     android:title="Night mode"
                     android:icon="@drawable/nightmode_icon_black"/>
-                <item android:id="@+id/nav_show_user"
-                    android:title="Show Users"
-                    android:icon="@drawable/ic_people_black"/>
+
 
                 <item android:id="@+id/nav_favorite_shelters"
                     android:title="Favorites"
@@ -34,18 +32,19 @@
                     android:title="Global Message" />
 
 
+            </menu>
+        </item>
+        <item android:title="Account">
+            <menu>
+                <item android:id="@+id/nav_show_user"
+                    android:title="Show Users"
+                    android:icon="@drawable/ic_people_black"/>
+
                 <item
                     android:id="@+id/nav_settings"
                     android:icon="@drawable/settings_icon_black"
                     android:title="Settings" />
 
-
-
-
-            </menu>
-        </item>
-        <item android:title="Account">
-            <menu>
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/logout_icon_black"
@@ -67,7 +66,6 @@
 
             </menu>
         </item>
-
 
     </group>
 </menu>
