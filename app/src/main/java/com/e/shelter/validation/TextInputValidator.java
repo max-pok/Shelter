@@ -14,6 +14,12 @@ public final class TextInputValidator {
         }
         return true;
     }
+    public  static boolean isValidMessage (String subject,String message ){
+        if( subject==null || message==null){
+            return false;
+        }
+        return true;
+    }
 
     public static boolean isValidShelterName(String string, String oldName, final TextInputEditText textInputEditText) {
         if (string.isEmpty()) {

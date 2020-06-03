@@ -10,6 +10,15 @@
 
     </style>
 
+        <style name="AppTheme.Timer" parent="Theme.AppCompat.Light.NoActionBar">
+            <!-- Customize your theme here. -->
+            <item name="colorPrimary">@color/colorPrimary1</item>
+            <item name="colorPrimaryDark">@color/colorPrimaryDark1</item>
+            <item name="colorAccent">@color/colorAccent1</item>
+            <!--Now we will change the statut bar color-->
+            <item name="android:statusBarColor">@color/colorPrimary</item>
+        </style>
+
     <style name="Theme.MyApp" parent="Theme.MaterialComponents">
 
     </style>

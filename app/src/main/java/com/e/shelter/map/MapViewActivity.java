@@ -34,6 +34,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.e.shelter.NewsActivity;
 import com.e.shelter.ShowUsersActivity;
+import com.e.shelter.TimerActivity;
 import com.e.shelter.contactus.ContactPage;
 import com.e.shelter.EditShelterDetails;
 import com.e.shelter.FavoritesActivity;
@@ -672,6 +673,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             case R.id.nav_show_reviews:
                 Intent reviewActive = new Intent(this, ShowReview.class);
                 startActivity(reviewActive);
+                return false;
+            case R.id.nav_timer:
+                Intent timerActive = new Intent(this, TimerActivity.class);
+                startActivity(timerActive);
                 return false;
             case R.id.nav_global_message:
                 Intent globalMessageActive = new Intent(this, GlobalMessage.class);

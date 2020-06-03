@@ -12,14 +12,16 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 @RunWith(AndroidJUnit4.class)
 
-public class SignupIntegrationTest {
+public class EditUserIntegrationTest {
     @Rule
-    public ActivityTestRule<SignUpActivity>signup = new ActivityTestRule<>(SignUpActivity.class);
+    public ActivityTestRule<EditUserActivity> signup = new ActivityTestRule<>(EditUserActivity.class);
 
     @Test
-    public void SignupViewCheck(){
+    public void EditUserViewCheck(){
         Espresso.onView(withId(R.id.updateButton)).check(matches(isClickable()));
     }
+
 }

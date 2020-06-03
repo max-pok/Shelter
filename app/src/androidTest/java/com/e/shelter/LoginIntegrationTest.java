@@ -25,9 +25,9 @@ public class LoginIntegrationTest {
     @Test
     public void LoginViewCheck(){
         Espresso.onView(withId(R.id.LoginButton)).check(matches(isClickable()));
-        Espresso.onView(withId(R.id.SignUpButton)).check(matches(isClickable()));
+        Espresso.onView(withId(R.id.signUpButton)).check(matches(isClickable()));
         Espresso.onView(withId(R.id.emailInput)).check(matches(withHint("Email")));
-        Espresso.onView(withId(R.id.passowrdInput)).check(matches(withHint("Password")));
+        Espresso.onView(withId(R.id.passInput)).check(matches(withHint("Password")));
 
     }
 

@@ -37,12 +37,16 @@
         <activity android:name=".EditUserActivity" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".GlobalMessage" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".SignUpActivity" android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".map.MapViewActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".map.MapViewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ShowUsersActivity" />
 
 
         <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".contactus.ContactPage" />
+        <activity android:name=".TimerActivity" />
+
         <activity android:name=".review.ShowReview" />
         <activity android:name=".ChangePassActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EditShelterDetails" android:theme="@style/AppTheme.NoActionBar"/>
