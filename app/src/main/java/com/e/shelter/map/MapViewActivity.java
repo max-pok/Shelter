@@ -106,8 +106,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.e.shelter.LoginActivity.email;
-
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
         GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RatingDialogListener {
 
@@ -206,13 +204,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 if (selectedMarker != null && selectedMarker.isInfoWindowShown())
                     selectedMarker.hideInfoWindow();
                 if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
-                    searchBar.disableSearch();
+                    searchBar.closeSearch();
                     toggle.syncState();
                     drawerLayout.openDrawer(GravityCompat.START);
-                    searchBar.disableSearch();
+                    searchBar.closeSearch();
                 } else if (buttonCode == MaterialSearchBar.BUTTON_BACK) {
                     searchBar.clearSuggestions();
-                    searchBar.disableSearch();
+                    searchBar.closeSearch();
                 }
             }
         });
@@ -224,6 +222,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d("LOG_TAG", getClass().getSimpleName() + " text changed " + searchBar.getText());
+                
             }
 
             @Override
@@ -236,13 +235,15 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         });
         searchBar.setCardViewElevation(10);
-        searchBar.setSuggstionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
+        searchBar.setSuggestionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
             @Override
             public void OnItemClickListener(int position, View v) {
+
             }
 
             @Override
             public void OnItemDeleteListener(int position, View v) {
+
             }
         });
 

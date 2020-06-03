@@ -36,6 +36,13 @@
 
         </com.e.shelter.map.MapWrapperLayout>
 
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include layout="@layout/shelter_info_sheet" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
         <com.mancj.materialsearchbar.MaterialSearchBar
             android:id="@+id/searchBar"
             style="@style/MaterialSearchBarLight"
@@ -52,14 +59,6 @@
             app:mt_speechMode="false"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="16dp" />
-
-
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <include layout="@layout/shelter_info_sheet" />
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
