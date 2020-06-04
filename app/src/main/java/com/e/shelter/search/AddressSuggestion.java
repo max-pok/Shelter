@@ -3,17 +3,19 @@ package com.e.shelter.search;
 import android.os.Parcel;
 
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
+import com.e.shelter.utilities.AddressWrapper;
+import com.google.android.gms.maps.model.LatLng;
 
 public class AddressSuggestion implements SearchSuggestion {
-    private String addressName;
+    private AddressWrapper addressWrapper;
     private boolean isHistory = false;
 
-    public AddressSuggestion(String suggestion) {
-        this.addressName = suggestion.toLowerCase();
+    public AddressSuggestion(AddressWrapper addressWrapper) {
+        this.addressWrapper = addressWrapper;
     }
 
     public AddressSuggestion(Parcel source) {
-        this.addressName = source.readString();
+        this.addressWrapper.setAddressInEnglish(source.readString());
         this.isHistory = source.readInt() != 0;
     }
 
@@ -27,7 +29,11 @@ public class AddressSuggestion implements SearchSuggestion {
 
     @Override
     public String getBody() {
-        return addressName;
+        return addressWrapper.getAddressInEnglish();
+    }
+
+    public String getBodyHebrew() {
+        return addressWrapper.getAddressInHebrew();
     }
 
     public static final Creator<AddressSuggestion> CREATOR = new Creator<AddressSuggestion>() {
@@ -49,7 +55,15 @@ public class AddressSuggestion implements SearchSuggestion {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(addressName);
+        dest.writeString(addressWrapper.getAddressInEnglish());
         dest.writeInt(isHistory ? 1 : 0);
+    }
+
+    public LatLng getLocation() {
+        return new LatLng(Double.parseDouble(addressWrapper.getLat()), Double.parseDouble(addressWrapper.getLon()));
+    }
+
+    public AddressWrapper getAddressWrapper() {
+        return addressWrapper;
     }
 }

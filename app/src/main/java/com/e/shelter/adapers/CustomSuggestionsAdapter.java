@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.e.shelter.R;
-import com.e.shelter.utilities.Address;
+import com.e.shelter.utilities.AddressWrapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
@@ -21,10 +21,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomSuggestionsAdapter extends SuggestionsAdapter<Address, CustomSuggestionsAdapter.SuggestionHolder> {
+public class CustomSuggestionsAdapter extends SuggestionsAdapter<AddressWrapper, CustomSuggestionsAdapter.SuggestionHolder> {
 
     private static final String ADDRESSES_FILE_NAME = "addresses2.json";
-    private List<Address> addressList = new ArrayList<>();
+    private List<AddressWrapper> addressWrapperList = new ArrayList<>();
 
     public CustomSuggestionsAdapter(LayoutInflater inflater, Context context) {
         super(inflater);
@@ -42,7 +42,7 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<Address, Custom
     }
 
     @Override
-    public void onBindSuggestionHolder(Address suggestion, SuggestionHolder holder, int position) {
+    public void onBindSuggestionHolder(AddressWrapper suggestion, SuggestionHolder holder, int position) {
         holder.firstAddress.setText(suggestion.getAddressInEnglish());
         holder.secondAddress.setText(suggestion.getAddressInHebrew());
     }
@@ -68,7 +68,7 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<Address, Custom
                 else {
                     suggestions = new ArrayList<>();
                     int MAX = 0;
-                    for (Address item: suggestions_clone)
+                    for (AddressWrapper item: suggestions_clone)
                         if (item.getAddressInHebrew().contains(term.toLowerCase()) || item.getAddressInEnglish().toLowerCase().contains(term.toLowerCase())) {
                             suggestions.add(item);
                             MAX++;
@@ -81,18 +81,18 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<Address, Custom
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                suggestions = (ArrayList<Address>) results.values;
+                suggestions = (ArrayList<AddressWrapper>) results.values;
                 notifyDataSetChanged();
             }
         };
     }
 
-    public List<Address> initSuggestions(Context context) {
-        if (addressList.isEmpty()) {
+    public List<AddressWrapper> initSuggestions(Context context) {
+        if (addressWrapperList.isEmpty()) {
             String jsonString = loadJson(context);
-            addressList = deserializeColors(jsonString);
+            addressWrapperList = deserializeColors(jsonString);
         }
-        return addressList;
+        return addressWrapperList;
     }
 
     private static String loadJson(Context context) {
@@ -112,9 +112,9 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<Address, Custom
         return jsonString;
     }
 
-    private static List<Address> deserializeColors(String jsonString) {
+    private static List<AddressWrapper> deserializeColors(String jsonString) {
         Gson gson = new Gson();
-        Type collectionType = new TypeToken<List<Address>>() {
+        Type collectionType = new TypeToken<List<AddressWrapper>>() {
         }.getType();
         return gson.fromJson(jsonString, collectionType);
     }

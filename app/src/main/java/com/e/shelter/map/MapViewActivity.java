@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,6 +34,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.e.shelter.NewsActivity;
 import com.e.shelter.ShowUsersActivity;
 import com.e.shelter.TimerActivity;
@@ -41,8 +46,11 @@ import com.e.shelter.FavoritesActivity;
 import com.e.shelter.GlobalMessage;
 import com.e.shelter.LoginActivity;
 import com.e.shelter.R;
+import com.e.shelter.search.AddressSuggestion;
+import com.e.shelter.search.SearchHelper;
 import com.e.shelter.settings.SettingsActivity;
 import com.e.shelter.review.ShowReview;
+import com.e.shelter.utilities.AddressWrapper;
 import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.Review;
 import com.e.shelter.utilities.Shelter;
@@ -111,7 +119,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
-    private MaterialSearchBar searchBar;
+    private FloatingSearchView searchBar;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location lastKnownLocation;
     private LocationCallback locationCallback;
@@ -129,7 +137,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView ratingTxt;
     private TextView ratingCountTxt;
     private List<String> suggestions = new ArrayList<>();
-
     private String userEmail;
     private String userFullName;
     private String permission = "admin";
@@ -186,71 +193,97 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Search bar
         searchBar = findViewById(R.id.searchBar);
-        searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+        final SearchHelper searchHelper = new SearchHelper(MapViewActivity.this);
+        searchBar.setOnLeftMenuClickListener(new FloatingSearchView.OnLeftMenuClickListener() {
             @Override
-            public void onSearchStateChanged(boolean enabled) {
+            public void onMenuOpened() {
+                toggle.syncState();
+                drawerLayout.openDrawer(GravityCompat.START);
+                searchBar.closeMenu(true);
             }
 
             @Override
-            public void onSearchConfirmed(CharSequence text) {
-                if (text != null && text.length() > 0) {
-                    searchAddress(text.toString());
-                }
-            }
+            public void onMenuClosed() {
 
+            }
+        });
+        searchBar.setOnClearSearchActionListener(new FloatingSearchView.OnClearSearchActionListener() {
             @Override
-            public void onButtonClicked(int buttonCode) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                if (selectedMarker != null && selectedMarker.isInfoWindowShown())
-                    selectedMarker.hideInfoWindow();
-                if (buttonCode == MaterialSearchBar.BUTTON_NAVIGATION) {
-                    searchBar.closeSearch();
-                    toggle.syncState();
-                    drawerLayout.openDrawer(GravityCompat.START);
-                    searchBar.closeSearch();
-                } else if (buttonCode == MaterialSearchBar.BUTTON_BACK) {
+            public void onClearSearchClicked() {
+                if (searchLocationMarker != null) searchLocationMarker.remove();
+            }
+        });
+        searchBar.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+                if (!oldQuery.equals("") && newQuery.equals("")) {
                     searchBar.clearSuggestions();
-                    searchBar.closeSearch();
+                } else {
+                    //this shows the top left circular progress
+                    //you can call it where ever you want, but
+                    //it makes sense to do it when loading something in
+                    //the background.
+                    searchBar.showProgress();
+
+                    //simulates a query call to a data source
+                    //with a new query.
+                    searchHelper.findSuggestions(MapViewActivity.this, newQuery, 5,
+                            250, new SearchHelper.OnFindSuggestionsListener() {
+
+                                @Override
+                                public void onResults(List<AddressSuggestion> results) {
+                                    //this will swap the data and
+                                    //render the collapse/expand animations as necessary
+                                    searchBar.swapSuggestions(results);
+
+                                    //let the users know that the background
+                                    //process has completed
+                                    searchBar.hideProgress();
+
+                                }
+                            });
+
                 }
             }
         });
-        searchBar.addTextChangeListener(new TextWatcher() {
+        searchBar.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
+                searchBar.clearSuggestions();
+                searchBar.setSearchText(searchSuggestion.getBody());
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("LOG_TAG", getClass().getSimpleName() + " text changed " + searchBar.getText());
-                
-            }
+            public void onSearchAction(String currentQuery) {
+                searchBar.showProgress();
+                searchBar.clearSuggestions();
+                hideSoftKeyboard();
+                Log.i("Search Suggestion Click", currentQuery);
+                searchHelper.findSuggestions(MapViewActivity.this, currentQuery, 5,
+                        250, new SearchHelper.OnFindSuggestionsListener() {
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (searchLocationMarker != null) {
-                    searchLocationMarker.remove();
-                    searchBar.clearSuggestions();
-                }
-            }
+                            @Override
+                            public void onResults(List<AddressSuggestion> results) {
+                                //this will swap the data and
+                                //render the collapse/expand animations as necessary
+                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(results.get(0).getLocation(), defaultZoom));
+                                searchLocationMarker = googleMap.addMarker(new MarkerOptions()
+                                        .position(results.get(0).getLocation())
+                                        .title(results.get(0).getBody())
+                                        .snippet(results.get(0).getBodyHebrew())
+                                        .icon(BitmapDescriptorFactory.defaultMarker(150)));
+                                searchBar.closeMenu(true);
+                                searchBar.hideProgress();
 
+                            }
+                        });
+            }
         });
-        searchBar.setCardViewElevation(10);
-        searchBar.setSuggestionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
-            @Override
-            public void OnItemClickListener(int position, View v) {
 
-            }
-
-            @Override
-            public void OnItemDeleteListener(int position, View v) {
-
-            }
-        });
 
         //Header
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
-
         userEmail = getIntent().getStringExtra("email");
         userFullName = getIntent().getStringExtra("full_name");
         uid = getIntent().getStringExtra("uid");
@@ -930,6 +963,14 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
+    }
+
+    protected void hideSoftKeyboard() {
+        if (this.getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
 }

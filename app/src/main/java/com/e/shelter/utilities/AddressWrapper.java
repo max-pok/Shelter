@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Address implements Parcelable {
+public class AddressWrapper implements Parcelable {
     @SerializedName("addressInHebrew")
     @Expose
     private String addressInHebrew;
@@ -20,7 +20,7 @@ public class Address implements Parcelable {
     @Expose
     private String lon;
 
-    public Address(Parcel in) {
+    public AddressWrapper(Parcel in) {
         this.addressInHebrew = in.readString();
         this.addressInEnglish = in.readString();
         this.lat = in.readString();
@@ -40,7 +40,7 @@ public class Address implements Parcelable {
         return 0;
     }
 
-    public Address(String addressInHebrew, String addressInEnglish, String lat, String lon) {
+    public AddressWrapper(String addressInHebrew, String addressInEnglish, String lat, String lon) {
         this.addressInHebrew = addressInHebrew;
         this.addressInEnglish = addressInEnglish;
         this.lat = lat;
@@ -79,15 +79,15 @@ public class Address implements Parcelable {
         this.lon = lon;
     }
 
-    public static final Creator<Address> CREATOR = new Creator<Address>() {
+    public static final Creator<AddressWrapper> CREATOR = new Creator<AddressWrapper>() {
         @Override
-        public Address createFromParcel(Parcel in) {
-            return new Address(in);
+        public AddressWrapper createFromParcel(Parcel in) {
+            return new AddressWrapper(in);
         }
 
         @Override
-        public Address[] newArray(int size) {
-            return new Address[size];
+        public AddressWrapper[] newArray(int size) {
+            return new AddressWrapper[size];
         }
     };
 }
