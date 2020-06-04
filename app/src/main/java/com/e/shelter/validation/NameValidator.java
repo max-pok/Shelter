@@ -1,6 +1,9 @@
 package com.e.shelter.validation;
 
 public class NameValidator {
+    public NameValidator(){
+
+    }
 
 
     public static boolean isValidName(String name){

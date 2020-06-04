@@ -1,6 +1,9 @@
 package com.e.shelter.validation;
 
 public class PhoneValidator {
+    public PhoneValidator(){
+        
+    }
 
     public static boolean isValidPhone(String phone){
 

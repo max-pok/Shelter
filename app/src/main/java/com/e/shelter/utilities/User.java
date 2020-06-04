@@ -1,14 +1,7 @@
 package com.e.shelter.utilities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+
 
 public class User implements Serializable {
     private String name;
