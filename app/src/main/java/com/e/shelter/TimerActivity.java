@@ -3,14 +3,9 @@ package com.e.shelter;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.e.shelter.R;
 
 public class TimerActivity extends MainActivity {
 

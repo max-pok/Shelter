@@ -1,26 +1,17 @@
 package com.e.shelter;
 
-import android.Manifest;
-import android.app.PendingIntent;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
+
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.e.shelter.utilities.Global;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
