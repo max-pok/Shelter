@@ -57,7 +57,10 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
             intent.putExtra("uid", firebaseUser.getUid());
             intent.putExtra("full_name", firebaseUser.getDisplayName());
             intent.putExtra("email", firebaseUser.getEmail());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -83,68 +86,62 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                         }
                     });
         } else {
-            email = Objects.requireNonNull(emailInput.getText()).toString();
-            password = Objects.requireNonNull(passwordInput.getText()).toString();
-            if (EmailValidator.isValidEmailTextInputEditText(email, emailInput)
-                    & PasswordValidator.isValidEmailTextInputEditText(password, passwordInput)) {
-
-                firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                                    Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                                    intent.putExtra("uid", firebaseUser.getUid());
-                                    intent.putExtra("full_name", firebaseUser.getDisplayName());
-                                    intent.putExtra("email", firebaseUser.getEmail());
-                                    startActivity(intent);
-                                    loadingProgressBar.setVisibility(View.INVISIBLE);
-                                } else {
-                                    loadingProgressBar.setVisibility(View.INVISIBLE);
-                                    Exception e = task.getException();
-                                    Log.d("Log In", "onFailure: " + e.getMessage());
-                                    Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
-                                }
+            firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                Exception e = task.getException();
+                                Log.d("Log In", "onFailure: " + e.getMessage());
+                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
                             }
-                        });
-            } else {
-                hideSoftKeyboard();
-            }
-
+                        }
+                    });
         }
     }
-    public void checkIfBlocked(final String email2){
-        firebaseFirestore.collection("Users").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isComplete()) {
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                System.out.println(queryDocumentSnapshot.get("email").toString() + " : "+email2);
-                                if (queryDocumentSnapshot.get("email").toString().equals(email2)) {
-                                    if(!queryDocumentSnapshot.getBoolean("blocked")) {
-                                        signIn();
-
+    public void checkIfBlocked(){
+        email = Objects.requireNonNull(emailInput.getText()).toString();
+        password = Objects.requireNonNull(passwordInput.getText()).toString();
+        if (EmailValidator.isValidEmailTextInputEditText(email, emailInput)
+                & PasswordValidator.isValidEmailTextInputEditText(password, passwordInput)) {
+            firebaseFirestore.collection("Users").get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isComplete()) {
+                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                    if (queryDocumentSnapshot.get("email").toString().equals(email)) {
+                                        if (!queryDocumentSnapshot.getBoolean("blocked")) {
+                                            signIn();
+                                            break;
+                                        }
+                                        else {
+                                            Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                                            loadingProgressBar.setVisibility(View.INVISIBLE);
+                                            break;
+                                        }
                                     }
-                                    else{
-                                        Toast.makeText(LoginActivity.this, "This user are blocked", Toast.LENGTH_LONG).show();
-
-                                    }
-
-
                                 }
-
+                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                            }
+                            else {
+                                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
                             }
                         }
-                        else{
-
-                            Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
-
-
-                        }
-                    }
-                });
+                    });
+        } else {
+            loadingProgressBar.setVisibility(View.INVISIBLE);
+            hideSoftKeyboard();
+        }
     }
 
     @Override
@@ -153,8 +150,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         switch (i) {
             case R.id.LoginButton:
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                email = Objects.requireNonNull(emailInput.getText()).toString();
-                checkIfBlocked(email);
+                checkIfBlocked();
                 //signIn();
                 break;
             case  R.id.signUpButton:

@@ -11,7 +11,7 @@
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="45dp"
         android:elevation="6dp"
         android:src="@drawable/male_account_icon" />
 
@@ -20,16 +20,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
+        android:clickable="true"
         android:textColor="@color/white"
         android:textSize="18dp" />
 
     <TextView
         android:id="@+id/name_header"
+        android:textColorHighlight="@color/quantum_bluegrey50"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:textColor="@color/white"
-        android:textSize="16dp" />
+        android:textColor="@color/quantum_bluegrey100"
+        android:textSize="12dp" />
 
 
 </LinearLayout>

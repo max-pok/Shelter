@@ -29,7 +29,7 @@ public class AddressSuggestion implements SearchSuggestion {
 
     @Override
     public String getBody() {
-        return addressWrapper.getAddressInEnglish();
+        return addressWrapper.getAddressInEnglish() + "\n" + addressWrapper.getAddressInHebrew();
     }
 
     public String getBodyHebrew() {

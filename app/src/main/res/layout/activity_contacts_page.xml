@@ -4,8 +4,6 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"

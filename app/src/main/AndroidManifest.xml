@@ -27,30 +27,43 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditUserActivity" android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".GlobalMessage" android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".SignUpActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".EditUserActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".GlobalMessage"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".SignUpActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".map.MapViewActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ShowUsersActivity" />
-
 
         <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".contactus.ContactPage" />
-        <activity android:name=".TimerActivity" />
+        <activity android:name=".TimerActivity" android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".review.ShowReview" />
-        <activity android:name=".ChangePassActivity" android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EditShelterDetails" android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".contactus.AddNewContactActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ChangePassActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".EditShelterDetails"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".contactus.AddNewContactActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
 
         <uses-library
             android:name="org.apache.http.legacy"

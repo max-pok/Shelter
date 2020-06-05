@@ -75,7 +75,7 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                     if (task.isSuccessful()) { //There is no user with the same email address
                         firebaseFirestore.collection("Emails").add(new Emails(email,false));
                         FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
-                        User newUser = new User(firstName + " " + lastName, phone,"user",email,false);
+                        User newUser = new User(firstName + " " + lastName, phone,"user", email,false);
 
                         final UserProfileChangeRequest update = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(firstName + " " + lastName)

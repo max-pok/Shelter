@@ -69,10 +69,11 @@
             app:floatingSearch_searchBarMarginRight="10dp"
             app:floatingSearch_searchHint="Search here"
             app:floatingSearch_suggestionsListAnimDuration="250"
-            app:floatingSearch_searchSuggestionTextSize="8dp"
+            app:floatingSearch_searchSuggestionTextSize="14dp"
             app:floatingSearch_showSearchKey="true"
             app:floatingSearch_leftActionMode="showHamburger"
             app:floatingSearch_dismissOnOutsideTouch="true"
+            app:floatingSearch_dividerColor="@color/quantum_bluegrey50"
             app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
 
 

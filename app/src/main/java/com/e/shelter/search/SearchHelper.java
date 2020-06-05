@@ -4,9 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Filter;
 
-import com.e.shelter.map.MapViewActivity;
 import com.e.shelter.utilities.AddressWrapper;
-import com.e.shelter.utilities.Contact;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,13 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class SearchHelper {
-    private static final String ADDRESSES_FILE_NAME = "addresses2.json";
+    private static final String ADDRESSES_FILE_NAME = "addresses.json";
 
     private static List<AddressWrapper> addressWrapperList = new ArrayList<>();
 
@@ -142,7 +137,7 @@ public class SearchHelper {
     public static void initAddressesList(Context context) {
         if (addressWrapperList.isEmpty()) {
             String jsonString = loadJson(context);
-            addressWrapperList = deserializeColors(jsonString);
+            addressWrapperList = deserializeAddresses(jsonString);
             for (int i = 0 ; i < addressWrapperList.size() ; i++) {
                 addressSuggestions.add(new AddressSuggestion(addressWrapperList.get(i)));
             }
@@ -167,7 +162,7 @@ public class SearchHelper {
         return jsonString;
     }
 
-    private static List<AddressWrapper> deserializeColors(String jsonString) {
+    private static List<AddressWrapper> deserializeAddresses(String jsonString) {
         Gson gson = new Gson();
         Type collectionType = new TypeToken<List<AddressWrapper>>() {
         }.getType();

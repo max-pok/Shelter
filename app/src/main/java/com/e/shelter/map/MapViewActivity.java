@@ -10,15 +10,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,7 +32,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
-import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.e.shelter.NewsActivity;
 import com.e.shelter.ShowUsersActivity;
@@ -88,16 +84,14 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -111,7 +105,6 @@ import java.util.List;
 import java.util.Locale;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
@@ -136,10 +129,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView capacityTxt;
     private TextView ratingTxt;
     private TextView ratingCountTxt;
-    private List<String> suggestions = new ArrayList<>();
     private String userEmail;
     private String userFullName;
-    private String permission = "admin";
+    private String permission = "user";
     private String uid;
     private MaterialButton saveShelterButton;
     private MaterialButton editShelterButton;
@@ -170,6 +162,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        //Init settings
+        userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        userFullName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getUserPermission();
 
         //Map
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
@@ -255,40 +253,36 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
             @Override
             public void onSearchAction(String currentQuery) {
+                if (searchLocationMarker != null) searchLocationMarker.remove();
                 searchBar.showProgress();
                 searchBar.clearSuggestions();
                 hideSoftKeyboard();
                 Log.i("Search Suggestion Click", currentQuery);
-                searchHelper.findSuggestions(MapViewActivity.this, currentQuery, 5,
-                        250, new SearchHelper.OnFindSuggestionsListener() {
-
-                            @Override
-                            public void onResults(List<AddressSuggestion> results) {
-                                //this will swap the data and
-                                //render the collapse/expand animations as necessary
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(results.get(0).getLocation(), defaultZoom));
-                                searchLocationMarker = googleMap.addMarker(new MarkerOptions()
-                                        .position(results.get(0).getLocation())
-                                        .title(results.get(0).getBody())
-                                        .snippet(results.get(0).getBodyHebrew())
-                                        .icon(BitmapDescriptorFactory.defaultMarker(150)));
-                                searchBar.closeMenu(true);
-                                searchBar.hideProgress();
-
-                            }
-                        });
+                searchHelper.findAddresses(MapViewActivity.this, currentQuery, 1, new SearchHelper.OnFindAddressListener() {
+                    @Override
+                    public void onResults(List<AddressWrapper> results) {
+                        //this will swap the data and
+                        //render the collapse/expand animations as necessary
+                        LatLng latLng = new LatLng(Double.parseDouble(results.get(0).getLat()), Double.parseDouble(results.get(0).getLon()));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom));
+                        searchLocationMarker = googleMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(results.get(0).getAddressInHebrew())
+                                .snippet(results.get(0).getAddressInEnglish())
+                                .icon(BitmapDescriptorFactory.defaultMarker(150)));
+                        searchBar.closeMenu(true);
+                        searchBar.hideProgress();
+                    }
+                });
             }
         });
-
 
         //Header
         View header = navigationView.getHeaderView(0);
         TextView header_email = header.findViewById(R.id.email_header);
-        userEmail = getIntent().getStringExtra("email");
-        userFullName = getIntent().getStringExtra("full_name");
-        uid = getIntent().getStringExtra("uid");
-        //permission = getIntent().getStringExtra("permission");
+        TextView header_name = header.findViewById(R.id.name_header);
         if (userEmail != null) header_email.setText(userEmail);
+        if (userFullName != null) header_name.setText(userFullName);
 
         //Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
@@ -308,7 +302,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Rating Dialog Window
         createRatingDialog();
-
     }
 
     /**
@@ -379,7 +372,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         // Add shelters to google map
         addSheltersIntoGoogleMap();
-        
+
         // Get favorite shelters from DB
         retrieveFavoriteShelters();
     }
@@ -419,14 +412,15 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public boolean onMarkerClick(Marker marker) {
         //if selected marker is a search location marker - do nothing
-        if (searchLocationMarker != null && searchLocationMarker.getTitle().equals(marker.getTitle())) return false;
+        if (searchLocationMarker != null && searchLocationMarker.getTitle().equals(marker.getTitle()))
+            return false;
 
         //opens bottom dialog sheet when shelter marker is selected
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         selectedMarker = marker;
 
         //finds selected shelter & shelter uid from shelter list
-        for (Map.Entry<String, Shelter> shelter: sheltersList.entrySet()) {
+        for (Map.Entry<String, Shelter> shelter : sheltersList.entrySet()) {
             if (shelter != null && shelter.getValue().getName().equals(selectedMarker.getTitle())) {
                 selectedShelter = shelter.getValue();
                 selectedShelterUID = shelter.getKey();
@@ -442,7 +436,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         capacityTxt.setText(selectedShelter.getCapacity());
         if (selectedShelter.getStatus().equals("open")) {
             statusTxt.setTextColor(getResources().getColor(R.color.quantum_googgreen));
-        } else statusTxt.setTextColor(getResources().getColor(R.color.quantum_googred));
+            googleMap.getUiSettings().setMapToolbarEnabled(true);
+        } else {
+            statusTxt.setTextColor(getResources().getColor(R.color.quantum_googred));
+            googleMap.getUiSettings().setMapToolbarEnabled(false);
+        }
         statusTxt.setText(selectedShelter.getStatus());
         if (checkIfShelterInFavorite(marker.getTitle())) {
             saveShelterButton.setText("SAVED");
@@ -486,7 +484,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 }
             }
         });
+
         //Edit Button Function
+        if (permission.equals("user")) editShelterButton.setVisibility(View.INVISIBLE);
         editShelterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -498,6 +498,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 startActivityForResult(i, 3);
             }
         });
+
         //Rate Button Function
         rateShelterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -517,10 +518,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 bottomSheet.setAlpha(1 + slideOffset);
             }
         });
-
-        if (permission.equals("user")) {
-            editShelterButton.setVisibility(View.INVISIBLE);
-        }
     }
 
     public void createRatingDialog() {
@@ -651,34 +648,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     /**
-     * Search given address from 'addresses.json' file. If address didn't found it will display a proper massage on screen.
-     * @param address - input received from search bar.
-     */
-    public void searchAddress(String address) {
-        MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
-        DB shelter_db = mongoClient.getDB("SafeZone_DB");
-        DBCollection shelter_db_collection = shelter_db.getCollection("Addresses");
-        DBCursor cursor = shelter_db_collection.find();
-        while (cursor.hasNext()) {
-            BasicDBObject object = (BasicDBObject) cursor.next();
-            if ((object.get("StreetName") + " " + object.get("HouseNumber")).contains(address)) {
-                double lat = Double.parseDouble(object.getString("lat"));
-                double lon = Double.parseDouble(object.getString("lon"));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), defaultZoom));
-                searchLocationMarker = googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(lat, lon))
-                        .title(object.get("StreetName") + " " + object.get("HouseNumber"))
-                        .snippet(object.get("StreetName") + " " + object.get("HouseNumber"))
-                        .icon(BitmapDescriptorFactory.defaultMarker(150)));
-                return;
-            }
-        }
-        //Toast.makeText(MapViewActivity.this, "Address not found", Toast.LENGTH_LONG).show();
-        Snackbar.make(Objects.requireNonNull(getCurrentFocus()), "Address not found", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-    }
-
-    /**
      * Starts specific function/intent from the navigation bar based on the item selected.
+     *
      * @param item - selected item from side navigation bar.
      * @return true to keep item selected, false otherwise.
      */
@@ -703,7 +674,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 break;
             case R.id.nav_show_user:
                 Intent userActive = new Intent(this, ShowUsersActivity.class);
-                startActivity(userActive);                break;
+                startActivity(userActive);
+                break;
             case R.id.nav_show_reviews:
                 Intent reviewActive = new Intent(this, ShowReview.class);
                 startActivity(reviewActive);
@@ -716,9 +688,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 Intent globalMessageActive = new Intent(this, GlobalMessage.class);
                 //startActivity(globalMessageActive);
                 startActivityForResult(globalMessageActive, 2);
-
                 return false;
-
             case R.id.nav_favorite_shelters:
                 Intent favIntent = new Intent(this, FavoritesActivity.class);
                 favIntent.putExtra("uid", uid);
@@ -730,6 +700,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                finish();
                 break;
         }
         return false;
@@ -965,7 +936,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
-    protected void hideSoftKeyboard() {
+    public void hideSoftKeyboard() {
         if (this.getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             assert imm != null;
@@ -973,5 +944,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    public void getUserPermission() {
+        FirebaseFirestore.getInstance().collection("Users").document(uid)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    permission = task.getResult().getString("permission");
+                }
+            }
+        });
+    }
 }
+
 

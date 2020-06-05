@@ -88,8 +88,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:layout_gravity="center">
+                android:gravity="center">
 
                 <com.google.android.material.button.MaterialButton
                     android:textSize="14dp"
