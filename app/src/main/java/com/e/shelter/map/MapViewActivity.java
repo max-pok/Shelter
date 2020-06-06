@@ -131,11 +131,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView ratingCountTxt;
     private String userEmail;
     private String userFullName;
-    private String permission = "user";
     private String uid;
+    private String permission = "user";
+    MaterialButton editShelterButton;
+    MaterialButton rateShelterButton;
+    MaterialButton shareShelterButton;
     private MaterialButton saveShelterButton;
-    private MaterialButton editShelterButton;
-    private MaterialButton rateShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters;
     private LinearLayout bottomSheet;
@@ -167,7 +168,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         userFullName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        getUserPermission();
+        initializePermissions();
 
         //Map
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
@@ -467,6 +468,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         capacityTxt = findViewById(R.id.info_window_capacity);
         statusTxt = findViewById(R.id.info_window_status);
         ratingBarInfoDialog = findViewById(R.id.rating_bar_info_window);
+        shareShelterButton = findViewById(R.id.info_window_share_button);
 
         //Save Button Function
         saveShelterButton.setOnClickListener(new View.OnClickListener() {
@@ -486,7 +488,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
 
         //Edit Button Function
-        if (permission.equals("user")) editShelterButton.setVisibility(View.INVISIBLE);
         editShelterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -944,13 +945,23 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
-    public void getUserPermission() {
+    public void initializePermissions() {
         FirebaseFirestore.getInstance().collection("Users").document(uid)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    permission = task.getResult().getString("permission");
+                    if (task.getResult().getString("permission").equals("user")) {
+                        editShelterButton = findViewById(R.id.info_window_edit_button);
+                        editShelterButton.setVisibility(View.INVISIBLE);
+
+                        navigationView = findViewById(R.id.nav_view);
+                        navigationView.getMenu().findItem(R.id.nav_global_message).setVisible(false);
+                        navigationView.getMenu().findItem(R.id.nav_show_user).setVisible(false);
+                        navigationView.getMenu().findItem(R.id.nav_show_reviews).setVisible(false);
+
+                    }
+                    else permission = "admin";
                 }
             }
         });

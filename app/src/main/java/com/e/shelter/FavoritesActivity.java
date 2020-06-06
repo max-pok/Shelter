@@ -12,7 +12,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,6 +25,7 @@ public class FavoritesActivity extends MainActivity {
 
     private ArrayList<FavoriteCard> list = new ArrayList<>();
     private ListView shelterCardListView;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,9 @@ public class FavoritesActivity extends MainActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        progressBar = findViewById(R.id.fav_loading_spinner);
+        progressBar.setVisibility(View.VISIBLE);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
@@ -72,6 +79,7 @@ public class FavoritesActivity extends MainActivity {
                         }
                         FavoriteListAdapter adapter = new FavoriteListAdapter(getBaseContext(), R.layout.content_favorites, list, getIntent().getStringExtra("userEmail"));
                         shelterCardListView.setAdapter(adapter);
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
     }
