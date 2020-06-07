@@ -48,11 +48,10 @@ public class ChangePassActivity extends MainActivity {
 
     public void ChangePass(String oldPass, final String newPass, final String newPass2) {
 
-        if (newPass == newPass2) {
+        if (newPass.equals(newPass2)) {
             final FirebaseUser user = firebaseAuth.getCurrentUser();
             AuthCredential credential = EmailAuthProvider
                     .getCredential(user.getEmail().toString(), oldPass);
-
 // Prompt the user to re-provide their sign-in credentials
             assert user != null;
             user.reauthenticate(credential)
@@ -63,7 +62,7 @@ public class ChangePassActivity extends MainActivity {
                                 user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
+                                        if (task.isComplete()) {
                                             Toast.makeText(ChangePassActivity.this, "password changed", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Log.d("", "Error password not changed");
