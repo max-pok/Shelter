@@ -27,8 +27,6 @@ public class ChangePassIntegrationTest {
         Espresso.onView(withId(R.id.oldpass)).check(matches(withHint("Old password")));
         Espresso.onView(withId(R.id.newpass)).check(matches(withHint("New password")));
         Espresso.onView(withId(R.id.newpass2)).check(matches(withHint("New password again")));
-
-
     }
 
 }

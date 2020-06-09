@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'checkstyle'
-apply plugin: 'project-report'
+apply plugin: 'jacoco'
 
 
 android {
@@ -29,12 +29,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-        ignoreWarnings true //false
-    }
 }
 
 task checkstyle(type: Checkstyle) {
@@ -58,11 +52,6 @@ checkstyle {
 project.afterEvaluate {
     preBuild.dependsOn 'checkstyle'
 }
-
-htmlDependencyReport {
-    projects = project.getSubprojects()
-}
-
 
 repositories {
     mavenCentral()
@@ -114,6 +103,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
     implementation 'com.github.arimorty:floatingsearchview:2.1.1'
-    implementation 'com.lapism:search:2.1.3@aar'
-
 }
