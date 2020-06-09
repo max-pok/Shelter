@@ -48,7 +48,9 @@ public class EditShelterDetails extends MainActivity {
         });
     }
 
-
+    /**
+     * updating details of shelter after the admin inputs new details and is updating to the database
+     */
     public void update_details() {
         if (TextInputValidator.isValidEditText(nameEditText.getText().toString(), nameEditText)
                 & TextInputValidator.isValidEditText(addressEditText.getText().toString(), addressEditText)

@@ -46,7 +46,9 @@ public class EditUserActivity  extends MainActivity {
         });
     }
 
-
+    /**
+     * Editing user details and updating database
+     */
         public void InitEditText () {
         try {
             firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get()
