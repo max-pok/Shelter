@@ -22,7 +22,9 @@ import java.util.ArrayList;
 
 
 public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
-
+    /**
+     * class FavoriteListAdapter fields
+     */
     private static final String TAG = "FavoriteListAdapter";
 
     private Context mContext;
@@ -58,6 +60,13 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
         cards = objects;
     }
 
+    /**
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return view
+     */
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
@@ -107,6 +116,10 @@ public class FavoriteListAdapter extends ArrayAdapter<FavoriteCard> {
         return convertView;
     }
 
+    /**
+     * removes shelther from faviorite list
+     * @param position
+     */
     public void removeSelectedShelterFromFavorites(int position) {
         FavoriteCard shelterToRemove = new FavoriteCard(getItem(position).getName(),
                 getItem(position).getAddress(),

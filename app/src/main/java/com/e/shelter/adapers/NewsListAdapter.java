@@ -24,6 +24,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class NewsListAdapter extends ArrayAdapter<News> {
+    /**
+     * class NewsListAdapter fields
+     */
     private static final String TAG = "NewsListAdapter";
 
     private Context mContext;
@@ -58,6 +61,13 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         cards = objects;
     }
 
+    /**
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return View
+     */
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
@@ -113,6 +123,10 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         return convertView;
     }
 
+    /**
+     *
+     * @param position
+     */
     private void showMore(final int position) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(mContext);
         builder.setTitle("");
@@ -137,6 +151,11 @@ public class NewsListAdapter extends ArrayAdapter<News> {
         builder.show();
     }
 
+    /**
+     *
+     * @param position
+     * @param holder
+     */
     private void share(int position, ViewHolder holder) {
         //get image from image view
         Intent intent = new Intent(Intent.ACTION_SEND);

@@ -23,6 +23,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 public class UserListAdapter extends ArrayAdapter<User> {
+    /**
+     * class UserListAdapter fields
+     */
     private static final String TAG = "CustomListAdapter";
 
     private Context mContext;
@@ -60,6 +63,13 @@ public class UserListAdapter extends ArrayAdapter<User> {
         cards = objects;
     }
 
+    /**
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return View
+     */
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
@@ -171,6 +181,11 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
     }*/
 
+    /**
+     * function that blocks user and updates the database
+     * @param position
+     * @param convertView
+     */
     public void blockedSelectedUser(final int position, final View convertView) {
 
         FirebaseFirestore.getInstance().collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
