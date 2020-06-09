@@ -46,6 +46,12 @@ public class ChangePassActivity extends MainActivity {
 
     }
 
+    /**
+     * changing password by confirming old password to new password and re-entering
+     * @param oldPass
+     * @param newPass
+     * @param newPass2
+     */
     public void ChangePass(String oldPass, final String newPass, final String newPass2) {
 
         if (newPass.equals(newPass2)) {

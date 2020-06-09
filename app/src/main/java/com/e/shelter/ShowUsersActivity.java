@@ -36,7 +36,10 @@ public class ShowUsersActivity extends MainActivity {
         retrieveShowUsers();
     }
 
-
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -48,7 +51,9 @@ public class ShowUsersActivity extends MainActivity {
         super.onBackPressed();
     }
 
-
+    /**
+     * Retrieving all users from the database
+     */
     public void retrieveShowUsers() {
         firebaseFirestore.collection("Users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

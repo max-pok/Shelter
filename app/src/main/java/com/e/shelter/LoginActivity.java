@@ -27,9 +27,10 @@ import java.util.Objects;
 public class LoginActivity extends MainActivity implements View.OnClickListener {
     public static String email;
     public static String password;
-    public static String permission;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
+
+    private Boolean skipLogin = false;
     private ProgressBar loadingProgressBar;
 
     @Override
@@ -53,6 +54,9 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+            intent.putExtra("uid", firebaseUser.getUid());
+            intent.putExtra("full_name", firebaseUser.getDisplayName());
+            intent.putExtra("email", firebaseUser.getEmail());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -60,29 +64,56 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         }
     }
 
+    /**
+     * Enter username and password, check in database continue is user exists and not blocked else throw exeption
+     */
     public void signIn() {
-        firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            loadingProgressBar.setVisibility(View.INVISIBLE);
-                            Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.putExtra("permission", permission);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            loadingProgressBar.setVisibility(View.INVISIBLE);
-                            Exception e = task.getException();
-                            Log.d("Log In", "onFailure: " + e.getMessage());
-                            Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+        if (skipLogin) {
+            firebaseAuth.signInWithEmailAndPassword("adirat@ac.sce.il", "123456")
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                                Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+                                intent.putExtra("uid", firebaseUser.getUid());
+                                intent.putExtra("full_name", firebaseUser.getDisplayName());
+                                intent.putExtra("email", firebaseUser.getEmail());
+                                startActivity(intent);
+                            } else {
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                Log.d("Log In", "onFailure: " + task.getException().getMessage());
+                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
+                                Exception e = task.getException();
+                                Log.d("Log In", "onFailure: " + e.getMessage());
+                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+        }
     }
 
+    /**
+     * Function checks is user is blocked in database
+     */
     public void checkIfBlocked(){
         email = Objects.requireNonNull(emailInput.getText()).toString();
         password = Objects.requireNonNull(passwordInput.getText()).toString();
@@ -96,16 +127,18 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                                 for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                                     if (queryDocumentSnapshot.get("email").toString().equals(email)) {
                                         if (!queryDocumentSnapshot.getBoolean("blocked")) {
-                                            permission = queryDocumentSnapshot.getString("permission");
                                             signIn();
                                             break;
-                                        } else {
+                                        }
+                                        else {
                                             Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
                                             loadingProgressBar.setVisibility(View.INVISIBLE);
                                             break;
                                         }
                                     }
                                 }
+                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
+                                loadingProgressBar.setVisibility(View.INVISIBLE);
                             }
                             else {
                                 Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();

@@ -59,6 +59,9 @@ public class FavoritesActivity extends MainActivity {
         finish();
     }
 
+    /**
+     * Adding to favorite list of selected shelter
+     */
     public void createFavoriteCardList() {
 
         firebaseFirestore.collection("FavoriteShelters").document(firebaseAuth.getUid()).get()
