@@ -64,6 +64,11 @@ public class MapWrapperLayout extends RelativeLayout {
         this.infoWindow = infoWindow;
     }
 
+    /**
+     *
+     * @param ev
+     * @return boolean
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         boolean ret = false;

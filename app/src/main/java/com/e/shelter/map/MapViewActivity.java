@@ -109,7 +109,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener,
         GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RatingDialogListener {
-
+    /**
+     * class MapViewActivity feilds
+     */
     private GoogleMap googleMap;
     private SupportMapFragment mapFragment;
     private FloatingSearchView searchBar;
@@ -146,7 +148,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private AppRatingDialog appRatingDialog;
     private AppCompatRatingBar ratingBarInfoDialog;
 
-
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -377,6 +382,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         retrieveFavoriteShelters();
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -409,6 +420,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
+    /**
+     *
+     * @param marker
+     * @return boolean
+     */
     @Override
     public boolean onMarkerClick(Marker marker) {
         //if selected marker is a search location marker - do nothing
@@ -451,6 +467,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
         return false;
     }
+
 
     public void createBottomSheetDialog() {
         //init
@@ -520,6 +537,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * all rating options
+     */
     public void createRatingDialog() {
         appRatingDialog = new AppRatingDialog.Builder()
                 .setPositiveButtonText("Send Feedback")
@@ -543,10 +563,18 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 .create(MapViewActivity.this);
     }
 
+    /**
+     *
+     * @param shelterName
+     * @return boolean
+     */
     public boolean checkIfShelterInFavorite(String shelterName) {
         return favoriteShelters.contains(shelterName);
     }
 
+    /**
+     * get favorite shelters from database
+     */
     public void retrieveFavoriteShelters() {
         favoriteShelters = new ArrayList<>();
         database.collection("FavoriteShelters").document(uid).get()
@@ -802,7 +830,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         snackbar.show();
     }
 
-
+    /**
+     * Removing shelther from favorite list and database
+     */
     public void removeSelectedShelterFromFavorites() {
         FavoriteCard favoriteCard = new FavoriteCard(selectedMarker.getTitle(), selectedMarker.getSnippet(),
                 selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
@@ -829,7 +859,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         // Do Nothing
     }
 
-
+    /**
+     *
+     * @param i
+     * @param s
+     */
     @Override
     public void onPositiveButtonClicked(int i, String s) {
         if (s.isEmpty()) {
@@ -840,7 +874,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
-
+    /**
+     *
+     * @param permission
+     * @param requestCode
+     */
     // Function to check and request permission.
     public void checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MapViewActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
@@ -849,6 +887,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -882,7 +926,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
-
+    /**
+     *
+     * @param stars
+     * @param review
+     */
     public void addReview(int stars, String review) {
         Date currentTime = Calendar.getInstance().getTime();
         Review newReview = new Review(selectedShelter.getName(), userFullName, userEmail, review, String.valueOf(stars), currentTime.toString());
@@ -920,6 +968,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+    /**
+     * Updating shelter deails
+     */
     public void updateSelectedShelter() {
         FirebaseFirestore.getInstance().collection("Shelters").document(selectedShelterUID)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -936,6 +987,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         });
     }
 
+
     public void hideSoftKeyboard() {
         if (this.getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -944,6 +996,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+    /**
+     * Check if admin or regural user.
+     */
     public void getUserPermission() {
         FirebaseFirestore.getInstance().collection("Users").document(uid)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
