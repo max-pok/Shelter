@@ -59,6 +59,10 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
         signUpMaterialButton = findViewById(R.id.finalSignUpButton);
         signUpMaterialButton.setOnClickListener(this);
     }
+
+    /**
+     * Input all sign up details and adding to the database after checking is the user doesnt already exist or is blocked
+     */
     public void signUp() {
         firstName = firstNameTextInputEditText.getText().toString();
         lastName = lastNameTextInputEditText.getText().toString();
@@ -128,6 +132,10 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
         finish();
     }
 
+    /**
+     *
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         int i = v.getId();

@@ -64,6 +64,9 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         }
     }
 
+    /**
+     * Enter username and password, check in database continue is user exists and not blocked else throw exeption
+     */
     public void signIn() {
         if (skipLogin) {
             firebaseAuth.signInWithEmailAndPassword("adirat@ac.sce.il", "123456")
@@ -107,6 +110,10 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                     });
         }
     }
+
+    /**
+     * Function checks is user is blocked in database
+     */
     public void checkIfBlocked(){
         email = Objects.requireNonNull(emailInput.getText()).toString();
         password = Objects.requireNonNull(passwordInput.getText()).toString();

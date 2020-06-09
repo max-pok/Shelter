@@ -43,6 +43,11 @@ public class GlobalMessage extends MainActivity {
         });
     }
 
+    /**
+     *
+     * After entering collective notification from admin input sent to all user emails from database
+     * @throws FirebaseAuthException
+     */
     protected void sendEmail() throws FirebaseAuthException {
 
 

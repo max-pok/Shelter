@@ -55,6 +55,10 @@ public class NewsActivity extends MainActivity implements View.OnClickListener {
         new JSONParser().execute();
     }
 
+    /**
+     * Connecto to news Api and redirect to news page
+     * @param value
+     */
     private void getLatestNews(JSONObject value) {
         try {
             JSONArray articles = value.getJSONArray("articles");
@@ -86,6 +90,10 @@ public class NewsActivity extends MainActivity implements View.OnClickListener {
         finish();
     }
 
+    /**
+     *
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -95,6 +103,7 @@ public class NewsActivity extends MainActivity implements View.OnClickListener {
         }
     }
 
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -103,6 +112,7 @@ public class NewsActivity extends MainActivity implements View.OnClickListener {
         finish();
 
     }
+
 
     protected class JSONParser extends AsyncTask<Void, Void, JSONObject> {
         @Override
