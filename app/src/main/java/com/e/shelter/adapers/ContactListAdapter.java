@@ -26,7 +26,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 public class ContactListAdapter extends ArrayAdapter<Contact> {
-
+    /**
+     * ContactListAdapter Fields
+     */
     private static final String TAG = "CustomListAdapter";
 
     private Context mContext;
@@ -54,6 +56,7 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
      * @param context
      * @param resource
      * @param objects
+     * @param permission
      */
     public ContactListAdapter(Context context, int resource, ArrayList<Contact> objects, String permission) {
         super(context, resource, objects);
@@ -63,6 +66,13 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
         cards = objects;
         this.permission = permission;
     }
+    /**
+    * Returns view for contact list
+    * @param position
+    * @param convertView
+    * @param parent
+    *
+    */
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
@@ -133,7 +143,11 @@ public class ContactListAdapter extends ArrayAdapter<Contact> {
 
         return convertView;
     }
-
+    /**
+     * Removes contact from database
+     * @param position
+     *
+     */
     private void removeSelectedContactFromContactsList(int position) {
         FirebaseFirestore.getInstance().collection("ContactUsInformation")
                 .whereEqualTo("nameInEnglish", getItem(position).getNameInEnglish())
