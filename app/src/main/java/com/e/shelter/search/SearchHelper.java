@@ -33,6 +33,12 @@ public class SearchHelper {
         void onResults(List<AddressSuggestion> results);
     }
 
+    /**
+     * getting all addresses
+     * @param context
+     * @param count
+     * @return
+     */
     public static List<AddressSuggestion> getHistory(Context context, int count) {
         List<AddressSuggestion> suggestionList = new ArrayList<>();
         AddressSuggestion colorSuggestion;
@@ -47,12 +53,21 @@ public class SearchHelper {
         return suggestionList;
     }
 
+
     public static void resetSuggestionsHistory() {
         for (AddressSuggestion colorSuggestion : addressSuggestions) {
             colorSuggestion.setIsHistory(false);
         }
     }
 
+    /**
+     *
+     * @param context
+     * @param query
+     * @param limit
+     * @param simulatedDelay
+     * @param listener
+     */
     public void findSuggestions(Context context, String query, final int limit, final long simulatedDelay,
                                        final OnFindSuggestionsListener listener) {
         new Filter() {
@@ -103,7 +118,13 @@ public class SearchHelper {
 
     }
 
-
+    /**
+     * Finding address after search input.
+     * @param context
+     * @param query
+     * @param limit
+     * @param listener
+     */
     public void findAddresses(Context context, String query, final int limit, final OnFindAddressListener listener) {
         new Filter() {
             @Override
@@ -134,6 +155,10 @@ public class SearchHelper {
 
     }
 
+    /**
+     *
+     * @param context
+     */
     public static void initAddressesList(Context context) {
         if (addressWrapperList.isEmpty()) {
             String jsonString = loadJson(context);
@@ -146,6 +171,11 @@ public class SearchHelper {
         }
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     private static String loadJson(Context context) {
         String jsonString;
         try {
@@ -162,6 +192,11 @@ public class SearchHelper {
         return jsonString;
     }
 
+    /**
+     *
+     * @param jsonString
+     * @return
+     */
     private static List<AddressWrapper> deserializeAddresses(String jsonString) {
         Gson gson = new Gson();
         Type collectionType = new TypeToken<List<AddressWrapper>>() {

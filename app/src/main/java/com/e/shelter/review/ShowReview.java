@@ -20,10 +20,16 @@ import androidx.appcompat.app.ActionBar;
 import java.util.ArrayList;
 
 public class ShowReview extends MainActivity {
-
+    /**
+     * class ShowReview feilds
+     */
     private ListView reviewListView;
     private ArrayList<Review> reviewArrayList = new ArrayList<>();
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +57,9 @@ public class ShowReview extends MainActivity {
         super.onBackPressed();
     }
 
-
+    /**
+     * Getting all reviews from database
+     */
     public void retrieveUserReviews() {
         firebaseFirestore.collection("UserReviews").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
