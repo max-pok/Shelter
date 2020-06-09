@@ -31,7 +31,10 @@ import androidx.appcompat.app.ActionBar;
 import java.util.ArrayList;
 
 public class ContactPage extends MainActivity {
-
+    /**
+     *
+     * class ContactPage fields
+     */
     private ListView contactsListView;
     private FloatingActionButton addButton;
     private ArrayList<Contact> contactsArrayList = new ArrayList<>();
@@ -63,18 +66,28 @@ public class ContactPage extends MainActivity {
         });
     }
 
-
+    /**
+     *
+     * @return boolean
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -84,6 +97,9 @@ public class ContactPage extends MainActivity {
         }
     }
 
+    /**
+     * get contacts from database
+     */
     public void retrieveContacts() {
         contactsArrayList = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("ContactUsInformation").get()
@@ -105,6 +121,9 @@ public class ContactPage extends MainActivity {
                 });
     }
 
+    /**
+     * add contact information to database
+     */
     public void addContactsToFireBase() {
         MongoClient mongoClient = new MongoClient("10.0.2.2", 27017);
         DB db = mongoClient.getDB("SafeZone_DB");

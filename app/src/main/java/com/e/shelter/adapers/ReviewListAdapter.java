@@ -16,7 +16,9 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 
 public class ReviewListAdapter extends ArrayAdapter<Review> {
-
+    /**
+     * class ReviewListAdapter fields
+     */
     private static final String TAG = "CustomListAdapter";
 
     private Context mContext;
@@ -53,6 +55,13 @@ public class ReviewListAdapter extends ArrayAdapter<Review> {
         cards = objects;
     }
 
+    /**
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return View
+     */
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;

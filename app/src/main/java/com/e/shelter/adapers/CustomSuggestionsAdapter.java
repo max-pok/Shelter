@@ -22,25 +22,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomSuggestionsAdapter extends SuggestionsAdapter<AddressWrapper, CustomSuggestionsAdapter.SuggestionHolder> {
-
+    /**
+     * class CustomSuggestionsAdapter fields
+     */
     private static final String ADDRESSES_FILE_NAME = "addresses2.json";
     private List<AddressWrapper> addressWrapperList = new ArrayList<>();
 
+    /**
+     * CustomSuggestionsAdapter constructor
+     * @param inflater
+     * @param context
+     */
     public CustomSuggestionsAdapter(LayoutInflater inflater, Context context) {
         super(inflater);
     }
 
+    /**
+     *
+     * @return view height
+     */
     @Override
     public int getSingleViewHeight() {
         return 80;
     }
 
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return SuggestionHolder
+     */
     @Override
     public SuggestionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = getLayoutInflater().inflate(R.layout.item_custom_suggestion, parent, false);
         return new SuggestionHolder(view);
     }
 
+    /**
+     *
+     * @param suggestion
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindSuggestionHolder(AddressWrapper suggestion, SuggestionHolder holder, int position) {
         holder.firstAddress.setText(suggestion.getAddressInEnglish());
@@ -87,6 +110,11 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<AddressWrapper,
         };
     }
 
+    /**
+     *
+     * @param context
+     * @return List<AddressWrapper>
+     */
     public List<AddressWrapper> initSuggestions(Context context) {
         if (addressWrapperList.isEmpty()) {
             String jsonString = loadJson(context);
@@ -95,6 +123,11 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<AddressWrapper,
         return addressWrapperList;
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     private static String loadJson(Context context) {
         String jsonString;
         try {
@@ -112,6 +145,11 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<AddressWrapper,
         return jsonString;
     }
 
+    /**
+     *
+     * @param jsonString
+     * @return List<AddressWrapper>
+     */
     private static List<AddressWrapper> deserializeColors(String jsonString) {
         Gson gson = new Gson();
         Type collectionType = new TypeToken<List<AddressWrapper>>() {
@@ -119,6 +157,9 @@ public class CustomSuggestionsAdapter extends SuggestionsAdapter<AddressWrapper,
         return gson.fromJson(jsonString, collectionType);
     }
 
+    /**
+     *
+     */
     static class SuggestionHolder extends RecyclerView.ViewHolder{
         protected TextView firstAddress;
         protected TextView secondAddress;
