@@ -22,12 +22,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddNewContactActivity extends MainActivity {
-
+    /**
+     * class AddNewContactActivity fields
+     */
     private TextInputEditText hebrewInput;
     private TextInputEditText englishInput;
     private TextInputEditText phoneNumber;
     private MaterialButton addButton;
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,18 +93,31 @@ public class AddNewContactActivity extends MainActivity {
         }
     }
 
+    /**
+     *
+     * @return boolean
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
+    /**
+     * void function
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
 
+    /**
+     * add contact information
+     * @param hebrewInput
+     * @param englishInput
+     * @param phoneNumber
+     */
     public void addContact(String hebrewInput, String englishInput, String phoneNumber) {
         Contact contact = new Contact(hebrewInput, englishInput, phoneNumber);
         firebaseFirestore.collection("ContactUsInformation").add(contact);
@@ -107,6 +126,13 @@ public class AddNewContactActivity extends MainActivity {
         finish();
     }
 
+    /**
+     * editing contact information
+     * @param oldName
+     * @param hebrewInput
+     * @param englishInput
+     * @param phoneNumber
+     */
     public void editContact(String oldName, final String hebrewInput, final String englishInput, final String phoneNumber) {
         firebaseFirestore.collection("ContactUsInformation").whereEqualTo("nameInEnglish", oldName)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
