@@ -47,7 +47,7 @@ public class EditUserActivity  extends MainActivity {
     }
 
 
-        public void InitEditText () {
+        public void InitEditText() {
         try {
             firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

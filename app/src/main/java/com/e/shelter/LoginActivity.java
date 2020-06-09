@@ -99,16 +99,13 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                                             permission = queryDocumentSnapshot.getString("permission");
                                             signIn();
                                             break;
-                                        }
-                                        else {
+                                        } else {
                                             Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
                                             loadingProgressBar.setVisibility(View.INVISIBLE);
                                             break;
                                         }
                                     }
                                 }
-                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
-                                loadingProgressBar.setVisibility(View.INVISIBLE);
                             }
                             else {
                                 Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();

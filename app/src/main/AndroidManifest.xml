@@ -47,7 +47,13 @@
         <activity
             android:name=".map.MapViewActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ShowUsersActivity" />
 
         <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar" />

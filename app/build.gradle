@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'checkstyle'
+apply plugin: 'project-report'
 
 
 android {
@@ -56,6 +57,10 @@ checkstyle {
 
 project.afterEvaluate {
     preBuild.dependsOn 'checkstyle'
+}
+
+htmlDependencyReport {
+    projects = project.getSubprojects()
 }
 
 

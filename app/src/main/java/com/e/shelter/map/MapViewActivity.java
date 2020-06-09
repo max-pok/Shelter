@@ -111,7 +111,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RatingDialogListener {
 
     private GoogleMap googleMap;
-    private SupportMapFragment mapFragment;
     private FloatingSearchView searchBar;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Location lastKnownLocation;
@@ -133,9 +132,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private String userFullName;
     private String uid;
     private String permission = "user";
-    MaterialButton editShelterButton;
-    MaterialButton rateShelterButton;
-    MaterialButton shareShelterButton;
+    private MaterialButton editShelterButton;
+    private MaterialButton rateShelterButton;
+    private MaterialButton shareShelterButton;
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters;
@@ -146,7 +145,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private String selectedShelterUID;
     private AppRatingDialog appRatingDialog;
     private AppCompatRatingBar ratingBarInfoDialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,9 +169,9 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         initializePermissions();
 
         //Map
-        this.mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
-        assert this.mapFragment != null;
-        this.mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
         mapView = mapFragment.getView();
 
         //Location
@@ -505,6 +503,28 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 appRatingDialog.show();
+            }
+        });
+
+        //Share Button Function
+        shareShelterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String location = "http://maps.googleapis.com/maps/api/staticmap?center="
+                        + selectedMarker.getPosition().latitude
+                        + ","
+                        + selectedMarker.getPosition().longitude
+                        + "&zoom=14&markers=color:blue|label:A|"
+                        + selectedMarker.getPosition().latitude
+                        + ","
+                        + selectedMarker.getPosition().longitude
+                        + "&size=500x400&sensor=false";
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT,location);
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, selectedMarker.getTitle());
+                startActivity(Intent.createChooser(shareIntent, "Share..."));
             }
         });
 
