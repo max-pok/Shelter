@@ -510,20 +510,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         shareShelterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String location = "http://maps.googleapis.com/maps/api/staticmap?center="
-                        + selectedMarker.getPosition().latitude
-                        + ","
-                        + selectedMarker.getPosition().longitude
-                        + "&zoom=14&markers=color:blue|label:A|"
-                        + selectedMarker.getPosition().latitude
-                        + ","
-                        + selectedMarker.getPosition().longitude
-                        + "&size=500x400&sensor=false";
-
+                String location = "http://maps.google.com/maps?saddr=" + selectedMarker.getPosition().latitude + "," + selectedMarker.getPosition().longitude;
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_TEXT,location);
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, selectedMarker.getTitle());
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Shelter name: " + selectedMarker.getTitle() + "\n"
+                    + "Address: " + selectedMarker.getSnippet());
+                shareIntent.putExtra(Intent.EXTRA_TITLE, location);
                 startActivity(Intent.createChooser(shareIntent, "Share..."));
             }
         });
