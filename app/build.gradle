@@ -1,8 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'checkstyle'
-apply plugin: 'jacoco'
-
 
 android {
     compileSdkVersion 29
@@ -28,6 +26,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled = true
+        }
     }
 }
 
@@ -43,7 +44,6 @@ task checkstyle(type: Checkstyle) {
 
     classpath = files()
 }
-
 
 checkstyle {
     toolVersion "8.17"
