@@ -1,11 +1,15 @@
 package com.e.shelter;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -18,13 +22,15 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
-public class LoginActivity extends MainActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     public static String email;
     public static String password;
     private TextInputEditText emailInput;
@@ -51,7 +57,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         MaterialButton register = findViewById(R.id.signUpButton);
         register.setOnClickListener(this);
 
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
             intent.putExtra("uid", firebaseUser.getUid());
@@ -69,13 +75,13 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
      */
     public void signIn() {
         if (skipLogin) {
-            firebaseAuth.signInWithEmailAndPassword("adirat@ac.sce.il", "123456")
+            FirebaseAuth.getInstance().signInWithEmailAndPassword("adirat@ac.sce.il", "123456")
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 loadingProgressBar.setVisibility(View.INVISIBLE);
-                                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                                 Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
                                 intent.putExtra("uid", firebaseUser.getUid());
                                 intent.putExtra("full_name", firebaseUser.getDisplayName());
@@ -89,7 +95,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                         }
                     });
         } else {
-            firebaseAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -119,7 +125,7 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
         password = Objects.requireNonNull(passwordInput.getText()).toString();
         if (EmailValidator.isValidEmailTextInputEditText(email, emailInput)
                 & PasswordValidator.isValidEmailTextInputEditText(password, passwordInput)) {
-            firebaseFirestore.collection("Users").get()
+            FirebaseFirestore.getInstance().collection("Users").get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -137,8 +143,6 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
                                         }
                                     }
                                 }
-                                Toast.makeText(LoginActivity.this, "Login Failed. Try again.", Toast.LENGTH_LONG).show();
-                                loadingProgressBar.setVisibility(View.INVISIBLE);
                             }
                             else {
                                 Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
@@ -163,6 +167,14 @@ public class LoginActivity extends MainActivity implements View.OnClickListener 
             case  R.id.signUpButton:
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
+        }
+    }
+
+    protected void hideSoftKeyboard() {
+        if (this.getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
         }
     }
 

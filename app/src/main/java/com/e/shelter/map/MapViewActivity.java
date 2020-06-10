@@ -133,8 +133,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private String uid;
     private String permission = "user";
     private MaterialButton editShelterButton;
-    private MaterialButton rateShelterButton;
-    private MaterialButton shareShelterButton;
     private MaterialButton saveShelterButton;
     private Marker selectedMarker;
     private List<String> favoriteShelters;
@@ -150,11 +148,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        checkPermission(Manifest.permission.SEND_SMS, 1);
-        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, 2);
-        checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, 3);
-        checkPermission(Manifest.permission.INTERNET, 4);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_window);
@@ -458,7 +451,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         saveShelterButton = findViewById(R.id.info_window_save_button);
         editShelterButton = findViewById(R.id.info_window_edit_button);
-        rateShelterButton = findViewById(R.id.info_window_rate_button);
+        MaterialButton rateShelterButton = findViewById(R.id.info_window_rate_button);
         infoTitle = findViewById(R.id.info_window_title);
         infoSnippet = findViewById(R.id.info_window_address);
         ratingTxt = findViewById(R.id.info_window_rating);
@@ -466,7 +459,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         capacityTxt = findViewById(R.id.info_window_capacity);
         statusTxt = findViewById(R.id.info_window_status);
         ratingBarInfoDialog = findViewById(R.id.rating_bar_info_window);
-        shareShelterButton = findViewById(R.id.info_window_share_button);
+        MaterialButton shareShelterButton = findViewById(R.id.info_window_share_button);
 
         //Save Button Function
         saveShelterButton.setOnClickListener(new View.OnClickListener() {
@@ -854,46 +847,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 
-    // Function to check and request permission.
-    public void checkPermission(String permission, int requestCode) {
-        if (ContextCompat.checkSelfPermission(MapViewActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
-            // Requesting the permission
-            ActivityCompat.requestPermissions(MapViewActivity.this, new String[]{permission}, requestCode);
-        }
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            // Checking whether user granted the permission or not.
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Showing the toast message
-                Toast.makeText(MapViewActivity.this, "SEND SMS Permission Granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MapViewActivity.this, "SEND SMS Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == 2) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MapViewActivity.this, "LOCATION Permission Granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MapViewActivity.this, "LOCATION Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == 3) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MapViewActivity.this, "LOCATION Permission Granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MapViewActivity.this, "LOCATION Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == 4) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MapViewActivity.this, "INTERNET Permission Granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MapViewActivity.this, "INTERNET Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
 
     public void addReview(int stars, String review) {

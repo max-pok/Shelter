@@ -6,11 +6,14 @@ import com.e.shelter.adapers.FavoriteListAdapter;
 import com.e.shelter.utilities.FavoriteCard;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 
-public class FavoritesActivity extends MainActivity {
+public class FavoritesActivity extends AppCompatActivity {
 
     private ArrayList<FavoriteCard> list = new ArrayList<>();
     private ListView shelterCardListView;
@@ -64,7 +67,7 @@ public class FavoritesActivity extends MainActivity {
      */
     public void createFavoriteCardList() {
 
-        firebaseFirestore.collection("FavoriteShelters").document(firebaseAuth.getUid()).get()
+        FirebaseFirestore.getInstance().collection("FavoriteShelters").document(FirebaseAuth.getInstance().getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {

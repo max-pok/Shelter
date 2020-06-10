@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.e.shelter.validation.TextInputValidator;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -17,7 +19,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditShelterDetails extends MainActivity {
+public class EditShelterDetails extends AppCompatActivity {
     public TextInputEditText nameEditText;
     public TextInputEditText statusEditText;
     public TextInputEditText addressEditText;
@@ -57,7 +59,7 @@ public class EditShelterDetails extends MainActivity {
                 & TextInputValidator.isValidEditText(capacityEditText.getText().toString(), capacityEditText)
                 & TextInputValidator.isValidEditText(statusEditText.getText().toString(), statusEditText)) {
 
-            firebaseFirestore.collection("Shelters").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            FirebaseFirestore.getInstance().collection("Shelters").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -74,7 +76,7 @@ public class EditShelterDetails extends MainActivity {
                                 map.put("address", addressEditText.getText().toString());
                                 map.put("status", statusEditText.getText().toString());
                                 map.put("capacity", capacityEditText.getText().toString());
-                                firebaseFirestore.collection("Shelters").document(document.getId()).set(map, SetOptions.merge());
+                                FirebaseFirestore.getInstance().collection("Shelters").document(document.getId()).set(map, SetOptions.merge());
                                 setResult(3);
                                 finish();
                             }

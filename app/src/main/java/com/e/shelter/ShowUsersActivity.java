@@ -7,17 +7,19 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.e.shelter.adapers.UserListAdapter;
 import com.e.shelter.utilities.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class ShowUsersActivity extends MainActivity {
+public class ShowUsersActivity extends AppCompatActivity {
     private ListView userListView;
     private ArrayList<User> userArrayList = new ArrayList<>();
 
@@ -55,7 +57,7 @@ public class ShowUsersActivity extends MainActivity {
      * Retrieving all users from the database
      */
     public void retrieveShowUsers() {
-        firebaseFirestore.collection("Users").get()
+        FirebaseFirestore.getInstance().collection("Users").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

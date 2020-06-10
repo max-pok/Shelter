@@ -8,13 +8,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
-public class EditUserActivity  extends MainActivity {
+public class EditUserActivity extends AppCompatActivity {
 
     private EditText nameEditText;
     private EditText addressEditText;
@@ -49,7 +52,7 @@ public class EditUserActivity  extends MainActivity {
 
         public void InitEditText() {
         try {
-            firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).get()
+            FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -58,7 +61,7 @@ public class EditUserActivity  extends MainActivity {
                                 if (documentSnapshot.exists()) {
                                     nameEditText.setText(documentSnapshot.get("name").toString());
                                     phoneEditText.setText(documentSnapshot.get("phoneNumber").toString());
-                                    emailEditText.setText(firebaseAuth.getCurrentUser().getEmail());
+                                    emailEditText.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
                                 }
                             }
@@ -76,9 +79,9 @@ public class EditUserActivity  extends MainActivity {
 
         public Boolean EditUser() {
             try {
-                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update("name", nameEditText.getText().toString());
-                firebaseFirestore.collection("Users").document(firebaseAuth.getUid()).update("phoneNumber", phoneEditText.getText().toString());
-                firebaseAuth.getCurrentUser().updateEmail(emailEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).update("name", nameEditText.getText().toString());
+                FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).update("phoneNumber", phoneEditText.getText().toString());
+                FirebaseAuth.getInstance().getCurrentUser().updateEmail(emailEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
@@ -88,7 +91,7 @@ public class EditUserActivity  extends MainActivity {
                         }
                     }
                 });
-                firebaseFirestore.collection("FavoriteShelters").document(firebaseAuth.getUid()).update("email", emailEditText.getText().toString());
+                FirebaseFirestore.getInstance().collection("FavoriteShelters").document(FirebaseAuth.getInstance().getUid()).update("email", emailEditText.getText().toString());
             }
             catch (Exception e){
                 System.out.println("Error: "+e);

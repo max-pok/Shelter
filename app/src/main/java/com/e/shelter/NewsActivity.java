@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.e.shelter.adapers.NewsListAdapter;
 import com.e.shelter.utilities.News;
@@ -26,7 +27,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-public class NewsActivity extends MainActivity implements View.OnClickListener {
+public class NewsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ListView newsListView;
     private ArrayList<News> newsArrayList = new ArrayList<>();

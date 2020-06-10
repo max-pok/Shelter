@@ -2,6 +2,7 @@ package com.e.shelter.contactus;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -21,7 +23,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddNewContactActivity extends MainActivity {
+public class AddNewContactActivity extends AppCompatActivity {
     /**
      * class AddNewContactActivity fields
      */
@@ -120,7 +122,7 @@ public class AddNewContactActivity extends MainActivity {
      */
     public void addContact(String hebrewInput, String englishInput, String phoneNumber) {
         Contact contact = new Contact(hebrewInput, englishInput, phoneNumber);
-        firebaseFirestore.collection("ContactUsInformation").add(contact);
+        FirebaseFirestore.getInstance().collection("ContactUsInformation").add(contact);
         Toast.makeText(AddNewContactActivity.this, "Contact Added", Toast.LENGTH_LONG).show();
         setResult(2);
         finish();
@@ -134,7 +136,7 @@ public class AddNewContactActivity extends MainActivity {
      * @param phoneNumber
      */
     public void editContact(String oldName, final String hebrewInput, final String englishInput, final String phoneNumber) {
-        firebaseFirestore.collection("ContactUsInformation").whereEqualTo("nameInEnglish", oldName)
+        FirebaseFirestore.getInstance().collection("ContactUsInformation").whereEqualTo("nameInEnglish", oldName)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -144,7 +146,7 @@ public class AddNewContactActivity extends MainActivity {
                         map.put("name", hebrewInput);
                         map.put("nameInEnglish", englishInput);
                         map.put("phoneNumber", phoneNumber);
-                        firebaseFirestore.collection("ContactUsInformation").document(document.getId()).set(map, SetOptions.merge());
+                        FirebaseFirestore.getInstance().collection("ContactUsInformation").document(document.getId()).set(map, SetOptions.merge());
                         Toast.makeText(AddNewContactActivity.this, "Contact Updated", Toast.LENGTH_LONG).show();
                         setResult(3);
                         finish();

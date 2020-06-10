@@ -11,15 +11,17 @@ import com.e.shelter.adapers.ReviewListAdapter;
 import com.e.shelter.utilities.Review;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class ShowReview extends MainActivity {
+public class ShowReview extends AppCompatActivity {
     /**
      * class ShowReview feilds
      */
@@ -61,7 +63,7 @@ public class ShowReview extends MainActivity {
      * Getting all reviews from database
      */
     public void retrieveUserReviews() {
-        firebaseFirestore.collection("UserReviews").get()
+        FirebaseFirestore.getInstance().collection("UserReviews").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

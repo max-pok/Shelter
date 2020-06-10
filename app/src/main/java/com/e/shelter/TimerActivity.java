@@ -9,9 +9,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.concurrent.TimeUnit;
 
-public class TimerActivity extends MainActivity implements View.OnClickListener {
+public class TimerActivity extends AppCompatActivity implements View.OnClickListener {
 
     private long timeCountInMilliSeconds = 1 * 60000;
     private enum TimerStatus {

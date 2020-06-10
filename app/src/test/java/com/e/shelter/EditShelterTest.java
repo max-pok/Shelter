@@ -3,12 +3,8 @@ package com.e.shelter;
 import com.e.shelter.validation.StatusValidator;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class EditShelterTest {
 
     @Test

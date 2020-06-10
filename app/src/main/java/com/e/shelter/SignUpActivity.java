@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.e.shelter.utilities.Emails;
 import com.e.shelter.utilities.FavoriteCard;
@@ -22,12 +23,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class SignUpActivity extends MainActivity implements View.OnClickListener {
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
     public static String email;
     public static String password;
     public static String firstName;
@@ -73,19 +76,19 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                 & TextInputValidator.isValidEditText(firstName, firstNameTextInputEditText) & TextInputValidator.isValidEditText(lastName, lastNameTextInputEditText)
                 & TextInputValidator.isValidEditText(phone, phoneTextInputEditText)) {
 
-            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) { //There is no user with the same email address
-                        firebaseFirestore.collection("Emails").add(new Emails(email,false));
-                        FirebaseUser mAuthCurrentUser = firebaseAuth.getCurrentUser();
+                        FirebaseFirestore.getInstance().collection("Emails").add(new Emails(email,false));
+                        FirebaseUser mAuthCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
                         User newUser = new User(firstName + " " + lastName, phone,"user", email,false);
 
                         final UserProfileChangeRequest update = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(firstName + " " + lastName)
                                 .build();
                         mAuthCurrentUser.updateProfile(update);
-                        firebaseFirestore.collection("Users").document(mAuthCurrentUser.getUid()).set(newUser)
+                        FirebaseFirestore.getInstance().collection("Users").document(mAuthCurrentUser.getUid()).set(newUser)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -98,7 +101,7 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
                                 });
 
                         FavoriteShelter favoriteShelter = new FavoriteShelter(mAuthCurrentUser.getEmail(), new ArrayList<FavoriteCard>());
-                        firebaseFirestore.collection("FavoriteShelters").document(mAuthCurrentUser.getUid()).set(favoriteShelter)
+                        FirebaseFirestore.getInstance().collection("FavoriteShelters").document(mAuthCurrentUser.getUid()).set(favoriteShelter)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -128,7 +131,7 @@ public class SignUpActivity extends MainActivity implements View.OnClickListener
 
     private void updateUI() {
         Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
-        firebaseAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
         finish();
     }
 

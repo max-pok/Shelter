@@ -26,7 +26,7 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".LoginActivity"
+        <activity android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -55,8 +55,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ShowUsersActivity" />
-
-        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".contactus.ContactPage" />
         <activity android:name=".TimerActivity" android:theme="@style/AppTheme.NoActionBar" />
 
