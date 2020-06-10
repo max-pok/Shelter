@@ -25,7 +25,7 @@ pipeline {
                 script {
                     //run a gradle test
                     sh './gradlew clean test --no-daemon'
-                    //junit '**/build/test-results/testDebugUnitTest/*.xml' //make the junit test results available in any case (success & failure)
+                    junit '**/build/test-results/testDebugUnitTest/*.xml' //make the junit test results available in any case (success & failure)
                 }
             }
         }
