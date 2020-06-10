@@ -25,7 +25,7 @@ pipeline {
                 script {
                     //run a gradle test
                     sh './gradlew clean test --no-daemon'
-                    junit '**/build/test-results/testDebugUnitTest/*.xml' //make the junit test results available in any case (success & failure)
+                    //junit '**/build/test-results/testDebugUnitTest/*.xml' //make the junit test results available in any case (success & failure)
                 }
             }
         }
@@ -49,6 +49,15 @@ pipeline {
                 script {
                     sh './gradlew checkstyle'
                     recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'app/build/reports/checkstyle/checkstyle.xml')
+                }
+            }
+        }
+
+        stage('Build & Generate Test Report') {
+            steps {
+                script {
+                    sh './gradlew test jacocoTestReportDebug --no-daemon'
+                    junit '**/build/test-results/testDebugUnitTest/*.xml' //make the junit test results available in any case (success & failure)
                 }
             }
         }
