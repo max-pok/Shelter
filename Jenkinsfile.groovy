@@ -53,7 +53,7 @@ pipeline {
             }
         }
 
-        stage("JaCoCo Verify Coverage") {
+        stage('JaCoCo Verify Coverage') {
             step([$class: 'JacocoPublisher',
                   execPattern: 'target/*.exec',
                   classPattern: 'target/classes',
