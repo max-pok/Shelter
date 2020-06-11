@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".FavoritesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,9 +17,9 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:theme="@style/AppTheme"
+            android:fitsSystemWindows="true"
             app:toolbarId="@+id/toolbar">
 
             <androidx.appcompat.widget.Toolbar

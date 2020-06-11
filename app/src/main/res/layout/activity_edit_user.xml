@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_3"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".EditUserActivity" >
@@ -85,7 +84,8 @@
         android:id="@+id/updateButton"
         android:layout_width="362dp"
         android:layout_height="65dp"
-        android:background="#FFFFFF"
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
         android:text="update" />
 
 </LinearLayout>

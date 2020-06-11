@@ -1,5 +1,6 @@
 package com.e.shelter;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,11 +33,8 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
     private ListView newsListView;
     private ArrayList<News> newsArrayList = new ArrayList<>();
-    private NewsListAdapter adapter;
-    private String url = "https://newsapi.org/v2/top-headlines?country=il&apiKey=aba21d0a39774bd2bd4fda9a3885db8e";
-    private FloatingActionButton refreshButton;
     private ProgressBar progressBar;
-
+    FloatingActionButton refreshButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +43,13 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Top Headlines</font>"));
+            actionBar.setTitle("Top Headlines");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        ScrollView scrollView = findViewById(R.id.scrollView_news);
+        ObjectAnimator animator = ObjectAnimator.ofInt(scrollView, "scrollY", 10);
+        animator.setDuration(800);
+        animator.start();
 
         progressBar = findViewById(R.id.news_loading_spinner);
         progressBar.setVisibility(View.VISIBLE);
@@ -57,7 +60,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Connecto to news Api and redirect to news page
+     * Connect to to news Api and redirect to news page
      * @param value
      */
     private void getLatestNews(JSONObject value) {
@@ -75,7 +78,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         progressBar.setVisibility(View.INVISIBLE);
-        adapter = new NewsListAdapter(NewsActivity.this, R.layout.content_news, newsArrayList);
+        NewsListAdapter adapter = new NewsListAdapter(NewsActivity.this, R.layout.content_news, newsArrayList);
         newsListView.setAdapter(adapter);
     }
 
@@ -111,7 +114,6 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         Intent i = new Intent(NewsActivity.this, NewsActivity.class);
         startActivity(i);
         finish();
-
     }
 
 
@@ -135,7 +137,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 return new JSONObject(stringBuffer.toString());
             }
             catch (Exception e) {
-                Log.e("App", "yourDataTask", e);
+                Log.e("NewsActivity", "Retrieve news", e);
                 return null;
             }
             finally {

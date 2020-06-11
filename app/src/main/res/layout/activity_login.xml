@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/quantum_bluegrey50"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".LoginActivity">
@@ -55,7 +54,12 @@
         android:id="@+id/LoginButton"
         android:layout_width="362dp"
         android:layout_height="60dp"
-        android:background="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryDark"
+        app:strokeColor="@color/colorPrimaryDark"
+        android:backgroundTint="@color/yellow_600"
+        app:strokeWidth="1dp"
         android:text="Login" />
 
     <TextView
@@ -73,11 +77,9 @@
         android:backgroundTint="@color/white"
         android:stateListAnimator="@null"
         android:text="Register"
-        android:textColor="@color/colorPrimary"
-        app:icon="@drawable/googleg_standard_color_18"
-        app:iconTint="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         app:rippleColor="@color/grey_40"
-        app:strokeColor="@color/colorPrimary"
+        app:strokeColor="@color/colorPrimaryDark"
         app:strokeWidth="1dp" />
 
     <TextView

@@ -17,12 +17,11 @@
 
         <com.google.android.material.circularreveal.cardview.CircularRevealCardView
             android:layout_width="30dp"
-            android:layout_height="5dp"
+            android:layout_height="6dp"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:background="@drawable/dark_background"
-            app:cardBackgroundColor="@color/grey_20" />
-
+            app:cardBackgroundColor="@color/grey_10" />
 
         <TextView
             android:id="@+id/info_window_title"
@@ -32,6 +31,7 @@
             android:layout_marginEnd="@dimen/spacing_xxlarge"
             android:gravity="center"
             android:minHeight="0dp"
+            android:textColor="@color/colorPrimaryDark"
             android:text="***"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
@@ -68,6 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
+                    android:textColor="@color/colorPrimaryDark"
                     android:gravity="center"
                     android:text="0.0"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
@@ -79,6 +80,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="75dp"
                     android:gravity="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="(0)"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -101,10 +103,10 @@
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="SAVE  "
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryDark"
                     app:cornerRadius="@dimen/corner_radius_rounded"
                     app:icon="@drawable/savebookmark_icon_black"
-                    app:iconTint="@color/colorPrimary"
+                    app:iconTint="@color/colorPrimaryDark"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
                     app:strokeWidth="0dp" />
@@ -119,10 +121,10 @@
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="EDIT"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryDark"
                     app:cornerRadius="@dimen/corner_radius_rounded"
                     app:icon="@drawable/edit_icon_black"
-                    app:iconTint="@color/colorPrimary"
+                    app:iconTint="@color/colorPrimaryDark"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
                     app:strokeWidth="0dp" />
@@ -138,10 +140,10 @@
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="RATE"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryDark"
                     app:cornerRadius="@dimen/corner_radius_rounded"
                     app:icon="@drawable/rate_icon_white"
-                    app:iconTint="@color/colorPrimary"
+                    app:iconTint="@color/colorPrimaryDark"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
                     app:strokeWidth="0dp" />
@@ -156,10 +158,10 @@
                     android:backgroundTint="@color/white"
                     android:stateListAnimator="@null"
                     android:text="SHARE"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimaryDark"
                     app:cornerRadius="@dimen/corner_radius_rounded"
                     app:icon="@drawable/share_icon_black"
-                    app:iconTint="@color/colorPrimary"
+                    app:iconTint="@color/colorPrimaryDark"
                     app:rippleColor="@color/grey_40"
                     app:strokeColor="@color/colorPrimary"
                     app:strokeWidth="0dp" />
@@ -189,7 +191,7 @@
                         android:layout_marginStart="16dp"
                         android:background="@android:color/transparent"
                         android:src="@drawable/address_icon_black"
-                        android:tint="@color/grey_20" />
+                        android:tint="@color/grey_10" />
 
                     <View
                         android:layout_width="@dimen/spacing_mxlarge"
@@ -202,7 +204,7 @@
                         android:gravity="center_vertical"
                         android:text="@string/addressWrapper"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/grey_90" />
+                        android:textColor="@color/colorPrimaryDark" />
 
                 </LinearLayout>
 
@@ -231,7 +233,7 @@
                         android:gravity="center_vertical"
                         android:text="@string/capacity"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/grey_90" />
+                        android:textColor="@color/colorPrimaryDark" />
 
                 </LinearLayout>
 
@@ -260,7 +262,7 @@
                         android:gravity="center_vertical"
                         android:text="@string/status"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/grey_90" />
+                        android:textColor="@color/colorPrimaryDark" />
 
                 </LinearLayout>
 

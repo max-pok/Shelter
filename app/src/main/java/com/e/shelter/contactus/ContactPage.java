@@ -37,7 +37,6 @@ public class ContactPage extends AppCompatActivity {
      * class ContactPage fields
      */
     private ListView contactsListView;
-    private FloatingActionButton addButton;
     private ArrayList<Contact> contactsArrayList = new ArrayList<>();
     private ContactListAdapter adapter;
 
@@ -50,13 +49,13 @@ public class ContactPage extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Contacts</font>"));
+            actionBar.setTitle("Contacts");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         contactsListView = findViewById(R.id.contacts_list_view);
 
-        addButton = findViewById(R.id.add_contacts_button);
+        FloatingActionButton addButton = findViewById(R.id.add_contacts_button);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override

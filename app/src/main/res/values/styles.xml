@@ -2,25 +2,30 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:fullDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
-
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
 
-        <style name="AppTheme.Timer" parent="Theme.AppCompat.Light.NoActionBar">
-            <!-- Customize your theme here. -->
-            <item name="colorPrimary">@color/colorPrimary1</item>
-            <item name="colorPrimaryDark">@color/colorPrimaryDark1</item>
-            <item name="colorAccent">@color/colorAccent1</item>
-            <!--Now we will change the statut bar color-->
-            <item name="android:statusBarColor">@color/colorPrimary</item>
-        </style>
+    <style name="Theme.MyApp" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:fullDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+    </style>
 
-    <style name="Theme.MyApp" parent="Theme.MaterialComponents">
-
+    <style name="Theme.AppCompat.DayNight." parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:fullDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>t
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -31,6 +36,7 @@
 
     <style name="AppTheme.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:titleTextStyle">@color/white</item>
     </style>
 
@@ -39,7 +45,10 @@
     </style>
 
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
 
     <style name="simple_switch" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->
@@ -73,7 +82,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <!--style for ripple library-->
     <style name="RippleStyleWhite">
         <item name="mrl_rippleOverlay">true</item>
@@ -87,7 +95,7 @@
     </style>
 
     <style name="Button.Primary" parent="@style/Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorButtonNormal">@color/colorPrimary1</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

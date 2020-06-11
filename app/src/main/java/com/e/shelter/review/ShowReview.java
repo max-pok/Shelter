@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class ShowReview extends AppCompatActivity {
     /**
-     * class ShowReview feilds
+     * class ShowReview fields
      */
     private ListView reviewListView;
     private ArrayList<Review> reviewArrayList = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ShowReview extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>Reviews</font>"));
+            actionBar.setTitle("User Reviews");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

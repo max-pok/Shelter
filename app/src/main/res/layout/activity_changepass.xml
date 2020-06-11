@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_3"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".ChangePassActivity" >
@@ -13,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Change Password"
-        android:textSize="20pt" />
+        android:textSize="19pt" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="Old Password">
+        android:hint="Current Password">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/oldpass"
@@ -57,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="New Password again">
+        android:hint="Confirm Password">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/newpass2"
@@ -74,7 +72,6 @@
         android:layout_marginEnd="25dp"
         android:hint="Password"/>
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,7 +82,8 @@
         android:id="@+id/changepass_button"
         android:layout_width="362dp"
         android:layout_height="65dp"
-        android:background="#FFFFFF"
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
         android:text="Change" />
 
 </LinearLayout>

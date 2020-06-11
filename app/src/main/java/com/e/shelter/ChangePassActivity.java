@@ -38,9 +38,6 @@ public class ChangePassActivity extends AppCompatActivity {
         changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 ChangePass(oldpass.getText().toString(),newpass.getText().toString(),newpass2.getText().toString());
             }
         });

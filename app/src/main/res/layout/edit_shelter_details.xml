@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@color/grey_3"
     style="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     tools:context=".EditShelterDetails">
 
@@ -81,6 +80,7 @@
         android:id="@+id/updateShelterInfoButton"
         android:layout_width="362dp"
         android:layout_height="65dp"
-        android:background="#FFFFFF"
+        android:backgroundTint="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
         android:text="Update" />
 </LinearLayout>

@@ -30,7 +30,7 @@ public class ShowUsersActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>User List</font>"));
+            actionBar.setTitle("Users");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

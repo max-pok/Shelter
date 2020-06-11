@@ -20,7 +20,6 @@
                 android:id="@+id/news_image"
                 android:layout_width="match_parent"
                 android:layout_height="194dp"
-                android:contentDescription="hello"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/googleg_standard_color_18" />
 
@@ -35,6 +34,7 @@
                     android:id="@+id/news_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="title"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
@@ -44,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="date"
+                    android:layout_gravity="right"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
 
@@ -53,6 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="description"
+                    android:layout_gravity="right"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
 

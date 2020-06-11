@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#202B3E</color>
+    <color name="colorPrimary">@color/white</color>
+<!--    <color name="colorPrimaryDark">@color/quantum_bluegrey950</color>-->
     <color name="colorPrimaryDark">#202B3E</color>
     <color name="colorAccent">#03DAC5</color>
 

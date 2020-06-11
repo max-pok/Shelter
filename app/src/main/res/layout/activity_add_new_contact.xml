@@ -6,14 +6,13 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@color/grey_3"
     tools:context=".contactus.AddNewContactActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add new contact"
-        android:textSize="12pt"/>
+        android:textSize="16pt"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -68,15 +67,18 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/add_new_contact_button"
-        android:layout_width="wrap_content"
-        android:text="Add"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
+        android:layout_width="362dp"
+        android:layout_height="65dp"
         android:backgroundTint="@color/colorAccent"
-        android:textColor="@android:color/white"
-        android:layout_height="wrap_content" />
+        android:textColor="@color/colorPrimaryDark"
+        android:text="ADD" />
 
 </LinearLayout>

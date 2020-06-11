@@ -1,10 +1,9 @@
 package com.e.shelter.map;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -25,8 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
@@ -159,7 +156,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         userFullName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        initializePermissions();
+        initializeUserPermission();
 
         //Map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
@@ -276,9 +273,15 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         if (userEmail != null) header_email.setText(userEmail);
         if (userFullName != null) header_name.setText(userFullName);
 
-        //Switch
+        //Night Mode Switch
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
-        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
+        if ((MapViewActivity.this.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
+        } else {
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
+        }
+
         ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -355,7 +358,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
         this.googleMap.getUiSettings().setZoomControlsEnabled(true);
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(31.2530, 34.7915), 12));
-        this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+        if ((MapViewActivity.this.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+        } else {
+            this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
+        }
 
         // Navigation toolbar
         this.googleMap.getUiSettings().setMapToolbarEnabled(true);
@@ -739,6 +747,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+
                         } else
                             googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
@@ -911,7 +920,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
-    public void initializePermissions() {
+    public void initializeUserPermission() {
         FirebaseFirestore.getInstance().collection("Users").document(uid)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

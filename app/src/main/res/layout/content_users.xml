@@ -11,15 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/white"
             android:orientation="vertical">
 
             <LinearLayout
@@ -39,8 +36,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="Name:                  "
-                        android:textAlignment="center"
-                        android:textColor="@color/grey_100_" />
+                        android:textAlignment="center"/>
 
                     <TextView
                         android:id="@+id/userCardName"
@@ -62,8 +58,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="Email:                   "
-                        android:textAlignment="center"
-                        android:textColor="@color/grey_100_" />
+                        android:textAlignment="center" />
 
                     <TextView
                         android:id="@+id/userCardEmail"
@@ -83,8 +78,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="Phone number:  "
-                        android:textAlignment="center"
-                        android:textColor="@color/grey_100_" />
+                        android:textAlignment="center" />
 
                     <TextView
                         android:id="@+id/userCardPhone"
@@ -104,8 +98,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="Permission:        "
-                        android:textAlignment="center"
-                        android:textColor="@color/grey_100_" />
+                        android:textAlignment="center" />
 
                     <TextView
                         android:id="@+id/userCardPermission"
