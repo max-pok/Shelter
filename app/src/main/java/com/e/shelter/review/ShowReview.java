@@ -1,11 +1,14 @@
 package com.e.shelter.review;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 
-import com.e.shelter.MainActivity;
 import com.e.shelter.R;
 import com.e.shelter.adapers.ReviewListAdapter;
 import com.e.shelter.utilities.Review;
@@ -18,6 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import java.util.ArrayList;
 
@@ -27,7 +31,7 @@ public class ShowReview extends AppCompatActivity {
      */
     private ListView reviewListView;
     private ArrayList<Review> reviewArrayList = new ArrayList<>();
-
+    private SearchView searchView;
     /**
      *
      * @param savedInstanceState
@@ -47,6 +51,53 @@ public class ShowReview extends AppCompatActivity {
         retrieveUserReviews();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_show_reviews, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search_reviews);
+
+        SearchManager searchManager = (SearchManager) ShowReview.this.getSystemService(Context.SEARCH_SERVICE);
+
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(ShowReview.this.getComponentName()));
+        }
+        //Search action
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ArrayList<Review> searchArrayList = new ArrayList<>();
+                for (int i = 0; i < reviewArrayList.size(); i++) {
+                    if (reviewArrayList.get(i).getShelterName().contains(query) || reviewArrayList.get(i).getUserEmail().startsWith(query)
+                    || reviewArrayList.get(i).getUserName().startsWith(query)) {
+                        searchArrayList.add(reviewArrayList.get(i));
+                    }
+                    ReviewListAdapter adapter = new ReviewListAdapter(getBaseContext(), R.layout.content_reviews, searchArrayList);
+                    reviewListView.setAdapter(adapter);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        //Close Search action
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                ReviewListAdapter adapter = new ReviewListAdapter(getBaseContext(), R.layout.content_reviews, reviewArrayList);
+                reviewListView.setAdapter(adapter);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

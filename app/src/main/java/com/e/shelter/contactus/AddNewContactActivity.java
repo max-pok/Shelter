@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.e.shelter.MainActivity;
 import com.e.shelter.R;
 import com.e.shelter.utilities.Contact;
 import com.google.android.gms.tasks.OnCompleteListener;

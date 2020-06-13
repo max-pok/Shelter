@@ -21,7 +21,7 @@
         android:text="" />
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -29,21 +29,23 @@
         android:hint="Contact Name (Hebrew)">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:id="@+id/contact_name_hebrew_add_contact_page"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="Contact name (English)">
+        android:hint="Contact Name (English)">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/contact_name_english_add_contact_page"
@@ -51,7 +53,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -60,6 +62,7 @@
         android:hint="Phone Number">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/contact_phone_number_add_contact_page"

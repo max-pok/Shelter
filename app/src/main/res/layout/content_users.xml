@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginTop="10dp"
+        android:foreground="?android:attr/selectableItemBackground"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -126,15 +127,15 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/user_permission_button_content_users"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:text="user" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/admin_permission_button_content_users"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_height="wrap_content"
                         android:text="admin" />
 

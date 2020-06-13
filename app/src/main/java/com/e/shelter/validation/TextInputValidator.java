@@ -14,7 +14,7 @@ public final class TextInputValidator {
         }
         return true;
     }
-    public  static boolean isValidMessage (String subject,String message ){
+    public  static boolean isValidMessage(String subject,String message){
         return subject != null && message != null;
     }
 

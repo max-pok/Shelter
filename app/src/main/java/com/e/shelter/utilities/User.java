@@ -10,8 +10,6 @@ public class User implements Serializable {
     private String email;
     private Boolean blocked;
 
-
-
     public User() {
         //do not delete.
     }

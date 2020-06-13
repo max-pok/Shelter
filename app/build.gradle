@@ -16,9 +16,9 @@ android {
 
     testOptions {
         unitTests.includeAndroidResources = true
-        unitTests.all {
-            unitTests()
-        }
+//        unitTests.all {
+//            unitTests()
+//        }
     }
 
     buildTypes {
@@ -69,7 +69,7 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:1.0.2'
     implementation 'com.google.android.libraries.places:places:2.3.0'
     implementation 'com.google.firebase:firebase-database:19.3.0'
-    implementation 'com.google.firebase:firebase-analytics:17.4.2'
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.2'
     implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
     implementation 'com.google.android.material:material:1.1.0'
@@ -100,4 +100,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
     implementation 'com.github.arimorty:floatingsearchview:2.1.1'
+    implementation 'com.afollestad.material-dialogs:input:3.3.0'
+
 }

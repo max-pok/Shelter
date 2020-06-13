@@ -85,8 +85,8 @@ public class SearchHelper {
                 List<AddressSuggestion> suggestionList = new ArrayList<>();
                 if (!(constraint == null || constraint.length() == 0)) {
                     for (AddressSuggestion suggestion : addressSuggestions) {
-                        if (suggestion.getBody().toLowerCase().contains(constraint.toString().toLowerCase()) ||
-                        suggestion.getBodyHebrew().contains(constraint.toString())) {
+                        if (suggestion.getBody().toLowerCase().contains(constraint.toString().toLowerCase())
+                                || suggestion.getBodyHebrew().contains(constraint.toString())) {
                             suggestionList.add(suggestion);
                             if (limit != -1 && suggestionList.size() == limit) {
                                 break;

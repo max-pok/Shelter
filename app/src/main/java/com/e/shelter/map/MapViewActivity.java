@@ -1,8 +1,10 @@
 package com.e.shelter.map;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
@@ -37,7 +40,7 @@ import com.e.shelter.contactus.ContactPage;
 import com.e.shelter.EditShelterDetails;
 import com.e.shelter.FavoritesActivity;
 import com.e.shelter.GlobalMessage;
-import com.e.shelter.LoginActivity;
+import com.e.shelter.login.LoginActivity;
 import com.e.shelter.R;
 import com.e.shelter.search.AddressSuggestion;
 import com.e.shelter.search.SearchHelper;
@@ -89,6 +92,7 @@ import com.mongodb.MongoClient;
 
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -140,6 +144,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private String selectedShelterUID;
     private AppRatingDialog appRatingDialog;
     private AppCompatRatingBar ratingBarInfoDialog;
+    TextView header_name;
+    TextView header_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,12 +274,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Header
         View header = navigationView.getHeaderView(0);
-        TextView header_email = header.findViewById(R.id.email_header);
-        TextView header_name = header.findViewById(R.id.name_header);
+        header_email = header.findViewById(R.id.email_header);
+        header_name = header.findViewById(R.id.name_header);
         if (userEmail != null) header_email.setText(userEmail);
         if (userFullName != null) header_name.setText(userFullName);
 
-        //Night Mode Switch
+        //Night Mode Switch Initialization
         navigationView.getMenu().findItem(R.id.nav_night_mode_switch).setActionView(new SwitchCompat(this));
         if ((MapViewActivity.this.getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
@@ -281,16 +287,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         } else {
             ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
         }
-
-        ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
-                } else
-                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
-            }
-        });
 
         //Bottom Information Window
         createBottomSheetDialog();
@@ -307,6 +303,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         this.googleMap = googleMap;
 
         // Google map current location button change
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         this.googleMap.setMyLocationEnabled(true);
         this.googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         if (this.mapView != null && mapView.findViewById(Integer.parseInt("1")) != null) {
@@ -364,6 +370,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         } else {
             this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
         }
+        //Initialize night mode switch function
+        initNightModeSwitch();
 
         // Navigation toolbar
         this.googleMap.getUiSettings().setMapToolbarEnabled(true);
@@ -398,6 +406,11 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         if (requestCode == 3) {
             Log.i("MapViewActivity", "From edit screen - finished");
             updateSelectedShelter();
+        }
+        if (requestCode == 4) {
+            Log.i("MapViewActivity", "From settings screen - finished");
+            header_email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            header_name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         }
     }
 
@@ -515,7 +528,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Shelter name: " + selectedMarker.getTitle() + "\n"
-                    + "Address: " + selectedMarker.getSnippet());
+                        + "Address: " + selectedMarker.getSnippet());
                 shareIntent.putExtra(Intent.EXTRA_TITLE, location);
                 startActivity(Intent.createChooser(shareIntent, "Share..."));
             }
@@ -586,6 +599,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
      * Finds device location, if it fails the function retrieves the last known location.
      */
     public void getDeviceLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
             public void onComplete(@NonNull Task<Location> task) {
@@ -609,6 +632,17 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), defaultZoom));
                             }
                         };
+                        if (ActivityCompat.checkSelfPermission(MapViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(MapViewActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
                     }
                 } else {
@@ -677,7 +711,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                 break;
             case R.id.nav_settings:
                 Intent settingsActive = new Intent(this, SettingsActivity.class);
-                startActivity(settingsActive);
+                startActivityForResult(settingsActive, 4);
                 break;
             case R.id.nav_news:
                 Intent newsIntent = new Intent(this, NewsActivity.class);
@@ -738,9 +772,15 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     public void nightModeSwitch() {
         if (((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).isChecked()) {
             ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(false);
-        } else
-            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.day_map));
 
+        } else {
+            ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setChecked(true);
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getBaseContext(), R.raw.night_map));
+        }
+    }
+
+    public void initNightModeSwitch() {
         ((SwitchCompat) navigationView.getMenu().findItem(R.id.nav_night_mode_switch).getActionView()).setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -854,10 +894,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             addReview(i, s);
         }
     }
-
-
-
-
 
     public void addReview(int stars, String review) {
         Date currentTime = Calendar.getInstance().getTime();

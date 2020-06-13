@@ -21,7 +21,7 @@
         android:text="" />
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -29,13 +29,14 @@
         android:hint="Name">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:id="@+id/shelter_name_text_input_edit_shelter"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -43,13 +44,14 @@
         android:hint="Status">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:id="@+id/shelter_status_text_input_edit_shelter"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -57,13 +59,14 @@
         android:hint="Address">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:id="@+id/shelter_address_text_input_edit_shelter"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -71,6 +74,7 @@
         android:hint="Capacity">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:layout_width="match_parent"
             android:id="@+id/shelter_capacity_text_input_edit_shelter"
             android:layout_height="wrap_content" />

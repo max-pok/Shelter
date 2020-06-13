@@ -36,7 +36,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:text="title"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
+                    android:textStyle="bold"
+                    android:textSize="9pt" />
 
                 <TextView
                     android:id="@+id/news_date"
@@ -45,8 +46,7 @@
                     android:layout_marginTop="8dp"
                     android:text="date"
                     android:layout_gravity="right"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:textSize="5pt"/>
 
                 <TextView
                     android:id="@+id/news_description"
@@ -55,8 +55,7 @@
                     android:layout_marginTop="16dp"
                     android:text="description"
                     android:layout_gravity="right"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:textSize="6pt" />
 
             </LinearLayout>
 
@@ -70,6 +69,7 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/news_share_button"
                     style="?attr/borderlessButtonStyle"
+                    android:theme="@style/BorderLessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -78,6 +78,7 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/news_show_more_button"
                     style="?attr/borderlessButtonStyle"
+                    android:theme="@style/BorderLessButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show more" />

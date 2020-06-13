@@ -1,4 +1,4 @@
-package com.e.shelter;
+package com.e.shelter.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.e.shelter.R;
 import com.e.shelter.map.MapViewActivity;
 import com.e.shelter.validation.EmailValidator;
 import com.e.shelter.validation.PasswordValidator;
@@ -35,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static String password;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
+    private TextView forgotPasswordTextView;
 
     private Boolean skipLogin = false;
     private ProgressBar loadingProgressBar;
@@ -56,6 +59,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         LoginButton.setOnClickListener(this);
         MaterialButton register = findViewById(R.id.signUpButton);
         register.setOnClickListener(this);
+
+        forgotPasswordTextView = findViewById(R.id.forgot_your_password_clickable_text_view);
+        forgotPasswordTextView.setOnClickListener(this);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -155,6 +161,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -162,11 +169,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.LoginButton:
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 checkIfBlocked();
-                //signIn();
                 break;
             case  R.id.signUpButton:
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
+                break;
+            case  R.id.forgot_your_password_clickable_text_view:
+                Intent resetPasswordIntent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                startActivity(resetPasswordIntent);
+                break;
         }
     }
 

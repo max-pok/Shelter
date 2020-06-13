@@ -1,4 +1,4 @@
-package com.e.shelter;
+package com.e.shelter.login;
 
 
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.e.shelter.R;
 import com.e.shelter.utilities.Emails;
 import com.e.shelter.utilities.FavoriteCard;
 import com.e.shelter.utilities.FavoriteShelter;

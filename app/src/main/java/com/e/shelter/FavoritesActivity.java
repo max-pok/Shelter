@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -66,7 +67,6 @@ public class FavoritesActivity extends AppCompatActivity {
      * Adding to favorite list of selected shelter
      */
     public void createFavoriteCardList() {
-
         FirebaseFirestore.getInstance().collection("FavoriteShelters").document(FirebaseAuth.getInstance().getUid()).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -83,6 +83,7 @@ public class FavoritesActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        Collections.reverse(list);
                         FavoriteListAdapter adapter = new FavoriteListAdapter(getBaseContext(), R.layout.content_favorites, list, getIntent().getStringExtra("userEmail"));
                         shelterCardListView.setAdapter(adapter);
                         progressBar.setVisibility(View.INVISIBLE);

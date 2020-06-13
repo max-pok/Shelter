@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".login.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView4"
@@ -21,7 +22,7 @@
         android:text="" />
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight.Login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -29,13 +30,14 @@
         android:hint="Email">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:id="@+id/emailInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/EditText.OutlinedBox.DayNight.Login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -44,6 +46,7 @@
         android:hint="Password">
 
         <com.google.android.material.textfield.TextInputEditText
+            style="@style/EditText.OutlinedBox.DayNight.Edit"
             android:id="@+id/passInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,6 +68,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/forgot_your_password_clickable_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:text="Forgot your password?" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="" />
 
@@ -72,7 +88,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signUpButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="150dp"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
         android:stateListAnimator="@null"

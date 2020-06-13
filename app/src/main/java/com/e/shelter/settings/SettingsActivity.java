@@ -18,8 +18,6 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.settings_activity);
         setTitle("Settings");
 
-        setContentView(R.layout.settings_activity);
-        setTitle("Settings");
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -46,6 +44,19 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
         }
       return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(4);
+        finish();
     }
 
 }

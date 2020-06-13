@@ -5,6 +5,8 @@ import androidx.test.rule.ActivityTestRule;
 
 import androidx.test.espresso.*;
 
+import com.e.shelter.login.LoginActivity;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

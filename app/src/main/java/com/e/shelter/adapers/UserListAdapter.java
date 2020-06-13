@@ -1,5 +1,6 @@
 package com.e.shelter.adapers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +40,9 @@ public class UserListAdapter extends ArrayAdapter<User> {
      * Holds variables in a View
      */
     private static class ViewHolder {
-        TextView Name;
-        TextView phone;
-        TextView userEmail;
+        TextView nameTextView;
+        TextView phoneTextView;
+        TextView userEmailTextView;
         TextView permissionTextView;
         MaterialButton blockedButton;
         MaterialButtonToggleGroup permissionToggle;
@@ -70,6 +71,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
      * @param parent
      * @return View
      */
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final View result;
@@ -78,10 +80,10 @@ public class UserListAdapter extends ArrayAdapter<User> {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
             holder = new UserListAdapter.ViewHolder();
-            holder.Name = convertView.findViewById(R.id.userCardName);
+            holder.nameTextView = convertView.findViewById(R.id.userCardName);
             holder.permissionTextView = convertView.findViewById(R.id.userCardPermission);
-            holder.phone = convertView.findViewById(R.id.userCardPhone);
-            holder.userEmail = convertView.findViewById(R.id.userCardEmail);
+            holder.phoneTextView = convertView.findViewById(R.id.userCardPhone);
+            holder.userEmailTextView = convertView.findViewById(R.id.userCardEmail);
             holder.blockedButton = convertView.findViewById(R.id.userCardBlockedButton);
             holder.permissionToggle = convertView.findViewById(R.id.permission_toggle_content_users);
             result = convertView;
@@ -100,9 +102,9 @@ public class UserListAdapter extends ArrayAdapter<User> {
         final String userN = getItem(position).getName();
         final String userE = getItem(position).getEmail();
         final String userPermession = getItem(position).getPermission();
-        holder.Name.setText(userN);
-        holder.phone.setText(userPhone);
-        holder.userEmail.setText(userE);
+        holder.nameTextView.setText(userN);
+        holder.phoneTextView.setText(userPhone);
+        holder.userEmailTextView.setText(userE);
         holder.permissionTextView.setText(userPermession);
 
         //Setting the permission toggle
@@ -114,10 +116,16 @@ public class UserListAdapter extends ArrayAdapter<User> {
             holder.permissionToggle.check(holder.currentCheckedPermission);
         }
 
+        //Hide current user settings
         if (getItem(position).getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
             holder.permissionToggle.setVisibility(View.INVISIBLE);
             holder.blockedButton.setVisibility(View.INVISIBLE);
         }
+
+        //initialize blocked button
+        if (getItem(position).getBlocked()) {
+            holder.blockedButton.setText("blocked");
+        } else holder.blockedButton.setText("block");
 
         final View finalConvertView = convertView;
         holder.blockedButton.setOnClickListener(new View.OnClickListener() {
@@ -154,32 +162,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
         return convertView;
     }
-    /*public void checkUserStatus(final int position, final View view, final String UserEmail){
-        FirebaseFirestore.getInstance().collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult()) {
-                        User user = document.toObject(User.class);
-                        if( user.getEmail().equals(UserEmail)) {
-                            if(user.getBlocked().equals(false)){
-                                MaterialButton blockedBtn= view.findViewById(R.id.userCardBlockedButton);
-                                blockedBtn.setText("Block");
-                            }
-                            else{
-                                MaterialButton blockedBtn= view.findViewById(R.id.userCardBlockedButton);
-                                blockedBtn.setText("Unblock");
-                            }
 
-                        }
-                    }
-                }
-            }
-        });
-
-
-
-    }*/
 
     /**
      * function that blocks user and updates the database
@@ -187,7 +170,6 @@ public class UserListAdapter extends ArrayAdapter<User> {
      * @param convertView
      */
     public void blockedSelectedUser(final int position, final View convertView) {
-
         FirebaseFirestore.getInstance().collection("Users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -196,17 +178,19 @@ public class UserListAdapter extends ArrayAdapter<User> {
                         User user = document.toObject(User.class);
                         if (user.getEmail().equals(cards.get(position).getEmail())) {
                             if (user.getBlocked().equals(false)) {
-                                user.setBlocked(true); //Use the setter
+                                user.setBlocked(true);
                                 String id = document.getId();
-                                FirebaseFirestore.getInstance().collection("Users").document(id).set(user); //Set student object
+                                FirebaseFirestore.getInstance().collection("Users").document(id).set(user);
                                 MaterialButton blockedBtn = convertView.findViewById(R.id.userCardBlockedButton);
                                 blockedBtn.setText("Unblock");
+                                getItem(position).setBlocked(true);
                             } else {
-                                user.setBlocked(false); //Use the setter
+                                user.setBlocked(false);
                                 String id = document.getId();
-                                FirebaseFirestore.getInstance().collection("Users").document(id).set(user); //Set student object
+                                FirebaseFirestore.getInstance().collection("Users").document(id).set(user);
                                 MaterialButton blockedBtn = convertView.findViewById(R.id.userCardBlockedButton);
                                 blockedBtn.setText("block");
+                                getItem(position).setBlocked(false);
                             }
 
                         }
@@ -222,7 +206,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
         Toast.makeText(mContext, "Removed from review list", Toast.LENGTH_LONG).show();*/
     }
 
-    public void changePermission(ViewHolder holder, final int position, final String permission) {
+    public void changePermission(final ViewHolder holder, final int position, final String permission) {
         FirebaseFirestore.getInstance().collection("Users")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -231,6 +215,8 @@ public class UserListAdapter extends ArrayAdapter<User> {
                     for (DocumentSnapshot documentSnapshot : task.getResult()) {
                         if (documentSnapshot.get("email").equals(getItem(position).getEmail())) {
                             FirebaseFirestore.getInstance().collection("Users").document(documentSnapshot.getId()).update("permission", permission);
+                            getItem(position).setPermission(permission);
+                            holder.permissionTextView.setText(permission);
                             return;
                         }
                     }

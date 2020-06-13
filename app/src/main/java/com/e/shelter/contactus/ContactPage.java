@@ -2,12 +2,10 @@ package com.e.shelter.contactus;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
-import com.e.shelter.MainActivity;
 import com.e.shelter.R;
 import com.e.shelter.adapers.ContactListAdapter;
 import com.e.shelter.utilities.Contact;

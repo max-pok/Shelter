@@ -8,7 +8,7 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:targetPackage="com.e.shelter"
-                android:targetClass="com.e.shelter.ChangePassActivity" />
+                android:targetClass="com.e.shelter.settings.ChangePassActivity" />
         </Preference>
         <Preference
             android:key="editUserDitails"
@@ -17,7 +17,7 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:targetPackage="com.e.shelter"
-                android:targetClass="com.e.shelter.EditUserActivity" />
+                android:targetClass="com.e.shelter.settings.EditUserActivity" />
         </Preference>
     </PreferenceCategory>
 
