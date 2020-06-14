@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         forgotPasswordTextView.setOnClickListener(this);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
+       /*if (firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MapViewActivity.class);
             intent.putExtra("uid", firebaseUser.getUid());
             intent.putExtra("full_name", firebaseUser.getDisplayName());
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-        }
+        }*/
     }
 
     /**
