@@ -108,7 +108,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
         holder.permissionTextView.setText(userPermession);
 
         //Setting the permission toggle
-        if (holder.permissionTextView.getText().equals("user")) {
+        if (userPermession.equals("user")) {
             holder.currentCheckedPermission = R.id.user_permission_button_content_users;
             holder.permissionToggle.check(holder.currentCheckedPermission);
         } else {
@@ -117,7 +117,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
         }
 
         //Hide current user settings
-        if (getItem(position).getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+        if (userE.equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
             holder.permissionToggle.setVisibility(View.INVISIBLE);
             holder.blockedButton.setVisibility(View.INVISIBLE);
         }
