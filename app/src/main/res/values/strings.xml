@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shelter</string>
+    <string name="app_name">SafeZone</string>
     <string name="title_location_permission" />
     <string name="text_location_permission" />
     <string name="ok" />
